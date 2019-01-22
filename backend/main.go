@@ -1,7 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"github.com/konohiroaki/color-consensus/backend/route"
+	"os"
+)
 
 func main() {
-	fmt.Println("hello world")
+	Init()
+}
+
+func Init() {
+	router := route.Route()
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5000"
+	}
+	router.Run(":" + port)
 }

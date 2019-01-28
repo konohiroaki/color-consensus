@@ -1,6 +1,6 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDom from "react-dom";
+import css from "./test.css";
+import App from "./App";
 
-const title = "Color Consensus";
-
-ReactDOM.render(<div>{title}</div>, document.getElementById("app"));
+ReactDom.render(<App/>, document.getElementById("app"));

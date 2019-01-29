@@ -7,13 +7,35 @@ import (
 
 type ColorController struct{}
 
+func (ColorController) GetAllConsensusKey(c *gin.Context) {
+	type ResponseElement struct {
+		Language string
+		Color    string
+	}
+	list := []ResponseElement{}
+	for _, e := range models.Consensus {
+		list = append(list, ResponseElement{e.Language, e.Color})
+	}
+	c.JSON(200, list)
+}
+
 func (ColorController) GetAllConsensus(c *gin.Context) {
-	//TODO: provide a way to get only language list
-	c.JSON(200, models.Sum)
+	c.JSON(200, models.Consensus)
+}
+
+func (ColorController) GetAllConsensusKeyForLang(c *gin.Context) {
+	lang := c.Param("lang")
+	list := []string{}
+	for _, e := range models.Consensus {
+		if e.Language == lang {
+			list = append(list, e.Color)
+		}
+	}
+	c.JSON(200, list)
 }
 
 func (ColorController) GetAllConsensusForLang(c *gin.Context) {
-	list := findSumListOfLang(c.Param("lang"))
+	list := findConsensusListOfLang(c.Param("lang"))
 	c.JSON(200, list)
 }
 
@@ -28,9 +50,9 @@ func (ColorController) GetConsensus(c *gin.Context) {
 	}
 }
 
-func findSumListOfLang(lang string) []models.ColorConsensus {
+func findConsensusListOfLang(lang string) []models.ColorConsensus {
 	list := []models.ColorConsensus{}
-	for _, ele := range models.Sum {
+	for _, ele := range models.Consensus {
 		if ele.Language == lang {
 			list = append(list, *ele)
 		}

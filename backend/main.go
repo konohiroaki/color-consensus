@@ -1,20 +1,12 @@
 package main
 
 import (
-	"github.com/konohiroaki/color-consensus/backend/route"
-	"os"
+	"github.com/konohiroaki/color-consensus/backend/config"
+	"github.com/konohiroaki/color-consensus/backend/server"
 )
 
 func main() {
-	Init()
-}
+	config.Init("development")
 
-func Init() {
-	router := route.Route()
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "5000"
-	}
-	router.Run(":" + port)
+	server.Init()
 }

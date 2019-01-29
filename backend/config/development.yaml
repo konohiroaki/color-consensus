@@ -1,0 +1,3 @@
+test: "config is working"
+
+port: "5000"

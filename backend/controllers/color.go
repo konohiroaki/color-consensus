@@ -9,12 +9,13 @@ type ColorController struct{}
 
 func (ColorController) GetAllConsensusKey(c *gin.Context) {
 	type ResponseElement struct {
-		Language string
-		Color    string
+		Language string `json:"lang"`
+		Color    string `json:"name"`
+		BaseCode string `json:"base_code"`
 	}
 	list := []ResponseElement{}
 	for _, e := range models.Consensus {
-		list = append(list, ResponseElement{e.Language, e.Color})
+		list = append(list, ResponseElement{e.Language, e.Color, e.BaseCode})
 	}
 	c.JSON(200, list)
 }
@@ -25,10 +26,15 @@ func (ColorController) GetAllConsensus(c *gin.Context) {
 
 func (ColorController) GetAllConsensusKeyForLang(c *gin.Context) {
 	lang := c.Param("lang")
-	list := []string{}
+	type ResponseElement struct {
+		Language string `json:"lang"`
+		Color    string `json:"name"`
+		BaseCode string `json:"base_code"`
+	}
+	list := []ResponseElement{}
 	for _, e := range models.Consensus {
 		if e.Language == lang {
-			list = append(list, e.Color)
+			list = append(list, ResponseElement{e.Language, e.Color, e.BaseCode})
 		}
 	}
 	c.JSON(200, list)

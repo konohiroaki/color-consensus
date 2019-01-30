@@ -29,6 +29,11 @@
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "bootstrap": "^4.2.1",
+    "jquery": "^3.3.1",
+    "mustache": "^3.0.1",
+    "popper.js": "^1.14.7",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-selectable-fast": "^2.2.1"

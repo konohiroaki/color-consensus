@@ -17,6 +17,7 @@ func (ColorController) GetAllConsensusKey(c *gin.Context) {
 	for _, e := range models.Consensus {
 		list = append(list, ResponseElement{e.Language, e.Color, e.BaseCode})
 	}
+	c.Header("Access-Control-Allow-Origin", "*") // temporary for local development
 	c.JSON(200, list)
 }
 

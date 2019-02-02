@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	env := flag.String("env","production", "specify environment")
+	env := flag.String("env", "production", "specify environment")
 	flag.Parse()
 	config.Init(*env)
 

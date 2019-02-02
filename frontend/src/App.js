@@ -31,26 +31,45 @@ class MainContent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // similar color 2d array
+            candidates: []
         };
+        this.updateCandidates = this.updateCandidates.bind(this);
     }
 
     //TODO: should draw when triggered.
-    static draw(lang, name, code) {
-        console.log(lang + ":" + name + ":" + code);
+    draw(lang, name, code) {
+        // console.log(lang + ":" + name + ":" + code);
+        axios.get("http://localhost:5000/api/v1/colors/candidates/" + code.substring(1)).then(this.updateCandidates);
+    }
+
+    updateCandidates({data}) {
+        this.setState({candidates: data});
     }
 
     componentDidMount() {
-        //TODO: get color from sidebar? then draw
+        //TODO: get color from sidebar?
+        axios.get("http://localhost:5000/api/v1/colors/candidates/ff0000").then(this.updateCandidates);
     }
 
     render() {
-        // TODO: think algorithm to list similar colors.
-        // TODO: think algorithm to place them.
         // TODO: understand react-selectable-fast and apply for them.
+        // TODO: use not span ■ but something else which is more configurable.
+
+        let row = [];
+        for (let i = 0; i < this.state.candidates.length / 51; i++) {
+            let list = [];
+            for (let j = 0; j < this.state.candidates.length / 51; j++) {
+                list.push(<span style={{color: this.state.candidates[51 * i + j]}}>■</span>);
+            }
+            row.push(
+                <div>
+                    {list}
+                </div>
+            );
+        }
         return (
-            <div className="container-fluid">
-                asdf
+            <div className={this.props.className + " container"} style={{lineHeight: "0.9em"}}>
+                {row}
             </div>
         );
     }
@@ -100,16 +119,6 @@ class SideBar extends Component {
                 <div style={{overflowY: "auto", height: "100%"}}>
                     {colorList}
                     <AddColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
-                    <ColorCard/>
                 </div>
             </div>
         );
@@ -123,14 +132,17 @@ class ColorCard extends Component {
     }
 
     handleClick(lang, name, code) {
-        MainContent.draw(lang, name, code);
+        console.log(lang, name, code);
+        // TODO: somehow affect to main content.
+        // draw(lang, name, code);
     }
 
     render() {
         return (
             <a className="card btn bg-dark border border-secondary m-2" onClick={this.handleClick.bind(this, this.props.lang, this.props.name, this.props.code)}>
-                <div className="card-body">
-                    {this.props.lang} : {this.props.name}
+                <div className="row">
+                    <div className="col-3 border-right border-secondary p-3">{this.props.lang}</div>
+                    <div className="col-9 p-3">{this.props.name}</div>
                 </div>
             </a>
         );
@@ -148,7 +160,7 @@ class AddColorCard extends Component {
     render() {
         return (
             <a className="card btn bg-dark border border-secondary m-2" onClick={ColorCard.handleClick}>
-                <div className="card-body">
+                <div className="p-3">
                     <FontAwesomeIcon icon={faPlus}/>
                 </div>
             </a>

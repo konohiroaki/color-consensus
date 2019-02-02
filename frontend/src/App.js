@@ -154,12 +154,12 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 class AddColorCard extends Component {
 
     static handleClick(e) {
-
+        // TODO: show modal for adding color.
     }
 
     render() {
         return (
-            <a className="card btn bg-dark border border-secondary m-2" onClick={ColorCard.handleClick}>
+            <a className="card btn bg-dark border border-secondary m-2" onClick={this.handleClick}>
                 <div className="p-3">
                     <FontAwesomeIcon icon={faPlus}/>
                 </div>

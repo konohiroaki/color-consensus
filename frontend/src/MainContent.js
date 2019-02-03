@@ -1,16 +1,29 @@
-import {Component} from "react";
+import React, {Component, createRef} from "react";
 import axios from "axios";
-import $ from "jquery";
-import React from "react";
+import {SelectableGroup} from "react-selectable-fast";
+import {SelectableCandidateCell, Counter} from "./CandidateCell";
 
 class MainContent extends Component {
+
+    // TODO: move selected status to this level.
     constructor(props) {
         super(props);
+        this.counterRef = createRef();
         this.state = {
             candidates: [],
         };
         this.updateCandidates = this.updateCandidates.bind(this);
+        this.handleSelecting = this.handleSelecting.bind(this);
+        this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
     }
+
+    handleSelecting(selectingItems) {
+        this.counterRef.current.handleSelectin(selectingItems);
+    };
+
+    handleSelectionFinish(selectedItems) {
+        this.counterRef.current.handleSelectionFinis(selectedItems);
+    };
 
     //TODO: should draw when triggered.
     draw(lang, name, code) {
@@ -35,34 +48,25 @@ class MainContent extends Component {
         axios.get("http://localhost:5000/api/v1/colors/candidates/ff0000").then(this.updateCandidates);
     }
 
-    handleMouseDown(e) {
-        const offsets = $("#color-picker").offset();
-        console.log("mouse down", e.pageX - offsets.left, e.pageY - offsets.top);
-    }
-
-    handleMouseUp(e) {
-        const offsets = $("#color-picker").offset();
-        console.log("mouse up", e.pageX - offsets.left, e.pageY - offsets.top);
-    }
-
     render() {
         return (
-            <div id="color-picker" className="container-fluid" style={{overflow: "auto"}}
-                 onMouseDown={this.handleMouseDown} onMouseUp={this.handleMouseUp}>
-                <List items={this.state.candidates}/>
-                {/*<SelectableGroup enableDeselect={true}>*/}
-                {/*<List items={this.state.candidates}/>*/}
-                {/*</SelectableGroup>*/}
+            <div className="container-fluid" style={{overflow: "auto"}}>
+                <Counter ref={this.counterRef}/>
+                <SelectableGroup
+                    className="selectable"
+                    clickClassName="tick"
+                    enableDeselect
+                    allowClickWithoutSelected={true}
+                    duringSelection={this.handleSelecting}
+                    onSelectionFinish={this.handleSelectionFinish}>
+                    <List items={this.state.candidates}/>
+                </SelectableGroup>
             </div>
         );
     }
 }
 
 class List extends Component {
-
-    shouldComponentUpdate(nextProps) {
-        return nextProps.items !== this.props.items;
-    }
 
     render() {
         if (this.props.items.length === 0) {
@@ -72,26 +76,13 @@ class List extends Component {
         for (let i = 0; i < 51; i++) {
             let row = [];
             for (let j = 0; j < 51; j++) {
-                row.push(<CandidateCell key={i * 51 + j} color={this.props.items[i][j]}/>);
+                row.push(<SelectableCandidateCell key={i * 51 + j} color={this.props.items[i][j]}/>);
             }
             list.push(<div key={i}>{row}</div>);
         }
         return (
             <div style={{lineHeight: "0", padding: "10px"}}>
                 {list}
-            </div>
-        );
-    }
-}
-
-class CandidateCell extends Component {
-    render() {
-        return (
-            <div style={{
-                display: "inline-block", padding: "1px", margin: "0 -1px -1px 0", border: "1px solid transparent",
-                userSelect: "none", userDrag: "none"
-            }}>
-                <div style={{width: "15px", height: "15px", backgroundColor: this.props.color}}/>
             </div>
         );
     }

@@ -4,6 +4,7 @@ import {createSelectable} from "react-selectable-fast";
 export class CandidateCell extends Component {
 
     render() {
+        const cellSize = "13px";
         let color = this.props.selected || this.props.selecting ? "#fff" : "transparent";
         return (
             <div style={{
@@ -11,7 +12,7 @@ export class CandidateCell extends Component {
                 borderWidth: "1px", borderStyle: "solid", borderColor: color,
                 userSelect: "none", userDrag: "none"
             }}>
-                <div ref={this.props.selectableRef} style={{width: "15px", height: "15px", backgroundColor: this.props.color}}/>
+                <div ref={this.props.selectableRef} style={{width: cellSize, height: cellSize, backgroundColor: this.props.color}}/>
             </div>
         );
     }
@@ -60,4 +61,4 @@ class Counter extends Component {
 
 const SelectableCandidateCell = createSelectable(CandidateCell);
 
-export {SelectableCandidateCell, Counter};
+export {SelectableCandidateCell};

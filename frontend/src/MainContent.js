@@ -8,21 +8,32 @@ class MainContent extends Component {
     // TODO: move selected status to this level.
     constructor(props) {
         super(props);
-        this.counterRef = createRef();
         this.state = {
+            target: {
+                lang: "",
+                name: "",
+                code: ""
+            },
             candidates: [],
+            selected: []
         };
         this.updateCandidates = this.updateCandidates.bind(this);
         this.handleSelecting = this.handleSelecting.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
+        this.submit = this.submit.bind(this);
     }
 
     handleSelecting(selectingItems) {
-        this.counterRef.current.handleSelectin(selectingItems);
+        // TODO: remove border between selected and selected
     };
 
     handleSelectionFinish(selectedItems) {
-        this.counterRef.current.handleSelectionFinis(selectedItems);
+        // TODO: add to selected in this.state
+        let selected = [];
+        for (const v of selectedItems) {
+            selected.push(v.props.color);
+        }
+        this.setState({selected: selected});
     };
 
     //TODO: should draw when triggered.
@@ -45,13 +56,28 @@ class MainContent extends Component {
 
     componentDidMount() {
         //TODO: get color from sidebar?
-        axios.get("http://localhost:5000/api/v1/colors/candidates/ff0000").then(this.updateCandidates);
+        const target = {lang: "en", name: "red", code: "#ff0000"};
+        axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)).then(this.updateCandidates);
+        this.setState({target: target});
+    }
+
+    submit() {
+        const {lang, name} = this.state.target;
+
+        axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.state.selected)
+            .then(() => console.log("submitted data!!!!"));
     }
 
     render() {
         return (
-            <div className="container-fluid" style={{overflow: "auto"}}>
-                <Counter ref={this.counterRef}/>
+            <div className="container-fluid pt-3" style={{overflow: "auto"}}>
+                {/* TODO: skip and see statistics button*/}
+                {/* TODO: submit button*/}
+                <div className="row">
+                    <div className="offset-10 col-2">
+                        <button className="btn btn-secondary" onClick={this.submit}>Submit</button>
+                    </div>
+                </div>
                 <SelectableGroup
                     className="selectable"
                     clickClassName="tick"
@@ -81,7 +107,7 @@ class List extends Component {
             list.push(<div key={i}>{row}</div>);
         }
         return (
-            <div style={{lineHeight: "0", padding: "10px"}}>
+            <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
                 {list}
             </div>
         );

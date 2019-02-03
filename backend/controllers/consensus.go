@@ -7,9 +7,9 @@ import (
 	"strconv"
 )
 
-type ColorController struct{}
+type ConsensusController struct{}
 
-func (ColorController) GetAllConsensusKey(c *gin.Context) {
+func (ConsensusController) GetAllConsensusKey(c *gin.Context) {
 	type ResponseElement struct {
 		Language string `json:"lang"`
 		Color    string `json:"name"`
@@ -22,11 +22,11 @@ func (ColorController) GetAllConsensusKey(c *gin.Context) {
 	c.JSON(200, list)
 }
 
-func (ColorController) GetAllConsensus(c *gin.Context) {
+func (ConsensusController) GetAllConsensus(c *gin.Context) {
 	c.JSON(200, models.Consensus)
 }
 
-func (ColorController) GetAllConsensusKeyForLang(c *gin.Context) {
+func (ConsensusController) GetAllConsensusKeyForLang(c *gin.Context) {
 	lang := c.Param("lang")
 	type ResponseElement struct {
 		Language string `json:"lang"`
@@ -42,12 +42,12 @@ func (ColorController) GetAllConsensusKeyForLang(c *gin.Context) {
 	c.JSON(200, list)
 }
 
-func (ColorController) GetAllConsensusForLang(c *gin.Context) {
+func (ConsensusController) GetAllConsensusForLang(c *gin.Context) {
 	list := findConsensusListOfLang(c.Param("lang"))
 	c.JSON(200, list)
 }
 
-func (ColorController) GetConsensus(c *gin.Context) {
+func (ConsensusController) GetConsensus(c *gin.Context) {
 	lang := c.Param("lang")
 	color := c.Param("color")
 	sum, found := findSum(lang, color)
@@ -58,7 +58,7 @@ func (ColorController) GetConsensus(c *gin.Context) {
 	}
 }
 
-func (ColorController) GetCandidateList(c *gin.Context) {
+func (ConsensusController) GetCandidateList(c *gin.Context) {
 	code := c.Param("code")
 	candidates := generateCandidateList(code)
 	c.JSON(200, candidates)

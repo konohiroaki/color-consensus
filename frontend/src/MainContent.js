@@ -1,7 +1,7 @@
 import React, {Component, createRef} from "react";
 import axios from "axios";
-import {SelectableGroup} from "react-selectable-fast";
-import {SelectableCandidateCell, Counter} from "./CandidateCell";
+import {SelectableGroup, DeselectAll} from "react-selectable-fast";
+import {SelectableCandidateCell} from "./CandidateCell";
 
 class MainContent extends Component {
 
@@ -69,15 +69,11 @@ class MainContent extends Component {
     }
 
     render() {
+        console.log("rendering main content");
         return (
             <div className="container-fluid pt-3" style={{overflow: "auto"}}>
                 {/* TODO: skip and see statistics button*/}
                 {/* TODO: submit button*/}
-                <div className="row">
-                    <div className="offset-10 col-2">
-                        <button className="btn btn-secondary" onClick={this.submit}>Submit</button>
-                    </div>
-                </div>
                 <SelectableGroup
                     className="selectable"
                     clickClassName="tick"
@@ -85,6 +81,12 @@ class MainContent extends Component {
                     allowClickWithoutSelected={true}
                     duringSelection={this.handleSelecting}
                     onSelectionFinish={this.handleSelectionFinish}>
+                    <div className="row">
+                        <div className="offset-9 col-3">
+                            <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
+                            <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
+                        </div>
+                    </div>
                     <List items={this.state.candidates}/>
                 </SelectableGroup>
             </div>
@@ -94,7 +96,12 @@ class MainContent extends Component {
 
 class List extends Component {
 
+    shouldComponentUpdate(props) {
+        return props.items !== this.props.items;
+    }
+
     render() {
+        console.log("rendering list");
         if (this.props.items.length === 0) {
             return <div/>;
         }

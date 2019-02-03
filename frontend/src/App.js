@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import {SelectableGroup, createSelectable, SelectAll, DeselectAll} from "react-selectable-fast";
 
 class App extends Component {
 
@@ -31,7 +32,7 @@ class MainContent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            candidates: []
+            candidates: [],
         };
         this.updateCandidates = this.updateCandidates.bind(this);
     }
@@ -43,7 +44,15 @@ class MainContent extends Component {
     }
 
     updateCandidates({data}) {
-        this.setState({candidates: data});
+        let list = [];
+        for (let i = 0; i < 51; i++) {
+            let row = [];
+            for (let j = 0; j < 51; j++) {
+                row.push(data[i * 51 + j]);
+            }
+            list.push(row);
+        }
+        this.setState({candidates: list});
     }
 
     componentDidMount() {
@@ -51,25 +60,82 @@ class MainContent extends Component {
         axios.get("http://localhost:5000/api/v1/colors/candidates/ff0000").then(this.updateCandidates);
     }
 
-    render() {
-        // TODO: understand react-selectable-fast and apply for them.
-        // TODO: use not span ■ but something else which is more configurable.
+    afterSelect(selectedTargets) {
+        console.log(selectedTargets.length);
+    }
 
-        let row = [];
-        for (let i = 0; i < this.state.candidates.length / 51; i++) {
-            let list = [];
-            for (let j = 0; j < this.state.candidates.length / 51; j++) {
-                list.push(<span style={{color: this.state.candidates[51 * i + j]}}>■</span>);
-            }
-            row.push(
-                <div>
-                    {list}
+    render() {
+        return (
+            <div className="container-fluid">
+                <div className="container-fluid bg-light" style={{overflow: "auto"}}>
+                    <SelectableGroup
+                        clickClassName="tick"
+                        enableDeselect
+                        allowClickWithoutSelected={true}
+                        duringSelection={console.log("during selection")}
+                        onSelectionClear={console.log("selection clear")}
+                        onSelectionFinish={console.log("selection finish")}
+                    >
+                        <List items={this.state.candidates}/>
+                    </SelectableGroup>
                 </div>
-            );
+            </div>
+        );
+    }
+}
+
+function CandidateCell(props) {
+    if (props.selected || props.selecting) {
+        return (
+            <div style={{
+                display: "inline-block", padding: "1px", margin: "0 -1px -1px 0",
+                borderStyle: "dashed", borderWidth: "1px",
+                borderTopColor: "#008888", borderRightColor: "#008888", borderBottomColor: "#008888", borderLeftColor: "#008888"
+            }}>
+                <div ref={props.selectableRef} style={{width: "15px", height: "15px", backgroundColor: props.color}}/>
+            </div>
+        );
+    } else {
+        return (
+            <div style={{display: "inline-block", padding: "1px", margin: "0 -1px -1px 0", border: "1px dashed transparent"}}>
+                <div ref={props.selectableRef} style={{width: "15px", height: "15px", backgroundColor: props.color}}/>
+            </div>
+        );
+    }
+}
+
+const SelectableCandidateCell = createSelectable(CandidateCell);
+
+class List extends Component {
+
+    shouldComponentUpdate(nextProps) {
+        return nextProps.items !== this.props.items;
+    }
+
+    render() {
+        if (this.props.items.length === 0) {
+            return <div/>;
+        }
+        let list = [];
+        console.log(this.props.items);
+        for (let i = 0; i < 51; i++) {
+            let row = [];
+            for (let j = 0; j < 51; j++) {
+                row.push(<SelectableCandidateCell key={i * 51 + j} color={this.props.items[i][j]}/>);
+            }
+            list.push(<div key={i}>{row}</div>);
         }
         return (
-            <div className={this.props.className + " container"} style={{lineHeight: "0.9em"}}>
-                {row}
+            <div>
+                <SelectAll className="selectable-button">
+                    <button>Select all</button>
+                </SelectAll>
+                <DeselectAll className="selectable-button">
+                    <button>Clear selection</button>
+                </DeselectAll>
+                <div style={{lineHeight: "0", padding: "10px"}}>
+                    {list}
+                </div>
             </div>
         );
     }

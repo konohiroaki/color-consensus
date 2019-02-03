@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-contrib/sessions"
@@ -15,6 +16,7 @@ func NewRouter() *gin.Engine {
 	pprof.Register(router)
 
 	router.GET("/debug/vars", expvar.Handler())
+	router.Use(cors.Default())
 	router.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
 	router.Use(sessions.Sessions("session", cookie.NewStore([]byte("secret"))))
 
@@ -31,7 +33,7 @@ func NewRouter() *gin.Engine {
 			v1api.GET("/colors/candidates/:code", color.GetCandidateList)
 
 			vote := new(controllers.VoteController)
-			v1api.POST("/votes/:lang/:color/:user", vote.Vote)
+			v1api.POST("/votes/:lang/:color", vote.Vote)
 			v1api.GET("/votes/:lang/:color/raw", vote.GetVotes)
 
 			user := new(controllers.UserController)

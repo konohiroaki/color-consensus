@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/models"
-	"net/http"
 	"time"
 )
 
@@ -14,8 +14,10 @@ func (VoteController) Vote(c *gin.Context) {
 	// TODO: move session related logic to non-api endpoint.
 	session := sessions.Default(c)
 	userID := session.Get("userID")
+	fmt.Println("userID is {}", session.Get("userID"))
 	if userID == nil {
-		c.AbortWithStatus(http.StatusForbidden)
+		//c.AbortWithStatus(http.StatusForbidden) // temporary skipping auth
+		userID = "testuser"
 	}
 
 	var colors []string

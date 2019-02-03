@@ -65,7 +65,7 @@ class MainContent extends Component {
         const {lang, name} = this.state.target;
 
         axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.state.selected)
-            .then(() => console.log("submitted data!!!!"));
+            .then(() => console.log("submitted data"));
     }
 
     render() {
@@ -73,7 +73,6 @@ class MainContent extends Component {
         return (
             <div className="container-fluid pt-3" style={{overflow: "auto"}}>
                 {/* TODO: skip and see statistics button*/}
-                {/* TODO: submit button*/}
                 <SelectableGroup
                     className="selectable"
                     clickClassName="tick"
@@ -82,7 +81,11 @@ class MainContent extends Component {
                     duringSelection={this.handleSelecting}
                     onSelectionFinish={this.handleSelectionFinish}>
                     <div className="row">
-                        <div className="offset-9 col-3">
+                        <div className="mr-auto ml-5">
+                            <p>Language: {this.state.target.lang}</p>
+                            <p>Color Name: {this.state.target.name}</p>
+                        </div>
+                        <div className="ml-auto">
                             <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
                             <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
                         </div>

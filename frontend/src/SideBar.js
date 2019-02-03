@@ -90,7 +90,8 @@ class AddColorCard extends Component {
         super(props);
         this.state = {
             lang: "",
-            name: ""
+            name: "",
+            code: ""
         };
         this.handleLangChange = this.handleLangChange.bind(this);
         this.handleNameChange = this.handleNameChange.bind(this);
@@ -112,9 +113,9 @@ class AddColorCard extends Component {
 
     handleClick() {
         // TODO: post lang and name to add it in db.
-        const {lang, name} = this.state;
-        console.log(lang, name);
-        this.setState({lang: "", name: ""});
+        const {lang, name, code} = this.state;
+        console.log(lang, name, code);
+        this.setState({lang: "", name: "", code: ""});
     }
 
     // FIXME: modal disappears when clicked. it shouldn't disappear except cancel or submit button or outside space.

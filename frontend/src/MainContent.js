@@ -5,7 +5,6 @@ import {SelectableCandidateCell} from "./CandidateCell";
 
 class MainContent extends Component {
 
-    // TODO: move selected status to this level.
     constructor(props) {
         super(props);
         this.state = {
@@ -73,6 +72,17 @@ class MainContent extends Component {
         return (
             <div className="container-fluid pt-3" style={{overflow: "auto"}}>
                 {/* TODO: skip and see statistics button*/}
+                <div className="row">
+                    <div className="mr-auto ml-5">
+                        <p>Language: {this.state.target.lang}</p>
+                        <p>Color Name: {this.state.target.name}</p>
+                    </div>
+                    <div className="ml-auto">
+                        {/* FIXME: doesn't work when inside <SelectableGroup> */}
+                        <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
+                    </div>
+                </div>
+
                 <SelectableGroup
                     className="selectable"
                     clickClassName="tick"
@@ -81,13 +91,8 @@ class MainContent extends Component {
                     duringSelection={this.handleSelecting}
                     onSelectionFinish={this.handleSelectionFinish}>
                     <div className="row">
-                        <div className="mr-auto ml-5">
-                            <p>Language: {this.state.target.lang}</p>
-                            <p>Color Name: {this.state.target.name}</p>
-                        </div>
                         <div className="ml-auto">
                             <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
-                            <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
                         </div>
                     </div>
                     <List items={this.state.candidates}/>

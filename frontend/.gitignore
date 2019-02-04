@@ -1,5 +1,5 @@
 # ignore node packages
 node_modules/
 
-# ignore webpack bundled
-dist/bundle.js
+# ignore dist files
+dist/

@@ -1,5 +1,11 @@
+const path = require("path");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
 module.exports = {
-    entry: "./src/index.js",
+    entry: {
+        app: "./src/index.js"
+    },
     module: {
         rules: [
             {
@@ -18,12 +24,12 @@ module.exports = {
     resolve: {
         extensions: ["*", ".js", ".jsx"]
     },
+    plugins: [
+        new CleanWebpackPlugin(["dist"]),
+        new HtmlWebpackPlugin({template: "src/template/template.html"})
+    ],
     output: {
-        path: __dirname + "/dist",
-        publicPath: "/",
-        filename: "bundle.js"
-    },
-    devServer: {
-        contentBase: "./dist"
+        path: path.resolve(__dirname, "dist"),
+        filename: "[name].bundle.js"
     }
 };

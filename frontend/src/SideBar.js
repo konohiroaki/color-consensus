@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import axios from "axios";
+import $ from "jquery";
 
 class SideBar extends Component {
     constructor(props) {
@@ -114,18 +115,22 @@ class AddColorCard extends Component {
         // TODO: post lang and name to add it in db.
         const {lang, name, code} = this.state;
         console.log(lang, name, code);
+        $("#add-color-lang").val("");
+        $("#add-color-name").val("");
+        $("#add-color-code").val("");
         this.setState({lang: "", name: "", code: ""});
     }
 
-    // FIXME: modal disappears when clicked. it shouldn't disappear except cancel or submit button or outside space.
     render() {
         console.log("rendering add color card");
         return (
-            <a className="card btn bg-dark border border-secondary m-2" data-toggle="modal" data-target="#color-add-modal">
-                <div className="p-3">
-                    <FontAwesomeIcon icon={faPlus}/>
-                </div>
-                <div className="modal" tabIndex="-1" id="color-add-modal">
+            <div>
+                <a className="card btn bg-dark border border-secondary m-2" data-toggle="modal" data-target="#color-add-modal">
+                    <div className="p-3">
+                        <FontAwesomeIcon icon={faPlus}/>
+                    </div>
+                </a>
+                <div className="modal fade" tabIndex="-1" id="color-add-modal">
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content bg-dark">
                             <div className="modal-header">
@@ -133,12 +138,13 @@ class AddColorCard extends Component {
                             </div>
                             <div className="modal-body">
                                 <form>
+                                    {/* TODO: should be drop down */}
                                     <label htmlFor="add-color-lang" className="col-form-label text-left">Language:</label>
-                                    <input type="text" className="form-control" id="add-color-lang" value={this.state.lang} onChange={this.handleLangChange} placeholder="en"/>
+                                    <input type="text" className="form-control" id="add-color-lang" onChange={this.handleLangChange} placeholder="en"/>
                                     <label htmlFor="add-color-name" className="col-form-label text-left">Color Name:</label>
-                                    <input type="text" className="form-control" id="add-color-name" value={this.state.name} onChange={this.handleNameChange} placeholder="red"/>
+                                    <input type="text" className="form-control" id="add-color-name" onChange={this.handleNameChange} placeholder="red"/>
                                     <label htmlFor="add-color-code" className="col-form-label text-left">Base Color Code:</label>
-                                    <input type="text" className="form-control" id="add-color-code" value={this.state.code} onChange={this.handleCodeChange} placeholder="#ff0000"/>
+                                    <input type="text" className="form-control" id="add-color-code" onChange={this.handleCodeChange} placeholder="#ff0000"/>
                                 </form>
                             </div>
                             <div className="modal-footer">
@@ -148,7 +154,7 @@ class AddColorCard extends Component {
                         </div>
                     </div>
                 </div>
-            </a>
+            </div>
         );
     }
 }

@@ -22,7 +22,6 @@ class SideBar extends Component {
     render() {
         console.log("rendering sidebar");
         // FIXME: make the search box work.
-        // TODO: implement add modal.
         let colorList = [];
         let langSet = new Set();
         for (let v of this.state.colorList) {

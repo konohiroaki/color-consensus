@@ -4,6 +4,11 @@ import {createSelectable} from "react-selectable-fast";
 export class CandidateCell extends Component {
 
     shouldComponentUpdate(props) {
+        // don't need to update when selecting -> selected
+        if (this.props.selecting && props.selected) {
+            return false;
+        }
+        // don't need to update when same with before
         return props.selected !== this.props.selected || props.selecting !== this.props.selecting;
     }
 

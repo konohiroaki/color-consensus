@@ -3,6 +3,7 @@ import React, {Component} from "react";
 import SideBar from "./SideBar";
 import MainContent from "./MainContent";
 
+// TODO: do test for react app (jest?)
 class App extends Component {
 
     // TODO: route to statistics page (https://reacttraining.com/react-router/)

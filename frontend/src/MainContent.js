@@ -55,9 +55,9 @@ class MainContent extends Component {
 
     componentDidMount() {
         //TODO: get color from sidebar?
-        const target = {lang: "en", name: "red", code: "#ff0000"};
-        axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)).then(this.updateCandidates);
-        this.setState({target: target});
+        // const target = {lang: "en", name: "red", code: "#ff0000"};
+        // axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)).then(this.updateCandidates);
+        // this.setState({target: target});
     }
 
     submit() {

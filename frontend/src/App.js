@@ -5,6 +5,7 @@ import MainContent from "./MainContent";
 
 class App extends Component {
 
+    // TODO: route to statistics page (https://reacttraining.com/react-router/)
     render() {
         return (
             <div className="bg-dark text-light" style={{display: "flex", flexDirection: "column", height: "100%"}}>

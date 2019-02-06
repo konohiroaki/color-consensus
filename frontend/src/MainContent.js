@@ -1,7 +1,7 @@
-import React, {Component, createRef} from "react";
+import React, {Component} from "react";
 import axios from "axios";
 import {SelectableGroup, DeselectAll} from "react-selectable-fast";
-import {SelectableCandidateCell} from "./CandidateCell";
+import CandidateList from "./CandidateList";
 
 class MainContent extends Component {
 
@@ -95,35 +95,8 @@ class MainContent extends Component {
                             <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
                         </div>
                     </div>
-                    <List items={this.state.candidates}/>
+                    <CandidateList items={this.state.candidates}/>
                 </SelectableGroup>
-            </div>
-        );
-    }
-}
-
-class List extends Component {
-
-    shouldComponentUpdate(props) {
-        return props.items !== this.props.items;
-    }
-
-    render() {
-        console.log("rendering list");
-        if (this.props.items.length === 0) {
-            return <div/>;
-        }
-        let list = [];
-        for (let i = 0; i < 51; i++) {
-            let row = [];
-            for (let j = 0; j < 51; j++) {
-                row.push(<SelectableCandidateCell key={i * 51 + j} color={this.props.items[i][j]}/>);
-            }
-            list.push(<div key={i}>{row}</div>);
-        }
-        return (
-            <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
-                {list}
             </div>
         );
     }

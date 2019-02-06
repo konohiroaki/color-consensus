@@ -13,7 +13,7 @@ func (ConsensusController) GetAllConsensusKey(c *gin.Context) {
 	type ResponseElement struct {
 		Language string `json:"lang"`
 		Color    string `json:"name"`
-		BaseCode string `json:"base_code"`
+		BaseCode string `json:"code"`
 	}
 	list := []ResponseElement{}
 	for _, e := range models.Consensus {
@@ -31,7 +31,7 @@ func (ConsensusController) GetAllConsensusKeyForLang(c *gin.Context) {
 	type ResponseElement struct {
 		Language string `json:"lang"`
 		Color    string `json:"name"`
-		BaseCode string `json:"base_code"`
+		BaseCode string `json:"code"`
 	}
 	list := []ResponseElement{}
 	for _, e := range models.Consensus {
@@ -65,9 +65,9 @@ func (ConsensusController) GetCandidateList(c *gin.Context) {
 }
 
 func generateCandidateList(code string) []string {
-	r := fromHex(code[1:3])
-	g := fromHex(code[3:5])
-	b := fromHex(code[5:])
+	r := fromHex(code[0:2])
+	g := fromHex(code[2:4])
+	b := fromHex(code[4:])
 	list := []string{}
 	for x := 1; x < 100; x++ {
 		for i, rr := 0, r; i <= x; i, rr = i+1, swingIncrement(r, i+1, 16) {

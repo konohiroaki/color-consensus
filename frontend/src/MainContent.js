@@ -5,14 +5,22 @@ import CandidateList from "./CandidateList";
 
 class MainContent extends Component {
 
+    // FIXME: check state as well to run the update properly.
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log(this.props.target);
+        console.log(nextProps.target);
+        if (nextProps.target.code !== this.props.target.code) {
+            this.setState({candidates: [], selected: []});
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     constructor(props) {
         super(props);
         this.state = {
-            target: {
-                lang: "",
-                name: "",
-                code: ""
-            },
+            target: {},
             candidates: [],
             selected: []
         };
@@ -27,7 +35,6 @@ class MainContent extends Component {
     };
 
     handleSelectionFinish(selectedItems) {
-        // TODO: add to selected in this.state
         let selected = [];
         for (const v of selectedItems) {
             selected.push(v.props.color);
@@ -35,10 +42,8 @@ class MainContent extends Component {
         this.setState({selected: selected});
     };
 
-    //TODO: should draw when triggered.
-    draw(lang, name, code) {
-        // console.log(lang + ":" + name + ":" + code);
-        axios.get("http://localhost:5000/api/v1/colors/candidates/" + code.substring(1)).then(this.updateCandidates);
+    draw(target) {
+        return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)).then(this.updateCandidates);
     }
 
     updateCandidates({data}) {
@@ -50,14 +55,10 @@ class MainContent extends Component {
             }
             list.push(row);
         }
-        this.setState({candidates: list});
-    }
-
-    componentDidMount() {
-        //TODO: get color from sidebar?
-        // const target = {lang: "en", name: "red", code: "#ff0000"};
-        // axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)).then(this.updateCandidates);
-        // this.setState({target: target});
+        console.log(list);
+        if (this.state.candidates.length === 0) {
+            this.setState({candidates: list});
+        }
     }
 
     submit() {
@@ -69,8 +70,14 @@ class MainContent extends Component {
 
     render() {
         console.log("rendering main content");
+        return <div>{this.props.target.code}</div>;
+        if (Object.entries(this.props.target).length === 0) {
+            return <div/>;
+        }
+        this.draw(this.props.target);
+
         return (
-            <div className="container-fluid pt-3" style={{overflow: "auto"}}>
+            <div className="container-fluid pt-3" style={Object.assign({overflowY: "auto"}, this.props.style)}>
                 {/* TODO: skip and see statistics button*/}
                 <div className="row">
                     <div className="mr-auto ml-5">

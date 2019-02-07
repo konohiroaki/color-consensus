@@ -6,15 +6,17 @@ import AddColorCard from "./AddColorCard";
 class SideContent extends Component {
 
     // TODO: allow update when adding color from AddColorCard? or can update locally.
-    shouldComponentUpdate() {
-        return this.state.colorList.length === 0;
-    }
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     return this.state.colorList.length === 0 || this.state.searchText !== nextState.searchText;
+    // }
 
     constructor(props) {
         super(props);
         this.state = {
-            colorList: []
+            colorList: [],
+            searchText: "",
         };
+        this.handleSearchChange = this.handleSearchChange.bind(this);
     }
 
     componentDidMount() {
@@ -28,6 +30,11 @@ class SideContent extends Component {
             console.log(this.state);
             this.props.setTarget(this.state.colorList[1]);
         });
+    }
+
+    handleSearchChange(event) {
+        let value = event.target.value;
+        this.setState({searchText: value});
     }
 
     render() {
@@ -50,15 +57,18 @@ class SideContent extends Component {
         return (
             <div className={this.props.className} style={this.props.style}>
                 {/* FIXME: make the search box work. */}
+                {/* https://www.w3schools.com/jquery/tryit.asp?filename=tryjquery_filters_anything */}
                 <div className="input-group">
                     <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">Language</button>
                     <div className="dropdown-menu">
                         {langList}
                     </div>
-                    <input type="text" className="form-control"/>
+                    <input type="text" className="form-control" value={this.state.searchText} onChange={this.handleSearchChange}/>
                 </div>
                 <div style={{overflowY: "auto", height: "100%"}}>
-                    {colorList}
+                    <div id="colorList">
+                        {colorList}
+                    </div>
                     <AddColorCard/>
                 </div>
             </div>

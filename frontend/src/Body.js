@@ -13,7 +13,7 @@ class Body extends Component {
     }
 
     setTarget(target) {
-        console.log(target);
+        console.log("body got target: ",target);
         this.setState({target: target});
     }
 

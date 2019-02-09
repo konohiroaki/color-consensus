@@ -39,8 +39,11 @@ class SideContent extends Component {
         let colorList = [];
         let langSet = new Set();
         for (let v of this.state.colorList) {
+            const display = this.state.searchText === "" || v.name.includes(this.state.searchText.toLowerCase())
+                            ? "block" : "none";
             colorList.push(
-                <ColorCard lang={v.lang} name={v.name} code={v.code} setTarget={this.props.setTarget} key={v.lang + ":" + v.name}/>
+                <ColorCard color={{lang: v.lang, name: v.name, code: v.code}} style={{display: display}}
+                           setTarget={this.props.setTarget} key={v.lang + ":" + v.name}/>
             );
             langSet.add(v.lang);
         }
@@ -53,8 +56,7 @@ class SideContent extends Component {
 
         return (
             <div className={this.props.className} style={this.props.style}>
-                {/* FIXME: make the search box work. */}
-                {/* https://www.w3schools.com/jquery/tryit.asp?filename=tryjquery_filters_anything */}
+                {/* TODO: make the lang filter work */}
                 <div className="input-group">
                     <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">Language</button>
                     <div className="dropdown-menu">

@@ -10,6 +10,6 @@ import "core-js/fn/array/is-array";
 import "core-js/fn/map";
 import "core-js/fn/set";
 
-import App from "./App";
+import App from "./components/App";
 
 ReactDom.render(<App/>, document.getElementById("app"));

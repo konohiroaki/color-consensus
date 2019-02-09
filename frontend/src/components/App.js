@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import Header from "./Header";
-import Body from "./Body";
+import Header from "./header/Header";
+import Body from "./body/Body";
 
 // TODO: do test for react app (jest?)
 class App extends Component {

@@ -3,10 +3,6 @@ import {SelectableCandidateCell} from "./CandidateCell";
 
 class CandidateList extends Component {
 
-    shouldComponentUpdate(props) {
-        return props.items !== this.props.items;
-    }
-
     render() {
         console.log("rendering candidate list");
         if (this.props.items.length === 0) {

@@ -5,11 +5,6 @@ import AddColorCard from "./AddColorCard";
 
 class SideContent extends Component {
 
-    // TODO: allow update when adding color from AddColorCard? or can update locally.
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     return this.state.colorList.length === 0 || this.state.searchText !== nextState.searchText;
-    // }
-
     constructor(props) {
         super(props);
         this.state = {

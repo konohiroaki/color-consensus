@@ -3,13 +3,17 @@ import {createSelectable} from "react-selectable-fast";
 
 export class CandidateCell extends Component {
 
-    shouldComponentUpdate(props) {
-        // don't need to update when selecting -> selected
-        if (this.props.selecting && props.selected) {
+    shouldComponentUpdate(nextProps, nextState) {
+        // when color is changed, need to update
+        if (this.props.color !== nextProps.color) {
+            return true;
+        }
+        // when selecting -> selected, no need to update
+        if (this.props.selecting && nextProps.selected) {
             return false;
         }
-        // don't need to update when same with before
-        return props.selected !== this.props.selected || props.selecting !== this.props.selecting;
+        // when selected, selecting state is different, need to update
+        return nextProps.selected !== this.props.selected || nextProps.selecting !== this.props.selecting;
     }
 
     render() {

@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import MainContent from "./MainContent";
-import SideContent from "./SideContent";
+import MainContent from "./main/MainContent";
+import SideContent from "./side/SideContent";
 
 class Body extends Component {
 

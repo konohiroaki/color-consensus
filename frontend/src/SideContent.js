@@ -21,9 +21,11 @@ class SideContent extends Component {
     updateColorList() {
         // TODO: remove domain when releasing.
         axios.get("http://localhost:5000/api/v1/colors/keys").then(({data}) => {
+            console.log("side content got color list from server: ", data);
             this.setState({colorList: data});
-            console.log(this.state);
-            this.props.setTarget(this.state.colorList[1]);
+
+            // TODO: select random color in user's language?
+            this.props.setTarget(this.state.colorList[0]);
         });
     }
 
@@ -33,7 +35,7 @@ class SideContent extends Component {
     }
 
     render() {
-        console.log("rendering sidebar");
+        console.log("rendering side content");
         let colorList = [];
         let langSet = new Set();
         for (let v of this.state.colorList) {

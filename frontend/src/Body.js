@@ -13,12 +13,12 @@ class Body extends Component {
     }
 
     setTarget(target) {
-        console.log("body got target: ",target);
         this.setState({target: target});
     }
 
     // TODO: route to statistics page (https://reacttraining.com/react-router/)
     render() {
+        console.log("rendering body");
         return (
             <div style={Object.assign({display: "flex", flexDirection: "row"}, this.props.style)}>
                 <MainContent style={{flex: "1 1 auto"}} target={this.state.target}/>

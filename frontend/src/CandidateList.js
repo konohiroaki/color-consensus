@@ -8,7 +8,7 @@ class CandidateList extends Component {
     }
 
     render() {
-        console.log("rendering list");
+        console.log("rendering candidate list");
         if (this.props.items.length === 0) {
             return <div/>;
         }

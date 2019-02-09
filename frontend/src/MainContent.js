@@ -9,9 +9,9 @@ class MainContent extends Component {
         super(props);
         this.state = {
             target: {},
-            candidates: [],
-            selected: []
         };
+        this.candidates = [];
+        this.selected = [];
         this.updateCandidates = this.updateCandidates.bind(this);
         this.handleSelecting = this.handleSelecting.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
@@ -27,32 +27,33 @@ class MainContent extends Component {
         for (const v of selectedItems) {
             selected.push(v.props.color);
         }
-        this.setState({selected: selected});
+        this.selected = selected;
     };
 
-    draw(target) {
-        console.log("drawing");
-        return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1))
-            .then(this.updateCandidates.bind(null, target));
-    }
-
-    updateCandidates(target, {data}) {
-        let list = [];
-        for (let i = 0; i < 51; i++) {
-            let row = [];
-            for (let j = 0; j < 51; j++) {
-                row.push(data[i * 51 + j]);
+    updateCandidates(target) {
+        return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)).then(({data}) => {
+            console.log("main content got candidate list from server");
+            let list = [];
+            for (let i = 0; i < 51; i++) {
+                let row = [];
+                for (let j = 0; j < 51; j++) {
+                    row.push(data[i * 51 + j]);
+                }
+                list.push(row);
             }
-            list.push(row);
-        }
-        console.log("will draw", target, this.state.target);
-        this.setState({target: target, candidates: list});
+
+            console.log(this.selected);
+            this.candidates = list;
+            // FIXME: doesn't deselect on color change.
+            this.selected = [];
+            this.setState({target: target});
+        });
     }
 
     submit() {
         const {lang, name} = this.state.target;
 
-        axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.state.selected)
+        axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.selected)
             .then(() => console.log("submitted data"));
     }
 
@@ -63,14 +64,13 @@ class MainContent extends Component {
         if (Object.entries(this.props.target).length === 0) {
             return <div/>;
         }
-        console.log("is target and target same?", this.props.target, this.state.target);
         if (this.props.target !== this.state.target) {
-            this.draw(this.props.target);
+            this.updateCandidates(this.props.target);
         }
 
         return (
             <div className="container-fluid pt-3" style={Object.assign({overflowY: "auto"}, this.props.style)}>
-                {/* TODO: skip and see statistics button*/}
+                {/* TODO: add skip and see statistics button*/}
                 <div className="row">
                     <div className="mr-auto ml-5">
                         <p>Language: {this.props.target.lang}</p>
@@ -94,7 +94,7 @@ class MainContent extends Component {
                             <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
                         </div>
                     </div>
-                    <CandidateList items={this.state.candidates}/>
+                    <CandidateList items={this.candidates}/>
                 </SelectableGroup>
             </div>
         );

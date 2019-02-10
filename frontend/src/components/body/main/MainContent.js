@@ -10,7 +10,7 @@ class MainContent extends Component {
         this.state = {
             target: {},
         };
-        this.candidateSize = 5;
+        this.candidateSize = 31;
         this.candidates = [];
         this.selected = [];
         this.updateCandidates = this.updateCandidates.bind(this);
@@ -33,7 +33,7 @@ class MainContent extends Component {
 
     updateCandidates(target) {
         return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)
-                         + "?size=" + this.candidateSize).then(({data}) => {
+                         + "?size=" + Math.pow(this.candidateSize, 2)).then(({data}) => {
             console.log("main content got candidate list from server", data, this.candidateSize);
             let list = [];
             for (let i = 0; i < this.candidateSize; i++) {

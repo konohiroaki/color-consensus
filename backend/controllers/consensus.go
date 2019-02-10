@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/models"
+	"sort"
 	"strconv"
 )
 
@@ -74,8 +75,13 @@ func generateCandidateList(code string, size int) []string {
 	r := fromHex(code[0:2])
 	g := fromHex(code[2:4])
 	b := fromHex(code[4:6])
-	list := []string{"#" + code}
-	for x := 1; x < 100; x++ {
+	type Candidate struct {
+		Code string
+		Diff int
+	}
+	diff := 0;
+	list := []Candidate{{"#" + code, diff}}
+	for x := 1; ; x++ {
 		for i, rr := 0, r; i <= x; i, rr = i+1, swingIncrement(r, i+1, 16) {
 			for j, gg := 0, g; j <= x; j, gg = j+1, swingIncrement(g, j+1, 16) {
 				for k, bb := 0, b; k <= x; k, bb = k+1, swingIncrement(b, k+1, 16) {
@@ -83,15 +89,20 @@ func generateCandidateList(code string, size int) []string {
 						continue
 					}
 					str := "#" + toHex(rr) + toHex(gg) + toHex(bb)
-					list = append(list, str)
-					if len(list) == size*size {
-						return list
+					list = append(list, Candidate{str, (abs(r-rr) + abs(g-gg) + abs(b-bb))})
+					if len(list) == size {
+						sort.Slice(list, func(i, j int) bool { return list[i].Diff < list[j].Diff })
+						result := []string{}
+						for _, candidate := range list {
+							result = append(result, candidate.Code)
+						}
+						return result
 					}
 				}
 			}
 		}
 	}
-	return list
+	return []string{}
 }
 
 func findConsensusListOfLang(lang string) []models.ColorConsensus {
@@ -110,6 +121,12 @@ func fromHex(hex string) int {
 }
 func toHex(num int) string {
 	return fmt.Sprintf("%02x", num)
+}
+func abs(num int) int {
+	if (num < 0) {
+		return -num;
+	}
+	return num;
 }
 
 // return between 0 ~ 255 inclusive

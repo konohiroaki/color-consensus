@@ -60,15 +60,21 @@ func (ConsensusController) GetConsensus(c *gin.Context) {
 
 func (ConsensusController) GetCandidateList(c *gin.Context) {
 	code := c.Param("code")
-	candidates := generateCandidateList(code)
-	c.JSON(200, candidates)
+	if size, err := strconv.Atoi(c.Query("size")); err == nil {
+		candidates := generateCandidateList(code, size)
+		c.JSON(200, candidates)
+	} else {
+		c.AbortWithStatus(400)
+	}
+
 }
 
-func generateCandidateList(code string) []string {
+// FIXME: the result doesn't look nice.
+func generateCandidateList(code string, size int) []string {
 	r := fromHex(code[0:2])
 	g := fromHex(code[2:4])
-	b := fromHex(code[4:])
-	list := []string{}
+	b := fromHex(code[4:6])
+	list := []string{"#" + code}
 	for x := 1; x < 100; x++ {
 		for i, rr := 0, r; i <= x; i, rr = i+1, swingIncrement(r, i+1, 16) {
 			for j, gg := 0, g; j <= x; j, gg = j+1, swingIncrement(g, j+1, 16) {
@@ -78,7 +84,7 @@ func generateCandidateList(code string) []string {
 					}
 					str := "#" + toHex(rr) + toHex(gg) + toHex(bb)
 					list = append(list, str)
-					if len(list) == 51*51 {
+					if len(list) == size*size {
 						return list
 					}
 				}

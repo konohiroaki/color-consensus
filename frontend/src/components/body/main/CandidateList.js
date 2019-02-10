@@ -6,13 +6,14 @@ class CandidateList extends Component {
     render() {
         console.log("rendering candidate list");
         if (this.props.items.length === 0) {
+            console.log("candidate list is empty");
             return <div/>;
         }
         let list = [];
-        for (let i = 0; i < 51; i++) {
+        for (let i = 0; i < this.props.candidateSize; i++) {
             let row = [];
-            for (let j = 0; j < 51; j++) {
-                row.push(<SelectableCandidateCell key={i * 51 + j} color={this.props.items[i][j]}/>);
+            for (let j = 0; j < this.props.candidateSize; j++) {
+                row.push(<SelectableCandidateCell key={i * this.props.candidateSize + j} color={this.props.items[i][j]}/>);
             }
             list.push(<div key={i}>{row}</div>);
         }

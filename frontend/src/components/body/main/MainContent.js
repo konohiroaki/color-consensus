@@ -10,6 +10,7 @@ class MainContent extends Component {
         this.state = {
             target: {},
         };
+        this.candidateSize = 5;
         this.candidates = [];
         this.selected = [];
         this.updateCandidates = this.updateCandidates.bind(this);
@@ -31,18 +32,19 @@ class MainContent extends Component {
     };
 
     updateCandidates(target) {
-        return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)).then(({data}) => {
-            console.log("main content got candidate list from server");
+        return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)
+                         + "?size=" + this.candidateSize).then(({data}) => {
+            console.log("main content got candidate list from server", data, this.candidateSize);
             let list = [];
-            for (let i = 0; i < 51; i++) {
+            for (let i = 0; i < this.candidateSize; i++) {
                 let row = [];
-                for (let j = 0; j < 51; j++) {
-                    row.push(data[i * 51 + j]);
+                for (let j = 0; j < this.candidateSize; j++) {
+                    row.push(data[i * this.candidateSize + j]);
                 }
                 list.push(row);
             }
 
-            console.log(this.selected);
+            console.log(list);
             this.candidates = list;
             // FIXME: doesn't deselect on color change.
             this.selected = [];
@@ -94,7 +96,7 @@ class MainContent extends Component {
                             <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
                         </div>
                     </div>
-                    <CandidateList items={this.candidates}/>
+                    <CandidateList items={this.candidates} candidateSize={this.candidateSize}/>
                 </SelectableGroup>
             </div>
         );

@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {SelectableCandidateCell} from "./CandidateCell";
-import update, {extend} from "immutability-helper";
+import update from "immutability-helper";
 
 class CandidateList extends Component {
 
@@ -51,13 +51,14 @@ class CandidateList extends Component {
             return <div/>;
         }
         let list = [];
-        for (let i = 1; i < this.props.candidateSize + 1; i++) {
+        for (let i = 0; i < this.props.candidateSize; i++) {
             let row = [];
-            for (let j = 1; j < this.props.candidateSize + 1; j++) {
+            for (let j = 0; j < this.props.candidateSize; j++) {
                 const key = i * this.props.candidateSize + j;
+                const ii = i + 1, jj = j + 1;
                 row.push(<SelectableCandidateCell key={key} color={this.props.items[key]}
-                                                  border={this.state.border[i][j]}
-                                                  setCellState={this.setCellState.bind(null, {i: i, j: j})}/>);
+                                                  border={this.state.border[ii][jj]}
+                                                  setCellState={this.setCellState.bind(null, {i: ii, j: jj})}/>);
             }
             list.push(<div key={i}>{row}</div>);
         }

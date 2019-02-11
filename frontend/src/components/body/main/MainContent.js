@@ -14,14 +14,9 @@ class MainContent extends Component {
         this.candidates = [];
         this.selected = [];
         this.updateCandidates = this.updateCandidates.bind(this);
-        this.handleSelecting = this.handleSelecting.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
         this.submit = this.submit.bind(this);
     }
-
-    handleSelecting(selectingItems) {
-        // TODO: remove border between selected and selected
-    };
 
     handleSelectionFinish(selectedItems) {
         let selected = [];
@@ -79,7 +74,6 @@ class MainContent extends Component {
                     clickClassName="tick"
                     enableDeselect
                     allowClickWithoutSelected={true}
-                    duringSelection={this.handleSelecting}
                     onSelectionFinish={this.handleSelectionFinish}>
                     <div className="row">
                         <div className="ml-auto">

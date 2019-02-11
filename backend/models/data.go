@@ -2,14 +2,12 @@ package models
 
 import "time"
 
-/**
- * will be removed with real db.
- */
+//TODO: remove with real db.
 
 var Consensus = []*ColorConsensus{
-	{Language: "en", Color: "red", BaseCode: "#ff0000", Vote: 10, Colors: map[string]int{"ff0000": 10, "#ff007f": 3}},
-	{Language: "en", Color: "green", BaseCode: "#008000", Vote: 10, Colors: map[string]int{"00ff00": 10, "#00ff33": 3}},
-	{Language: "ja", Color: "赤", BaseCode: "#bf1e33",Vote: 15, Colors: map[string]int{"ff0000": 15, "#ff007f": 5}},
+	{Language: "en", Color: "red", Code: "#ff0000", Vote: 10, Colors: map[string]int{"ff0000": 10, "#ff007f": 3}},
+	{Language: "en", Color: "green", Code: "#008000", Vote: 10, Colors: map[string]int{"00ff00": 10, "#00ff33": 3}},
+	{Language: "ja", Color: "赤", Code: "#bf1e33",Vote: 15, Colors: map[string]int{"ff0000": 15, "#ff007f": 5}},
 }
 
 var Votes = []*ColorVote{

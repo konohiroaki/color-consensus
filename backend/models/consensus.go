@@ -5,7 +5,7 @@ type ColorConsensus struct {
 	// https://godoc.org/golang.org/x/text/language
 	Language string `json:"lang"`
 	Color    string `json:"name"`
-	BaseCode string `json:"code"`
+	Code     string `json:"code"`
 	Vote     int    `json:"vote"`
 	//TODO: validate keys is v9 feature but gin still uses v8 validator.
 	// https://github.com/gin-gonic/gin/pull/1015

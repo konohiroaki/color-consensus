@@ -34,18 +34,8 @@ class MainContent extends Component {
     updateCandidates(target) {
         return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)
                          + "?size=" + Math.pow(this.candidateSize, 2)).then(({data}) => {
-            console.log("main content got candidate list from server", data, this.candidateSize);
-            let list = [];
-            for (let i = 0; i < this.candidateSize; i++) {
-                let row = [];
-                for (let j = 0; j < this.candidateSize; j++) {
-                    row.push(data[i * this.candidateSize + j]);
-                }
-                list.push(row);
-            }
-
-            console.log(list);
-            this.candidates = list;
+            console.log("main content got candidate list from server", this.candidateSize, data);
+            this.candidates = data;
             // FIXME: doesn't deselect on color change.
             this.selected = [];
             this.setState({target: target});

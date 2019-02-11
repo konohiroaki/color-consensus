@@ -21,7 +21,6 @@ class CandidateList extends Component {
 
     setCellState({i, j}, selected) {
         if (this.selected[i][j] !== selected) {
-            // TODO : use +2 size array
             const bar = update(this.state.border, {
                 [i]: {
                     [j - 1]: {right: {$set: this.selected[i][j - 1] && !selected}},

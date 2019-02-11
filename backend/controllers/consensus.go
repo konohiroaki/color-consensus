@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/models"
+	"net/http"
 	"sort"
 	"strconv"
 )
@@ -18,7 +19,7 @@ func (ConsensusController) GetAllConsensusKey(c *gin.Context) {
 	}
 	list := []ResponseElement{}
 	for _, e := range models.Consensus {
-		list = append(list, ResponseElement{e.Language, e.Color, e.BaseCode})
+		list = append(list, ResponseElement{e.Language, e.Color, e.Code})
 	}
 	c.JSON(200, list)
 }
@@ -37,7 +38,7 @@ func (ConsensusController) GetAllConsensusKeyForLang(c *gin.Context) {
 	list := []ResponseElement{}
 	for _, e := range models.Consensus {
 		if e.Language == lang {
-			list = append(list, ResponseElement{e.Language, e.Color, e.BaseCode})
+			list = append(list, ResponseElement{e.Language, e.Color, e.Code})
 		}
 	}
 	c.JSON(200, list)
@@ -67,7 +68,16 @@ func (ConsensusController) GetCandidateList(c *gin.Context) {
 	} else {
 		c.AbortWithStatus(400)
 	}
+}
 
+func (ConsensusController) AddColor(c *gin.Context) {
+	var colorConsensus models.ColorConsensus
+	// TODO: error handling.
+	c.BindJSON(&colorConsensus)
+	colorConsensus.Colors = map[string]int{}
+	colorConsensus.Vote = 0
+	models.Consensus = append(models.Consensus, &colorConsensus);
+	c.Status(http.StatusCreated);
 }
 
 // FIXME: the result doesn't look nice.
@@ -102,7 +112,6 @@ func generateCandidateList(code string, size int) []string {
 			}
 		}
 	}
-	return []string{}
 }
 
 func findConsensusListOfLang(lang string) []models.ColorConsensus {

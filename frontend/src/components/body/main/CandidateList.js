@@ -13,7 +13,8 @@ class CandidateList extends Component {
         for (let i = 0; i < this.props.candidateSize; i++) {
             let row = [];
             for (let j = 0; j < this.props.candidateSize; j++) {
-                row.push(<SelectableCandidateCell key={i * this.props.candidateSize + j} color={this.props.items[i][j]}/>);
+                row.push(<SelectableCandidateCell key={i * this.props.candidateSize + j}
+                                                  color={this.props.items[i * this.props.candidateSize + j]}/>);
             }
             list.push(<div key={i}>{row}</div>);
         }

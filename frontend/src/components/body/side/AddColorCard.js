@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import $ from "jquery";
+import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
@@ -38,6 +39,11 @@ class AddColorCard extends Component {
         // TODO: post lang and name to add it in db.
         const {lang, name, code} = this.state;
         console.log(lang, name, code);
+        axios.post("http://localhost:5000/api/v1/colors", {
+            lang: lang, name: name, code: code
+        }).then(() => {
+            this.props.updateColorList();
+        });
         $("#add-color-lang").val("");
         $("#add-color-name").val("");
         $("#add-color-code").val("");
@@ -72,7 +78,9 @@ class AddColorCard extends Component {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                <button type="button" className="btn btn-primary" onClick={this.handleClick}>Add Color</button>
+                                <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={this.handleClick}>
+                                    Add Color
+                                </button>
                             </div>
                         </div>
                     </div>

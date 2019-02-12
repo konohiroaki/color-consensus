@@ -12,6 +12,7 @@ class SideContent extends Component {
             searchText: "",
         };
         this.handleSearchChange = this.handleSearchChange.bind(this);
+        this.updateColorList = this.updateColorList.bind(this);
     }
 
     componentDidMount() {
@@ -68,7 +69,7 @@ class SideContent extends Component {
                     <div id="colorList">
                         {colorList}
                     </div>
-                    <AddColorCard/>
+                    <AddColorCard updateColorList={this.updateColorList}/>
                 </div>
             </div>
         );

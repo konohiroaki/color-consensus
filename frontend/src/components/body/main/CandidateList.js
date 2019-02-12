@@ -7,6 +7,7 @@ class CandidateList extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            // +2 to avoid array out of bound error.
             border: new Array(this.props.candidateSize + 2).fill(
                 new Array(this.props.candidateSize + 2).fill(
                     {top: false, right: false, bottom: false, left: false}

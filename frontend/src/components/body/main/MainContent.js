@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import axios from "axios";
 import {SelectableGroup, DeselectAll} from "react-selectable-fast";
 import CandidateList from "./CandidateList";
+import {BrowserRouter as Router, Link, Route} from "react-router-dom";
 
 class MainContent extends Component {
 
@@ -56,33 +57,56 @@ class MainContent extends Component {
         }
 
         return (
-            <div className="container-fluid pt-3" style={Object.assign({overflowY: "auto"}, this.props.style)}>
-                {/* TODO: add skip and see statistics button*/}
-                <div className="row">
-                    <div className="mr-auto ml-5">
-                        <p>Language: {this.props.target.lang}</p>
-                        <p>Color Name: {this.props.target.name}</p>
-                    </div>
-                    <div className="ml-auto">
-                        {/* FIXME: doesn't work when inside <SelectableGroup> */}
-                        <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
-                    </div>
-                </div>
-
-                <SelectableGroup
-                    className="selectable"
-                    clickClassName="tick"
-                    enableDeselect
-                    allowClickWithoutSelected={true}
-                    onSelectionFinish={this.handleSelectionFinish}>
+            <Router>
+                <div className="container-fluid pt-3" style={Object.assign({overflowY: "auto"}, this.props.style)}>
                     <div className="row">
+                        <div className="mr-auto ml-5">
+                            <p>Language: {this.props.target.lang}</p>
+                            <p>Color Name: {this.props.target.name}</p>
+                        </div>
+
                         <div className="ml-auto">
-                            <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
+                            <Route exact path="/" render={() => (
+                                <div>
+                                    <Link to={"/statistics"}>
+                                        <button className="btn btn-secondary m-3">Skip to statistics</button>
+                                    </Link>
+                                    <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
+                                </div>
+                            )}>
+                            </Route>
+                            <Route exact path="/statistics" render={() => (
+                                <Link to={"/"}>
+                                    <button className="btn btn-secondary m-3">Back to voting</button>
+                                </Link>
+                            )}>
+                            </Route>
                         </div>
                     </div>
-                    <CandidateList items={this.candidates} candidateSize={this.candidateSize}/>
-                </SelectableGroup>
-            </div>
+
+                    {/* TODO: using too much Route with render={} seems danger. switch to component={} */}
+                    {/* TODO: add content here. */}
+                    <Route path="/statistics" render={() => (
+                        <div>Hey!</div>
+                    )}/>
+                    <Route exact path="/" render={() => (
+                        <SelectableGroup
+                            className="selectable"
+                            clickClassName="tick"
+                            enableDeselect
+                            allowClickWithoutSelected={true}
+                            onSelectionFinish={this.handleSelectionFinish}>
+                            <div className="row">
+                                <div className="ml-auto">
+                                    <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
+                                </div>
+                            </div>
+                            <CandidateList items={this.candidates} candidateSize={this.candidateSize}/>
+                        </SelectableGroup>
+                    )}>
+                    </Route>
+                </div>
+            </Router>
         );
     }
 }

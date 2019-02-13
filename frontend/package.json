@@ -45,6 +45,7 @@
     "popper.js": "^1.14.7",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-router-dom": "^4.3.1",
     "react-selectable-fast": "^2.2.1"
   }
 }

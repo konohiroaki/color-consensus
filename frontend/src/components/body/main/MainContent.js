@@ -16,7 +16,6 @@ class MainContent extends Component {
         this.selected = [];
         this.updateCandidates = this.updateCandidates.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
-        this.submit = this.submit.bind(this);
     }
 
     handleSelectionFinish(selectedItems) {
@@ -36,13 +35,6 @@ class MainContent extends Component {
             this.selected = [];
             this.setState({target: target});
         });
-    }
-
-    submit() {
-        const {lang, name} = this.state.target;
-
-        axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.selected)
-            .then(() => console.log("submitted data"));
     }
 
     // memo: this.props.target -> new target color
@@ -66,47 +58,78 @@ class MainContent extends Component {
                         </div>
 
                         <div className="ml-auto">
-                            <Route exact path="/" render={() => (
-                                <div>
-                                    <Link to={"/statistics"}>
-                                        <button className="btn btn-secondary m-3">Skip to statistics</button>
-                                    </Link>
-                                    <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
-                                </div>
-                            )}>
-                            </Route>
-                            <Route exact path="/statistics" render={() => (
-                                <Link to={"/"}>
-                                    <button className="btn btn-secondary m-3">Back to voting</button>
-                                </Link>
-                            )}>
-                            </Route>
+                            <Route exact path="/" render={() => <VotingButtons target={this.state.target} selected={this.selected}/>}/>
+                            <Route exact path="/statistics" render={() => <StatisticsButtons/>}/>
                         </div>
                     </div>
 
-                    {/* TODO: using too much Route with render={} seems danger. switch to component={} */}
                     {/* TODO: add content here. */}
-                    <Route path="/statistics" render={() => (
-                        <div>Hey!</div>
-                    )}/>
-                    <Route exact path="/" render={() => (
-                        <SelectableGroup
-                            className="selectable"
-                            clickClassName="tick"
-                            enableDeselect
-                            allowClickWithoutSelected={true}
-                            onSelectionFinish={this.handleSelectionFinish}>
-                            <div className="row">
-                                <div className="ml-auto">
-                                    <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
-                                </div>
-                            </div>
-                            <CandidateList items={this.candidates} candidateSize={this.candidateSize}/>
-                        </SelectableGroup>
-                    )}>
-                    </Route>
+                    <Route path="/statistics" render={() => <div>Hey!</div>}/>
+                    <Route exact path="/" render={() => <VotingSelectable handleSelectionFinish={this.handleSelectionFinish}
+                                                                          candidates={this.candidates}
+                                                                          candidateSize={this.candidateSize}/>}/>
                 </div>
             </Router>
+        );
+    }
+}
+
+class VotingButtons extends Component {
+
+    constructor(props) {
+        super(props);
+        this.submit = this.submit.bind(this);
+    }
+
+    submit() {
+        const {lang, name} = this.props.target;
+
+        axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.props.selected)
+            .then(() => console.log("submitted data"));
+    }
+
+    render() {
+        return (
+            <div>
+                <Link to={"/statistics"}>
+                    <button className="btn btn-secondary m-3">Skip to statistics</button>
+                </Link>
+                <Link to={"/statistics"}>
+                    <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
+                </Link>
+            </div>
+        );
+    }
+}
+
+class StatisticsButtons extends Component {
+    render() {
+        return (
+            <div>
+                <Link to={"/"}>
+                    <button className="btn btn-secondary m-3">Back to voting</button>
+                </Link>
+            </div>
+        );
+    }
+}
+
+class VotingSelectable extends Component {
+    render() {
+        return (
+            <SelectableGroup
+                className="selectable"
+                clickClassName="tick"
+                enableDeselect
+                allowClickWithoutSelected={true}
+                onSelectionFinish={this.props.handleSelectionFinish}>
+                <div className="row">
+                    <div className="ml-auto">
+                        <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
+                    </div>
+                </div>
+                <CandidateList items={this.props.candidates} candidateSize={this.props.candidateSize}/>
+            </SelectableGroup>
         );
     }
 }

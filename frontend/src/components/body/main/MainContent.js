@@ -13,8 +13,8 @@ class MainContent extends Component {
         };
         this.candidateSize = 31;
         this.candidates = [];
+        // TODO: this.selected should be in lower level component because it's only used in voting page.
         this.selected = [];
-        this.updateCandidates = this.updateCandidates.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
     }
 
@@ -26,26 +26,10 @@ class MainContent extends Component {
         this.selected = selected;
     };
 
-    updateCandidates(target) {
-        return axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)
-                         + "?size=" + Math.pow(this.candidateSize, 2)).then(({data}) => {
-            console.log("main content got candidate list from server", this.candidateSize, data);
-            this.candidates = data;
-            // FIXME: doesn't deselect on color change.
-            this.selected = [];
-            this.setState({target: target});
-        });
-    }
-
-    // memo: this.props.target -> new target color
-    //       this.state.target -> current target color
     render() {
         console.log("rendering main content");
         if (Object.entries(this.props.target).length === 0) {
             return <div/>;
-        }
-        if (this.props.target !== this.state.target) {
-            this.updateCandidates(this.props.target);
         }
 
         return (
@@ -63,7 +47,7 @@ class MainContent extends Component {
                         </div>
                     </div>
 
-                    {/* TODO: add content here. */}
+                     {/* TODO: add content here. */}
                     <Route path="/statistics" render={() => <div>Hey!</div>}/>
                     <Route exact path="/" render={() => <VotingSelectable handleSelectionFinish={this.handleSelectionFinish}
                                                                           candidates={this.candidates}
@@ -71,6 +55,24 @@ class MainContent extends Component {
                 </div>
             </Router>
         );
+    }
+
+    // this.props.target -> new target color
+    // this.state.target -> current target color
+    // on mount, this update is not necessary because it doesn't have props.target sent by the sidebar yet.
+    componentDidUpdate() {
+        if (this.props.target !== this.state.target) {
+            const target = this.props.target;
+            axios.get("http://localhost:5000/api/v1/colors/candidates/" + target.code.substring(1)
+                      + "?size=" + Math.pow(this.candidateSize, 2))
+                .then(({data}) => {
+                    console.log("main content got candidate list from server");
+                    this.candidates = data;
+                    // FIXME: doesn't deselect on color change.
+                    this.selected = [];
+                    this.setState({target: target});
+                });
+        }
     }
 }
 

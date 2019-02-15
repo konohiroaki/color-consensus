@@ -6,10 +6,6 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 class AddColorCard extends Component {
 
-    shouldComponentUpdate() {
-        return false;
-    }
-
     constructor(props) {
         super(props);
         this.state = {
@@ -18,6 +14,10 @@ class AddColorCard extends Component {
             code: ""
         };
         this.handleClick = this.handleClick.bind(this);
+    }
+
+    shouldComponentUpdate() {
+        return false;
     }
 
     handleClick() {

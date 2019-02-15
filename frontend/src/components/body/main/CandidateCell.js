@@ -32,7 +32,7 @@ export class CandidateCell extends Component {
         console.log("rendering candidate cell");
         return (
             <div style={{
-                display: "inline-block", padding: "1px", margin: "0 -1px -1px 0",
+                display: "inline-block", padding: "1px",
                 borderWidth: "1px", borderStyle: "solid",
                 borderTopColor: CandidateCell.getBorderColor(this.props.border.top),
                 borderRightColor: CandidateCell.getBorderColor(this.props.border.right),

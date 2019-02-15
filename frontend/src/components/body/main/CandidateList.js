@@ -6,23 +6,20 @@ class CandidateList extends Component {
 
     constructor(props) {
         super(props);
+        // +2 to avoid array out of bound error.
+        this.boardSize = this.props.candidateSize + 2;
         this.state = {
-            // +2 to avoid array out of bound error.
-            border: new Array(this.props.candidateSize + 2).fill(
-                new Array(this.props.candidateSize + 2).fill(
-                    {top: false, right: false, bottom: false, left: false}
-                ))
+            border: Array(this.boardSize).fill(Array(this.boardSize).fill(
+                {top: false, right: false, bottom: false, left: false}
+            ))
         };
-        this.selected = new Array(this.props.candidateSize + 2).fill(
-            new Array(this.props.candidateSize + 2).fill(
-                false
-            ));
+        this.selected = Array(this.boardSize).fill(Array(this.boardSize).fill(false));
         this.setCellState = this.setCellState.bind(this);
     }
 
     setCellState({i, j}, selected) {
         if (this.selected[i][j] !== selected) {
-            const bar = update(this.state.border, {
+            const border = update(this.state.border, {
                 [i]: {
                     [j - 1]: {right: {$set: this.selected[i][j - 1] && !selected}},
                     [j]: {
@@ -39,7 +36,7 @@ class CandidateList extends Component {
             this.selected = update(this.selected, {[i]: {[j]: {$set: selected}}});
 
             // TODO: alternative way for this anti pattern. (but this works fine..)
-            this.state.border = bar;
+            this.state.border = border;
             this.forceUpdate();
         }
     }

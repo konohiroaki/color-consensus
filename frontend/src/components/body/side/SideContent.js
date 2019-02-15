@@ -49,6 +49,7 @@ class SideContent extends Component {
         const colorList = this.state.colorList
             .filter(color => this.state.nameFilter === "" || color.name.includes(this.state.nameFilter.toLowerCase()))
             .filter(color => this.state.langFilter === "" || color.lang === this.state.langFilter)
+            .sort((a, b) => SideContent.colorComparator(a, b))
             .map(color => <ColorCard key={color.lang + ":" + color.name} color={color}
                                      style={{display: "block"}} setTarget={this.props.setTarget}/>);
 
@@ -70,6 +71,15 @@ class SideContent extends Component {
                 </div>
             </div>
         );
+    }
+
+    // ascending order for lang -> name
+    static colorComparator(a, b) {
+        if (a.lang === b.lang) {
+
+            return a.name < b.name ? -1 : 1;
+        }
+        return a.lang < b.lang ? -1 : 1;
     }
 }
 

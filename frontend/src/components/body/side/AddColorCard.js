@@ -17,33 +17,15 @@ class AddColorCard extends Component {
             name: "",
             code: ""
         };
-        this.handleLangChange = this.handleLangChange.bind(this);
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleCodeChange = this.handleCodeChange.bind(this);
         this.handleClick = this.handleClick.bind(this);
     }
 
-    handleLangChange(e) {
-        this.setState({lang: e.target.value});
-    }
-
-    handleNameChange(e) {
-        this.setState({name: e.target.value});
-    }
-
-    handleCodeChange(e) {
-        this.setState({code: e.target.value});
-    }
-
     handleClick() {
-        // TODO: post lang and name to add it in db.
-        const {lang, name, code} = this.state;
-        console.log(lang, name, code);
-        axios.post("http://localhost:5000/api/v1/colors", {
-            lang: lang, name: name, code: code
-        }).then(() => {
-            this.props.updateColorList();
-        });
+        axios.post("http://localhost:5000/api/v1/colors", this.state)
+            .then(() => {
+                this.props.updateColorList();
+            });
+        // TODO: should get rid of jquery. need to make it controlled component?
         $("#add-color-lang").val("");
         $("#add-color-name").val("");
         $("#add-color-code").val("");
@@ -66,18 +48,20 @@ class AddColorCard extends Component {
                                 <span className="modal-title">Add Color</span>
                             </div>
                             <div className="modal-body">
-                                <form>
-                                    {/* TODO: should be drop down */}
-                                    <label htmlFor="add-color-lang" className="col-form-label text-left">Language:</label>
-                                    <input type="text" className="form-control" id="add-color-lang" onChange={this.handleLangChange} placeholder="en"/>
-                                    <label htmlFor="add-color-name" className="col-form-label text-left">Color Name:</label>
-                                    <input type="text" className="form-control" id="add-color-name" onChange={this.handleNameChange} placeholder="red"/>
-                                    <label htmlFor="add-color-code" className="col-form-label text-left">Base Color Code:</label>
-                                    <input type="text" className="form-control" id="add-color-code" onChange={this.handleCodeChange} placeholder="#ff0000"/>
-                                </form>
+                                {/* TODO: should be drop down */}
+                                Language:
+                                <input type="text" className="form-control" id="add-color-lang" placeholder="en"
+                                       onChange={e => this.setState({lang: e.target.value})}/>
+                                Color Name:
+                                <input type="text" className="form-control" id="add-color-name" placeholder="red"
+                                       onChange={e => this.setState({name: e.target.value})}/>
+                                Base Color Code:
+                                <input type="text" className="form-control" id="add-color-code" placeholder="#ff0000"
+                                       onChange={e => this.setState({code: e.target.value})}/>
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                {/* TODO: dismiss the modal only when submit is success */}
                                 <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={this.handleClick}>
                                     Add Color
                                 </button>

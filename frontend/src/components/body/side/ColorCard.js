@@ -7,15 +7,11 @@ class ColorCard extends Component {
                || JSON.stringify(this.props.style) !== JSON.stringify(nextProps.style);
     }
 
-    handleClick(color) {
-        this.props.setTarget(color);
-    }
-
     render() {
         console.log("rendering color card", this.props);
         return (
             <a className="card btn bg-dark border border-secondary m-2" style={this.props.style}
-               onClick={this.handleClick.bind(this, this.props.color)}>
+               onClick={() => this.props.setTarget(this.props.color)}>
                 <div className="row">
                     <div className="col-3 border-right border-secondary p-3">{this.props.color.lang}</div>
                     <div className="col-9 p-3">{this.props.color.name}</div>

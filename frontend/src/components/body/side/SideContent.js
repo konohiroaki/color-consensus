@@ -9,6 +9,7 @@ class SideContent extends Component {
         super(props);
         this.state = {
             colorList: [],
+            langFilter: "",
             nameFilter: "",
         };
         this.langList = [];
@@ -39,24 +40,26 @@ class SideContent extends Component {
                     acc.push(current);
                 }
                 return acc;
-            }, []);
+            }, [""]);
     }
 
     render() {
         console.log("rendering side content");
+        const langList = this.langList.map(lang => <option key={lang} value={lang}>{lang !== "" ? lang : "Language"}</option>);
         const colorList = this.state.colorList
             .filter(color => this.state.nameFilter === "" || color.name.includes(this.state.nameFilter.toLowerCase()))
+            .filter(color => this.state.langFilter === "" || color.lang === this.state.langFilter)
             .map(color => <ColorCard key={color.lang + ":" + color.name} color={color}
                                      style={{display: "block"}} setTarget={this.props.setTarget}/>);
-        const langList = this.langList.map(lang => <div className="dropdown-item" key={lang}>{lang}</div>);
 
         return (
             <div className={this.props.className} style={this.props.style}>
-                {/* TODO: make the lang filter work */}
-                <div className="input-group">
-                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown">Language</button>
-                    <div className="dropdown-menu">
-                        {langList}
+                <div className="input-group" style={{borderRadius: "0px"}}>
+                    <div className="input-group-prepend">
+                        <select className="custom-select" value={this.state.langFilter} style={{borderRadius: "0"}}
+                                onChange={e => this.setState({langFilter: e.target.value})}>
+                            {langList}
+                        </select>
                     </div>
                     <input type="text" className="form-control" value={this.state.nameFilter}
                            onChange={e => this.setState({nameFilter: e.target.value})}/>

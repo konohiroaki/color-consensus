@@ -20,7 +20,7 @@ func (UserController) GetPresence(c *gin.Context) {
 		// this case shouldn't exist
 		c.Status(http.StatusPaymentRequired)
 	} else {
-		c.Status(http.StatusOK)
+		c.JSON(http.StatusOK, gin.H{"userID": userID})
 	}
 }
 

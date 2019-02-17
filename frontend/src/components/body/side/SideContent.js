@@ -49,6 +49,7 @@ class SideContent extends Component {
         const colorList = this.state.colorList
             .filter(color => this.state.nameFilter === "" || color.name.includes(this.state.nameFilter.toLowerCase()))
             .filter(color => this.state.langFilter === "" || color.lang === this.state.langFilter)
+            // TODO: sort on server side.
             .sort((a, b) => SideContent.colorComparator(a, b))
             .map(color => <ColorCard key={color.lang + ":" + color.name} color={color}
                                      style={{display: "block"}} setTarget={this.props.setTarget}/>);

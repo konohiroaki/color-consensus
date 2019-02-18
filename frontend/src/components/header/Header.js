@@ -6,13 +6,17 @@ class Header extends Component {
 
     constructor(props) {
         super(props);
+        // TODO: lift up the login state because it's not header's state.
         this.state = {};
+
+        this.handleSignUpClick = this.handleSignUpClick.bind(this);
+        this.handleLoginClick = this.handleLoginClick.bind(this);
     }
 
     render() {
         const userId = this.state.userId;
         const button = userId === undefined || userId === null
-                       ? null
+                       ? this.signUpLoginButton()
             // TODO: click button to copy userId into clipboard
                        : <button className="btn btn-outline-secondary">ID: {userId}</button>;
         const modal = userId === null
@@ -26,6 +30,13 @@ class Header extends Component {
                 {modal}
             </nav>
         );
+    }
+
+    signUpLoginButton() {
+        return (<button className="btn btn-outline-light"
+                        data-toggle="modal" data-target="#signup-login-modal">
+            Sign Up / Login
+        </button>);
     }
 
     modal() {
@@ -42,6 +53,7 @@ class Header extends Component {
                                     marginBottom: "1rem", paddingLeft: "40px"
                                 }}>
                                 <li className="nav-item">
+                                    {/* TODO: proper text color for nav link*/}
                                     <a className="nav-link active" href="#signup-tab" data-toggle="tab" role="tab">Sign Up</a>
                                 </li>
                                 <li className="nav-item">
@@ -49,9 +61,37 @@ class Header extends Component {
                                 </li>
                             </ul>
                             <div className="tab-content" id="myTabContent">
-                                {/* TODO: implement tab contents*/}
-                                <div className="tab-pane fade show active" id="signup-tab" role="tabpanel">sign up tab</div>
-                                <div className="tab-pane fade" id="login-tab" role="tabpanel">login tab</div>
+                                <div className="tab-pane fade show active" id="signup-tab" role="tabpanel">
+                                    {/* TODO: get list from server and use select box */}
+                                    Nationality:
+                                    <input type="text" className="form-control" id="add-user-nationality" placeholder="Japan"
+                                           onChange={e => this.setState({nationality: e.target.value})}/>
+                                    {/* TODO: get list from server and use select box */}
+                                    Gender:
+                                    <input type="text" className="form-control" id="add-user-gender" placeholder="Male"
+                                           onChange={e => this.setState({gender: e.target.value})}/>
+                                    {/* TODO: get list from server and use select box */}
+                                    Birth:
+                                    <input type="text" className="form-control" id="add-user-birth" placeholder="yyyy"
+                                           onChange={e => this.setState({birth: e.target.value})}/>
+                                    <div className="modal-footer" style={{paddingBottom: "0"}}>
+                                        <button type="button" className="btn btn-primary" data-dismiss="modal"
+                                                onClick={this.handleSignUpClick}>
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="tab-pane fade" id="login-tab" role="tabpanel">
+                                    ID:
+                                    <input type="text" className="form-control" id="login-user-id" placeholder="asdf"
+                                           onChange={e => this.setState({userIdInput: e.target.value})}/>
+                                    <div className="modal-footer" style={{paddingBottom: "0"}}>
+                                        <button type="button" className="btn btn-primary" data-dismiss="modal"
+                                                onClick={this.handleLoginClick}>
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -63,12 +103,10 @@ class Header extends Component {
     componentDidMount() {
         axios.get("http://localhost:5000/api/v1/users/presence")
             .then(({data}) => {
-                // TODO: show user id on header
                 console.log("user present", data);
                 this.setState({userId: data.userID});
             })
             .catch(() => {
-                // TODO: show modal to login or sign up.
                 console.log("user not present");
                 this.setState({userId: null});
             });
@@ -79,6 +117,26 @@ class Header extends Component {
         if (this.state.userId === null) {
             $("#signup-login-modal").modal();
         }
+    }
+
+    handleSignUpClick() {
+        axios.post("http://localhost:5000/api/v1/users", {
+            nationality: this.state.nationality,
+            gender: this.state.gender,
+            birth: Number(this.state.birth)
+        }).then(({data}) => {
+            this.setState({userId: data.id});
+        });
+    }
+
+    handleLoginClick() {
+        axios.post("http://localhost:5000/api/v1/users/presence", {id: this.state.userIdInput})
+            .then(({data}) => {
+                this.setState({userId: data.userID});
+            })
+            .catch(() => {
+                // TODO: error handling
+            });
     }
 }
 

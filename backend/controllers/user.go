@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/models"
@@ -11,7 +12,7 @@ import (
 
 type UserController struct{}
 
-func (UserController) GetPresence(c *gin.Context) {
+func (UserController) GetPresenceFromCookie(c *gin.Context) {
 	session := sessions.Default(c)
 	userID := session.Get("userID")
 	if userID == nil {
@@ -24,16 +25,36 @@ func (UserController) GetPresence(c *gin.Context) {
 	}
 }
 
+func (UserController) ConfirmPresence(c *gin.Context) {
+	var user models.User
+	if err := c.BindJSON(&user); err != nil {
+		fmt.Println(err)
+	}
+	if _, found := findUser(user.ID); !found {
+		c.Status(http.StatusNotFound)
+	} else {
+		session := sessions.Default(c)
+		session.Set("userID", user.ID)
+		c.JSON(http.StatusOK, gin.H{"userID": user.ID})
+	}
+}
+
 func (UserController) RegisterUser(c *gin.Context) {
 	var user models.User
-	c.BindJSON(&user) // TODO: error handling // if err := bind(); err != nil { handing... )
+	if err := c.BindJSON(&user); err != nil {
+		// TODO: error handling
+		fmt.Println(err)
+	}
 	user.ID = uuid.NewV4().String()
 	user.Date = time.Now()
 	models.Users = append(models.Users, &user)
 	// TODO: move session related logic to non-api endpoint.
 	session := sessions.Default(c)
 	session.Set("userID", user.ID)
-	session.Save()
+	if err := session.Save(); err != nil {
+		// TODO: error handling
+		fmt.Println(err)
+	}
 	c.JSON(200, user);
 }
 

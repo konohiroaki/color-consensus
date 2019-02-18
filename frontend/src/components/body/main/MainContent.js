@@ -14,6 +14,7 @@ class MainContent extends Component {
         this.candidateSize = 31;
         this.candidates = [];
         // TODO: this.selected should be in lower level component because it's only used in voting page.
+        // TODO: empty the list after submit.
         this.selected = [];
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
     }

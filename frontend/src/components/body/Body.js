@@ -6,9 +6,7 @@ class Body extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            target: {}
-        };
+        this.state = {};
         this.setTarget = this.setTarget.bind(this);
     }
 
@@ -16,7 +14,6 @@ class Body extends Component {
         this.setState({target: target});
     }
 
-    // TODO: route to statistics page (https://reacttraining.com/react-router/)
     render() {
         console.log("rendering body");
         return (

@@ -8,13 +8,13 @@ class MainContent extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            target: {},
-        };
+        this.state = {};
+
         this.candidateSize = 31;
         this.candidates = [];
         // TODO: this.selected should be in lower level component because it's only used in voting page.
         // TODO: empty the list after submit.
+        // FIXME: first submit doesn't have selected list.
         this.selected = [];
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
     }
@@ -29,8 +29,8 @@ class MainContent extends Component {
 
     render() {
         console.log("rendering main content");
-        if (Object.entries(this.props.target).length === 0) {
-            return <div/>;
+        if (this.props.target === undefined) {
+            return null;
         }
 
         return (

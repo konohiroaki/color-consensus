@@ -89,29 +89,26 @@ func generateCandidateList(code string, size int) []string {
 		Code string
 		Diff int
 	}
-	diff := 0;
-	list := []Candidate{{"#" + code, diff}}
-	for x := 1; ; x++ {
-		for i, rr := 0, r; i <= x; i, rr = i+1, swingIncrement(r, i+1, 16) {
-			for j, gg := 0, g; j <= x; j, gg = j+1, swingIncrement(g, j+1, 16) {
-				for k, bb := 0, b; k <= x; k, bb = k+1, swingIncrement(b, k+1, 16) {
-					if i < x && j < x && k < x {
-						continue
-					}
-					str := "#" + toHex(rr) + toHex(gg) + toHex(bb)
-					list = append(list, Candidate{str, (abs(r-rr) + abs(g-gg) + abs(b-bb))})
-					if len(list) == size {
-						sort.Slice(list, func(i, j int) bool { return list[i].Diff < list[j].Diff })
-						result := []string{}
-						for _, candidate := range list {
-							result = append(result, candidate.Code)
-						}
-						return result
-					}
-				}
+	list := []Candidate{{"#" + code, 0}}
+	for i := 0; i < 256; i += 16 {
+		for j := 0; j < 256; j += 16 {
+			for k := 0; k < 256; k += 16 {
+				list = append(list, Candidate{
+					"#" + toHex(i) + toHex(j) + toHex(k),
+					abs(r-i) + abs(g-j) + abs(b-k),
+				})
 			}
 		}
 	}
+	sort.Slice(list, func(i, j int) bool { return list[i].Diff < list[j].Diff })
+	result := []string{}
+	for _, candidate := range list {
+		result = append(result, candidate.Code)
+		if (len(result) == size) {
+			break;
+		}
+	}
+	return result
 }
 
 func findConsensusListOfLang(lang string) []models.ColorConsensus {
@@ -136,42 +133,4 @@ func abs(num int) int {
 		return -num;
 	}
 	return num;
-}
-
-// return between 0 ~ 255 inclusive
-func swingIncrement(base, step, gap int) int {
-	MIN, MAX := 0, 255
-	nextGap := gap
-	prev := base
-	upperLimit := false
-	lowerLimit := false
-	for i := 1; i <= step; i++ {
-		if (i%2 == 1) {
-			if tmp := prev + nextGap; upperLimit || tmp > MAX {
-				upperLimit = true
-				nextGap = gap
-				if lowerLimit || prev-nextGap < MIN {
-					break
-				}
-				prev = prev - nextGap
-			} else {
-				prev = prev + nextGap
-			}
-		} else {
-			if tmp := prev - nextGap; lowerLimit || tmp < MIN {
-				lowerLimit = true
-				nextGap = gap
-				if upperLimit || prev+nextGap > MAX {
-					break
-				}
-				prev = prev + nextGap
-			} else {
-				prev = prev - nextGap
-			}
-		}
-		if !upperLimit && !lowerLimit {
-			nextGap += gap
-		}
-	}
-	return prev
 }

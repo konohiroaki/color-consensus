@@ -82,11 +82,9 @@ class LoginModal extends Component {
     componentDidMount() {
         axios.get("http://localhost:5000/api/v1/users/presence")
             .then(({data}) => {
-                console.log("user present", data);
                 this.props.setUserId(data.userID);
             })
             .catch(() => {
-                console.log("user not present");
                 this.props.setUserId(null);
             });
     }
@@ -104,7 +102,6 @@ class LoginModal extends Component {
             birth: Number(this.state.birth)
         }).then(({data}) => {
             this.props.setUserId(data.id);
-            this.setState({userId: data.id});
         });
     }
 

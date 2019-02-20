@@ -3,6 +3,7 @@ import axios from "axios";
 import {SelectableGroup, DeselectAll} from "react-selectable-fast";
 import CandidateList from "./CandidateList";
 import {BrowserRouter as Router, Link, Route} from "react-router-dom";
+import $ from "jquery";
 
 class MainContent extends Component {
 
@@ -43,12 +44,12 @@ class MainContent extends Component {
                         </div>
 
                         <div className="ml-auto">
-                            <Route exact path="/" render={() => <VotingButtons target={this.state.target} selected={this.selected}/>}/>
+                            <Route exact path="/" render={() => <VotingButtons userId={this.props.userId} target={this.state.target} selected={this.selected}/>}/>
                             <Route exact path="/statistics" render={() => <StatisticsButtons/>}/>
                         </div>
                     </div>
 
-                     {/* TODO: add content here. */}
+                    {/* TODO: add content here. */}
                     <Route path="/statistics" render={() => <div>Hey!</div>}/>
                     <Route exact path="/" render={() => <VotingSelectable handleSelectionFinish={this.handleSelectionFinish}
                                                                           candidates={this.candidates}
@@ -85,6 +86,12 @@ class VotingButtons extends Component {
     }
 
     submit() {
+        const userId = this.props.userId;
+        if (userId === undefined || userId === null) {
+            console.log("not logged in!");
+            $("#signup-login-modal").modal();
+            return;
+        }
         const {lang, name} = this.props.target;
 
         axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.props.selected)
@@ -92,14 +99,30 @@ class VotingButtons extends Component {
     }
 
     render() {
+        const userId = this.props.userId;
+        let button;
+        if (userId === undefined || userId === null) {
+            button = (
+                <button className="btn btn-primary m-3" onClick={() => $("#signup-login-modal").modal()}>
+                    Submit
+                </button>
+            );
+        } else {
+            button = (
+                <Link to={"/statistics"}>
+                    <button className="btn btn-primary m-3" onClick={this.submit}>
+                        Submit
+                    </button>
+                </Link>
+            );
+        }
+
         return (
             <div>
                 <Link to={"/statistics"}>
                     <button className="btn btn-secondary m-3">Skip to statistics</button>
                 </Link>
-                <Link to={"/statistics"}>
-                    <button className="btn btn-primary m-3" onClick={this.submit}>Submit</button>
-                </Link>
+                {button}
             </div>
         );
     }

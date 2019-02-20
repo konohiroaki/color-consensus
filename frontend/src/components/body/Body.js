@@ -15,10 +15,10 @@ class Body extends Component {
     }
 
     render() {
-        console.log("rendering body");
+        console.log("rendering body", this.props.userId, this.state.target);
         return (
             <div style={Object.assign({display: "flex", flexDirection: "row"}, this.props.style)}>
-                <MainContent style={{flex: "1 1 auto"}} target={this.state.target}/>
+                <MainContent style={{flex: "1 1 auto"}} userId={this.props.userId} target={this.state.target}/>
                 <SideContent style={{flex: "0 0 auto"}} className="border-left border-secondary" setTarget={this.setTarget}/>
             </div>
         );

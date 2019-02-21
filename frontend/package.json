@@ -44,6 +44,7 @@
     "mustache": "^3.0.1",
     "popper.js": "^1.14.7",
     "react": "^16.7.0",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.7.0",
     "react-router-dom": "^4.3.1",
     "react-selectable-fast": "^2.2.1"

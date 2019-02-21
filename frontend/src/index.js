@@ -12,4 +12,6 @@ import "core-js/fn/set";
 
 import App from "./components/App";
 
-ReactDom.render(<App/>, document.getElementById("app"));
+const appRoot = document.createElement('div');
+document.body.appendChild(appRoot);
+ReactDom.render(<App/>, appRoot);

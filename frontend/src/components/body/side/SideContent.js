@@ -17,6 +17,7 @@ class SideContent extends Component {
     }
 
     componentDidMount() {
+        // TODO: get promise and setTarget in this method
         this.updateColorList();
     }
 
@@ -33,13 +34,6 @@ class SideContent extends Component {
 
     render() {
         console.log("rendering side content");
-        const colorList = this.state.colorList
-            .filter(color => this.state.nameFilter === "" || color.name.includes(this.state.nameFilter.toLowerCase()))
-            .filter(color => this.state.langFilter === "" || color.lang === this.state.langFilter)
-            // TODO: sort on server side.
-            .sort((a, b) => SideContent.colorComparator(a, b))
-            .map(color => <ColorCard key={color.lang + ":" + color.name} color={color}
-                                     style={{display: "block"}} setTarget={this.props.setTarget}/>);
 
         return (
             <div className={this.props.className} style={this.props.style}>
@@ -49,20 +43,14 @@ class SideContent extends Component {
                            nameFilter={this.state.nameFilter}
                            nameFilterSetter={e => this.setState({nameFilter: e.target.value})}/>
                 <div style={{overflowY: "auto", height: "100%"}}>
-                    {colorList}
+                    <ColorCards colorList={this.state.colorList}
+                                langFilter={this.state.langFilter}
+                                nameFilter={this.state.nameFilter}
+                                setTarget={this.props.setTarget}/>
                     <AddColorCard updateColorList={this.updateColorList}/>
                 </div>
             </div>
         );
-    }
-
-    // ascending order for lang -> name
-    static colorComparator(a, b) {
-        if (a.lang === b.lang) {
-
-            return a.name < b.name ? -1 : 1;
-        }
-        return a.lang < b.lang ? -1 : 1;
     }
 }
 
@@ -94,6 +82,34 @@ class SearchBar extends Component {
                        onChange={this.props.nameFilterSetter}/>
             </div>
         );
+    }
+}
+
+class ColorCards extends Component {
+    render() {
+        const colorCards = this.props.colorList
+            .filter(color => this.props.nameFilter === "" || color.name.includes(this.props.nameFilter.toLowerCase()))
+            .filter(color => this.props.langFilter === "" || color.lang === this.props.langFilter)
+            // TODO: sort on server side.
+            .sort((a, b) => ColorCards.colorComparator(a, b))
+            .map(color => (
+                <ColorCard key={color.lang + ":" + color.name} color={color}
+                           style={{display: "block"}} setTarget={this.props.setTarget}/>
+            ));
+
+        return (
+            <div>
+                {colorCards}
+            </div>
+        );
+    }
+
+    // ascending order for lang -> name
+    static colorComparator(a, b) {
+        if (a.lang === b.lang) {
+            return a.name - b.name;
+        }
+        return a.lang - b.lang;
     }
 }
 

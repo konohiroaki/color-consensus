@@ -24,7 +24,7 @@ class SideContent extends Component {
     }
 
     updateColorList() {
-        // TODO: remove domain when releasing.
+        // TODO: use dotenv? for environmental variables.
         return axios.get("http://localhost:5000/api/v1/colors/keys").then(({data}) => {
             console.log("side content got color list from server: ", data);
             this.setState({colorList: data});
@@ -85,6 +85,7 @@ class SearchBar extends Component {
 }
 
 class ColorCards extends Component {
+
     render() {
         const colorCards = this.props.colorList
             .filter(color => this.props.nameFilter === "" || color.name.includes(this.props.nameFilter.toLowerCase()))

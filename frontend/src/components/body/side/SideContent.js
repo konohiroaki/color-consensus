@@ -17,18 +17,17 @@ class SideContent extends Component {
     }
 
     componentDidMount() {
-        // TODO: get promise and setTarget in this method
-        this.updateColorList();
+        this.updateColorList().then(() => {
+            // TODO: select random color in user's language?
+            this.props.setTarget(this.state.colorList[0]);
+        });
     }
 
     updateColorList() {
         // TODO: remove domain when releasing.
-        axios.get("http://localhost:5000/api/v1/colors/keys").then(({data}) => {
+        return axios.get("http://localhost:5000/api/v1/colors/keys").then(({data}) => {
             console.log("side content got color list from server: ", data);
             this.setState({colorList: data});
-
-            // TODO: select random color in user's language?
-            this.props.setTarget(this.state.colorList[0]);
         });
     }
 

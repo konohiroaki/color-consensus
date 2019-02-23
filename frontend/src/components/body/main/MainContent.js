@@ -88,7 +88,7 @@ class VotingButtons extends Component {
     submit() {
         const userId = this.props.userId;
         if (userId === undefined || userId === null) {
-            console.log("not logged in!");
+            // FIXME: very tightly coupled code.
             $("#signup-login-modal").modal();
             return;
         }

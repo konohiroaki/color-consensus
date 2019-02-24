@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {DeselectAll, SelectableGroup} from "react-selectable-fast";
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import axios from "axios";
 import CandidateList from "./CandidateList";
 import $ from "jquery";
@@ -17,6 +17,7 @@ class VotingPage extends Component {
         this.selected = [];
 
         this.updateCandidateList = this.updateCandidateList.bind(this);
+        this.submit = this.submit.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
     }
 
@@ -34,7 +35,14 @@ class VotingPage extends Component {
                     </div>
 
                     <div className="ml-auto">
-                        <VotingButtons userId={this.props.userId} target={this.state.target} selected={this.selected}/>
+                        <div>
+                            <Link to={"/statistics"}>
+                                <button className="btn btn-secondary m-3">Skip to statistics</button>
+                            </Link>
+                            <button className="btn btn-primary m-3" onClick={this.submit}>
+                                Submit
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -80,6 +88,23 @@ class VotingPage extends Component {
         }
     }
 
+    submit() {
+        const userId = this.props.userId;
+        if (userId === undefined || userId === null) {
+            // FIXME: very tightly coupled code.
+            $("#signup-login-modal").modal();
+            // FIXME: should move to stats page after signing in without pressing the button again.
+            return;
+        }
+        const {lang, name} = this.state.target;
+
+        axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.selected)
+            .then(() => {
+                console.log("submitted data");
+                this.props.history.push("/statistics");
+            });
+    }
+
     handleSelectionFinish(selectedItems) {
         let selected = [];
         for (const v of selectedItems) {
@@ -87,56 +112,6 @@ class VotingPage extends Component {
         }
         this.selected = selected;
     };
-}
-
-class VotingButtons extends Component {
-
-    constructor(props) {
-        super(props);
-        this.submit = this.submit.bind(this);
-    }
-
-    submit() {
-        const userId = this.props.userId;
-        if (userId === undefined || userId === null) {
-            // FIXME: very tightly coupled code.
-            $("#signup-login-modal").modal();
-            return;
-        }
-        const {lang, name} = this.props.target;
-
-        axios.post("http://localhost:5000/api/v1/votes/" + lang + "/" + name, this.props.selected)
-            .then(() => console.log("submitted data"));
-    }
-
-    render() {
-        const userId = this.props.userId;
-        let button;
-        if (userId === undefined || userId === null) {
-            button = (
-                <button className="btn btn-primary m-3" onClick={() => $("#signup-login-modal").modal()}>
-                    Submit
-                </button>
-            );
-        } else {
-            button = (
-                <Link to={"/statistics"}>
-                    <button className="btn btn-primary m-3" onClick={this.submit}>
-                        Submit
-                    </button>
-                </Link>
-            );
-        }
-
-        return (
-            <div>
-                <Link to={"/statistics"}>
-                    <button className="btn btn-secondary m-3">Skip to statistics</button>
-                </Link>
-                {button}
-            </div>
-        );
-    }
 }
 
 export default VotingPage;

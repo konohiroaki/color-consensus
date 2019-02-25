@@ -1,20 +1,37 @@
 import React, {Component} from "react";
 import axios from "axios";
+import $ from "jquery";
 
 class LoginModal extends Component {
 
+    openLoginModal(callback) {
+        $("#signup-login-modal").modal();
+        if (callback !== undefined) {
+            this.callback = callback;
+        } else {
+            console.log("callback is undefined");
+        }
+    }
+
     constructor(props) {
         super(props);
+        this.state = {};
 
+        this.callback = () => {};
+
+        this.loginModal = this.loginModal.bind(this);
         this.handleSignUpClick = this.handleSignUpClick.bind(this);
         this.handleLoginClick = this.handleLoginClick.bind(this);
+        this.runAndResetCallback = this.runAndResetCallback.bind(this);
+    }
+
+    runAndResetCallback() {
+        this.callback();
+        this.callback = () => {};
     }
 
     render() {
-        if (this.props.userId === null) {
-            return this.loginModal();
-        }
-        return null;
+        return this.loginModal();
     }
 
     loginModal() {
@@ -95,6 +112,7 @@ class LoginModal extends Component {
             birth: Number(this.state.birth)
         }).then(({data}) => {
             this.props.setUserId(data.id);
+            this.runAndResetCallback();
         });
     }
 
@@ -102,6 +120,7 @@ class LoginModal extends Component {
         axios.post("http://localhost:5000/api/v1/users/presence", {id: this.state.userIdInput})
             .then(({data}) => {
                 this.props.setUserId(data.userID);
+                this.runAndResetCallback();
             })
             .catch(() => {
                 // TODO: error handling

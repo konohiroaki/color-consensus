@@ -12,7 +12,8 @@ class MainContent extends Component {
             <div className="container-fluid pt-3" style={Object.assign({overflowY: "auto"}, this.props.style)}>
                 <Switch>
                     <Route exact path={"/"} render={({history}) => (
-                        <VotingPage userId={this.props.userId} target={this.props.target} history={history}/>
+                        <VotingPage userId={this.props.userId} target={this.props.target} history={history}
+                                    loginModalRef={this.props.loginModalRef}/>
                     )}/>
                     <Route path={"/statistics"} render={({history}) => (
                         <StatisticsPage target={this.props.target} history={history}/>

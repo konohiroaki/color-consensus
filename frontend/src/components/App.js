@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, createRef} from "react";
 import Header from "./header/Header";
 import Body from "./body/Body";
 import LoginModal from "./common/LoginModal";
@@ -14,6 +14,8 @@ class App extends Component {
          *         "string"  -> user is logged in.
          */
 
+        this.loginModalRef = React.createRef();
+
         this.setUserId = this.setUserId.bind(this);
     }
 
@@ -22,11 +24,13 @@ class App extends Component {
     }
 
     render() {
+        const loginModalRef = this.loginModalRef.current;
+
         return (
             <div className="bg-dark text-light" style={{display: "flex", flexDirection: "column", height: "100%"}}>
-                <LoginModal setUserId={this.setUserId} userId={this.state.userId}/>
-                <Header style={{flex: "0 0 80px"}} userId={this.state.userId}/>
-                <Body style={{flex: "1 1 auto"}} userId={this.state.userId}/>
+                <LoginModal ref={this.loginModalRef} setUserId={this.setUserId} userId={this.state.userId}/>
+                <Header style={{flex: "0 0 80px"}} userId={this.state.userId} loginModalRef={loginModalRef}/>
+                <Body style={{flex: "1 1 auto"}} userId={this.state.userId} loginModalRef={loginModalRef}/>
             </div>
         );
     }

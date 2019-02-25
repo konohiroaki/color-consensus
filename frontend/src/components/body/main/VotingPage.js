@@ -3,6 +3,7 @@ import {DeselectAll, SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import CandidateList from "./CandidateList";
 import $ from "jquery";
+import LoginModal from "../../common/LoginModal";
 
 class VotingPage extends Component {
 
@@ -16,6 +17,7 @@ class VotingPage extends Component {
         this.selected = [];
 
         this.updateCandidateList = this.updateCandidateList.bind(this);
+        this.handleSubmitClick = this.handleSubmitClick.bind(this);
         this.submit = this.submit.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
     }
@@ -38,7 +40,7 @@ class VotingPage extends Component {
                             <button className="btn btn-secondary m-3" onClick={() => this.props.history.push("/statistics")}>
                                 Skip to statistics
                             </button>
-                            <button className="btn btn-primary m-3" onClick={this.submit}>
+                            <button className="btn btn-primary m-3" onClick={this.handleSubmitClick}>
                                 Submit
                             </button>
                         </div>
@@ -86,16 +88,17 @@ class VotingPage extends Component {
         }
     }
 
-    submit() {
+    handleSubmitClick() {
         const userId = this.props.userId;
         if (userId === undefined || userId === null) {
-            // FIXME: very tightly coupled code.
-            $("#signup-login-modal").modal();
-            // FIXME: should move to stats page after signing in without pressing the button again.
-            return;
+            this.props.loginModalRef.openLoginModal(this.submit);
+        } else {
+            this.submit();
         }
-        const {lang, name} = this.state.target;
+    }
 
+    submit() {
+        const {lang, name} = this.state.target;
         axios.post(`http://localhost:5000/api/v1/votes/${lang}/${name}`, this.selected)
             .then(() => {
                 console.log("submitted data");

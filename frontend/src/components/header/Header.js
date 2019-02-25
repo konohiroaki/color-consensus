@@ -3,11 +3,17 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 
 class Header extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.signUpLoginButton = this.signUpLoginButton.bind(this);
+    }
+
     render() {
         console.log("rendering header");
         const userId = this.props.userId;
         const button = userId === undefined || userId === null
-                       ? Header.signUpLoginButton()
+                       ? this.signUpLoginButton()
                        : Header.userIdButton(userId);
         return (
             <nav className="navbar navbar-dark bg-dark border-bottom border-secondary" style={this.props.style}>
@@ -17,11 +23,11 @@ class Header extends Component {
         );
     }
 
-    static signUpLoginButton() {
-        // TODO: get modal from props to depart from tight couple?
+    signUpLoginButton() {
         return (
-            <button className="btn btn-outline-light"
-                    data-toggle="modal" data-target="#signup-login-modal">
+            <button className="btn btn-outline-light" onClick={() =>
+                this.props.loginModalRef.openLoginModal()
+            }>
                 Sign Up / Login
             </button>
         );

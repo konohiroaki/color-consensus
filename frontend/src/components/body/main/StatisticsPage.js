@@ -17,9 +17,9 @@ class StatisticsPage extends Component {
                     </div>
 
                     <div className="ml-auto">
-                        <Link to={"/"}>
-                            <button className="btn btn-secondary m-3">Back to voting</button>
-                        </Link>
+                        <button className="btn btn-secondary m-3" onClick={() => this.props.history.push("/")}>
+                            Back to voting
+                        </button>
                     </div>
                 </div>
 

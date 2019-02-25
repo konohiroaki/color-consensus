@@ -14,8 +14,8 @@ class MainContent extends Component {
                     <Route exact path={"/"} render={({history}) => (
                         <VotingPage userId={this.props.userId} target={this.props.target} history={history}/>
                     )}/>
-                    <Route path={"/statistics"} render={() => (
-                        <StatisticsPage target={this.props.target}/>
+                    <Route path={"/statistics"} render={({history}) => (
+                        <StatisticsPage target={this.props.target} history={history}/>
                     )}/>
                 </Switch>
             </div>

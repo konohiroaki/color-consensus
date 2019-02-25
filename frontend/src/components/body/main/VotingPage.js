@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {DeselectAll, SelectableGroup} from "react-selectable-fast";
-import {Link, withRouter} from "react-router-dom";
+import {Link} from "react-router-dom";
 import axios from "axios";
 import CandidateList from "./CandidateList";
 import $ from "jquery";
@@ -36,9 +36,9 @@ class VotingPage extends Component {
 
                     <div className="ml-auto">
                         <div>
-                            <Link to={"/statistics"}>
-                                <button className="btn btn-secondary m-3">Skip to statistics</button>
-                            </Link>
+                            <button className="btn btn-secondary m-3" onClick={() => this.props.history.push("/statistics")}>
+                                Skip to statistics
+                            </button>
                             <button className="btn btn-primary m-3" onClick={this.submit}>
                                 Submit
                             </button>

@@ -2,8 +2,6 @@ import React, {Component} from "react";
 import {DeselectAll, SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import CandidateList from "./CandidateList";
-import $ from "jquery";
-import LoginModal from "../../common/LoginModal";
 
 class VotingPage extends Component {
 

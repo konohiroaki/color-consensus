@@ -1,5 +1,7 @@
 import React, {Component} from "react";
 import {CopyToClipboard} from "react-copy-to-clipboard";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faGithub} from "@fortawesome/free-brands-svg-icons";
 
 class Header extends Component {
 
@@ -17,7 +19,10 @@ class Header extends Component {
                        : Header.userIdButton(userId);
         return (
             <nav className="navbar navbar-dark bg-dark border-bottom border-secondary" style={this.props.style}>
-                <a className="navbar-brand" href="/">Color Consensus</a>
+                <div>
+                    <a className="navbar-brand" href="/">Color Consensus</a>
+                    <GithubLink/>
+                </div>
                 {button}
             </nav>
         );
@@ -25,9 +30,7 @@ class Header extends Component {
 
     signUpLoginButton() {
         return (
-            <button className="btn btn-outline-light" onClick={() =>
-                this.props.loginModalRef.openLoginModal()
-            }>
+            <button className="btn btn-outline-light" onClick={() => this.props.loginModalRef.openLoginModal()}>
                 Sign Up / Login
             </button>
         );
@@ -44,5 +47,12 @@ class Header extends Component {
         );
     }
 }
+
+const GithubLink = () => (
+    // FIXME: placement of icon is not good. place it a bit lower.
+    <a href="https://github.com/konohiroaki/color-consensus" className="text-light">
+        <FontAwesomeIcon icon={faGithub} size="2x"/>
+    </a>
+);
 
 export default Header;

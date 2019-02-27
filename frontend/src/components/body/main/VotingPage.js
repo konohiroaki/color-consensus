@@ -11,7 +11,6 @@ class VotingPage extends Component {
 
         this.candidateSize = 31;
         this.candidates = [];
-        // TODO: empty the list after submit.
         this.selected = [];
 
         this.updateCandidateList = this.updateCandidateList.bind(this);

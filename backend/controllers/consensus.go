@@ -77,11 +77,12 @@ func (ConsensusController) AddColor(c *gin.Context) {
 	c.BindJSON(&colorConsensus)
 	colorConsensus.Colors = map[string]int{}
 	colorConsensus.Vote = 0
-	repository.Consensus = append(repository.Consensus, &colorConsensus);
+	repository.Consensus = append(repository.Consensus, &colorConsensus)
 	c.Status(http.StatusCreated);
 }
 
 // TODO: I think the sort order shouldn't be measured only by diff scale but should also consider about the ratio between each RGB.
+// It shows very bad result for gray.
 func generateCandidateList(code string, size int) []string {
 	r := fromHex(code[0:2])
 	g := fromHex(code[2:4])

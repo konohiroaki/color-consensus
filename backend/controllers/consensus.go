@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/models"
+	"github.com/konohiroaki/color-consensus/backend/repository"
 	"net/http"
 	"sort"
 	"strconv"
@@ -18,14 +19,14 @@ func (ConsensusController) GetAllConsensusKey(c *gin.Context) {
 		BaseCode string `json:"code"`
 	}
 	list := []ResponseElement{}
-	for _, e := range models.Consensus {
+	for _, e := range repository.Consensus {
 		list = append(list, ResponseElement{e.Language, e.Color, e.Code})
 	}
 	c.JSON(200, list)
 }
 
 func (ConsensusController) GetAllConsensus(c *gin.Context) {
-	c.JSON(200, models.Consensus)
+	c.JSON(200, repository.Consensus)
 }
 
 func (ConsensusController) GetAllConsensusKeyForLang(c *gin.Context) {
@@ -36,7 +37,7 @@ func (ConsensusController) GetAllConsensusKeyForLang(c *gin.Context) {
 		BaseCode string `json:"code"`
 	}
 	list := []ResponseElement{}
-	for _, e := range models.Consensus {
+	for _, e := range repository.Consensus {
 		if e.Language == lang {
 			list = append(list, ResponseElement{e.Language, e.Color, e.Code})
 		}
@@ -76,7 +77,7 @@ func (ConsensusController) AddColor(c *gin.Context) {
 	c.BindJSON(&colorConsensus)
 	colorConsensus.Colors = map[string]int{}
 	colorConsensus.Vote = 0
-	models.Consensus = append(models.Consensus, &colorConsensus);
+	repository.Consensus = append(repository.Consensus, &colorConsensus);
 	c.Status(http.StatusCreated);
 }
 
@@ -113,7 +114,7 @@ func generateCandidateList(code string, size int) []string {
 
 func findConsensusListOfLang(lang string) []models.ColorConsensus {
 	list := []models.ColorConsensus{}
-	for _, ele := range models.Consensus {
+	for _, ele := range repository.Consensus {
 		if ele.Language == lang {
 			list = append(list, *ele)
 		}

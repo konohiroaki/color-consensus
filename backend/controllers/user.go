@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/models"
+	"github.com/konohiroaki/color-consensus/backend/repository"
 	"github.com/twinj/uuid"
 	"net/http"
 	"time"
@@ -47,7 +48,7 @@ func (UserController) RegisterUser(c *gin.Context) {
 	}
 	user.ID = uuid.NewV4().String()
 	user.Date = time.Now()
-	models.Users = append(models.Users, &user)
+	repository.Users = append(repository.Users, &user)
 	// TODO: move session related logic to non-api endpoint.
 	session := sessions.Default(c)
 	session.Set("userID", user.ID)
@@ -59,11 +60,11 @@ func (UserController) RegisterUser(c *gin.Context) {
 }
 
 func (UserController) GetUserList(c *gin.Context) {
-	c.JSON(200, models.Users)
+	c.JSON(200, repository.Users)
 }
 
 func findUser(userID string) (*models.User, bool) {
-	for _, user := range models.Users {
+	for _, user := range repository.Users {
 		if user.ID == userID {
 			return user, true
 		}

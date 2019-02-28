@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/models"
+	"github.com/konohiroaki/color-consensus/backend/repository"
 	"time"
 )
 
@@ -26,7 +27,7 @@ func (VoteController) Vote(c *gin.Context) {
 	color := c.Param("color")
 	vote := models.ColorVote{Language: lang, Color: color, User: userID.(string), Date: time.Now(), Colors: colors}
 
-	models.Votes = append(models.Votes, &vote)
+	repository.Votes = append(repository.Votes, &vote)
 	sum, found := findSum(lang, color)
 	if found {
 		sum.Vote += 1
@@ -52,7 +53,7 @@ func (VoteController) GetVotes(c *gin.Context) {
 }
 
 func findSum(lang, color string) (*models.ColorConsensus, bool) {
-	for _, ele := range models.Consensus {
+	for _, ele := range repository.Consensus {
 		if ele.Language == lang && ele.Color == color {
 			return ele, true
 		}
@@ -62,7 +63,7 @@ func findSum(lang, color string) (*models.ColorConsensus, bool) {
 
 func findVoteList(lang, color string) []models.ColorVote {
 	list := []models.ColorVote{};
-	for _, ele := range models.Votes {
+	for _, ele := range repository.Votes {
 		if ele.Language == lang && ele.Color == color {
 			list = append(list, *ele)
 		}

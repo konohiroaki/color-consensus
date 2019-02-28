@@ -9,6 +9,7 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/controllers"
+	"github.com/konohiroaki/color-consensus/backend/repository"
 )
 
 func NewRouter() *gin.Engine {
@@ -42,6 +43,9 @@ func NewRouter() *gin.Engine {
 			v1api.POST("/users/presence", user.ConfirmPresence)
 			v1api.POST("/users", user.RegisterUser)
 			v1api.GET("/admin/users", user.GetUserList)
+			v1api.GET("/admin/users/test-insert", func(c *gin.Context) {
+				repository.GetUserRepo().InsertSampleUser()
+			})
 		}
 	}
 	return router

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/models"
+	"github.com/konohiroaki/color-consensus/backend/domains/user"
 	"github.com/konohiroaki/color-consensus/backend/repository"
 	"github.com/twinj/uuid"
 	"net/http"
@@ -27,7 +27,7 @@ func (UserController) GetPresenceFromCookie(c *gin.Context) {
 }
 
 func (UserController) ConfirmPresence(c *gin.Context) {
-	var user models.User
+	var user user.User
 	if err := c.BindJSON(&user); err != nil {
 		fmt.Println(err)
 	}
@@ -41,7 +41,7 @@ func (UserController) ConfirmPresence(c *gin.Context) {
 }
 
 func (UserController) RegisterUser(c *gin.Context) {
-	var user models.User
+	var user user.User
 	if err := c.BindJSON(&user); err != nil {
 		// TODO: error handling
 		fmt.Println(err)
@@ -59,11 +59,7 @@ func (UserController) RegisterUser(c *gin.Context) {
 	c.JSON(200, user);
 }
 
-func (UserController) GetUserList(c *gin.Context) {
-	c.JSON(200, repository.Users)
-}
-
-func findUser(userID string) (*models.User, bool) {
+func findUser(userID string) (*user.User, bool) {
 	for _, user := range repository.Users {
 		if user.ID == userID {
 			return user, true

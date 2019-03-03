@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/konohiroaki/color-consensus/backend/domains/user"
 	"github.com/konohiroaki/color-consensus/backend/models"
 	"time"
 )
@@ -21,7 +22,7 @@ var Votes = []*models.ColorVote{
 	{Language: "en", Color: "red", User: "aaa", Date: time.Now(), Colors: []string{"#ff0000", "#ff007f"}},
 }
 
-var Users = []*models.User{
+var Users = []*user.User{
 	{ID: "0da04f70-dc71-4674-b47b-365c3b0805c4", Nationality: "Japan", Gender: "Male", Birth: 1990, Date: time.Now()},
 	{ID: "20af3406-8c7e-411a-851f-31732416fa83", Nationality: "Japan", Gender: "Male", Birth: 1991, Date: time.Now()},
 }

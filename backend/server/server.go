@@ -3,11 +3,13 @@ package server
 import (
 	"fmt"
 	"github.com/konohiroaki/color-consensus/backend/config"
+	"github.com/konohiroaki/color-consensus/backend/repository"
 	"os"
 )
 
-func Init() {
+func Init(env string) {
 	tryConfig()
+	initRepo(env)
 
 	router := NewRouter()
 
@@ -15,9 +17,22 @@ func Init() {
 	if port == "" {
 		port = config.GetConfig().Get("port").(string)
 	}
-	router.Run(":" + port)
+	_ = router.Run(":" + port)
 }
 
 func tryConfig() {
 	fmt.Println(config.GetConfig().Get("test"))
+}
+
+func initRepo(env string) {
+	repository.InitUserRepo()
+
+	if env == "development" {
+		fmt.Println("detected development mode. inserting sample data.")
+		insertSampleData()
+	}
+}
+
+func insertSampleData() {
+	repository.InsertSampleUser()
 }

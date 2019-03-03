@@ -11,5 +11,5 @@ func main() {
 	flag.Parse()
 	config.Init(*env)
 
-	server.Init()
+	server.Init(*env)
 }

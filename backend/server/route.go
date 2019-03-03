@@ -9,7 +9,7 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/controllers"
-	"github.com/konohiroaki/color-consensus/backend/repository"
+	"github.com/konohiroaki/color-consensus/backend/domains/user"
 )
 
 func NewRouter() *gin.Engine {
@@ -38,14 +38,11 @@ func NewRouter() *gin.Engine {
 			v1api.POST("/votes/:lang/:color", vote.Vote)
 			v1api.GET("/votes/:lang/:color/raw", vote.GetVotes)
 
-			user := new(controllers.UserController)
-			v1api.GET("/users/presence", user.GetPresenceFromCookie)
-			v1api.POST("/users/presence", user.ConfirmPresence)
-			v1api.POST("/users", user.RegisterUser)
-			v1api.GET("/admin/users", user.GetUserList)
-			v1api.GET("/admin/users/test-insert", func(c *gin.Context) {
-				repository.GetUserRepo().InsertSampleUser()
-			})
+			userController := new(controllers.UserController)
+			v1api.GET("/users/presence", userController.GetPresenceFromCookie)
+			v1api.POST("/users/presence", userController.ConfirmPresence)
+			v1api.POST("/users", userController.RegisterUser)
+			v1api.GET("/admin/users", func(c *gin.Context) { c.JSON(200, user.GetList()) })
 		}
 	}
 	return router

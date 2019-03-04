@@ -39,9 +39,9 @@ func NewRouter() *gin.Engine {
 			v1api.GET("/votes/:lang/:color/raw", vote.GetVotes)
 
 			userController := new(controllers.UserController)
-			v1api.GET("/users/presence", userController.GetPresenceFromCookie)
-			v1api.POST("/users/presence", userController.ConfirmPresence)
-			v1api.POST("/users", userController.RegisterUser)
+			v1api.GET("/users/presence", userController.GetUserIDFromCookie)
+			v1api.POST("/users/presence", userController.SetCookieIfUserExist)
+			v1api.POST("/users", userController.AddUserAndSetCookie)
 			v1api.GET("/admin/users", func(c *gin.Context) { c.JSON(200, user.GetList()) })
 		}
 	}

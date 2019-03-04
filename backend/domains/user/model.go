@@ -12,6 +12,6 @@ type User struct {
 	// https://ja.wikipedia.org/wiki/ISO_3166-1
 	Nationality string    `json:"nationality"`
 	Gender      string    `json:"gender"`
-	Birth       uint      `json:"birth"`
+	Birth       int       `json:"birth"`
 	Date        time.Time `json:"date"`
 }

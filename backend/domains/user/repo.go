@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/globalsign/mgo"
 	"github.com/konohiroaki/color-consensus/backend/config"
+	"github.com/twinj/uuid"
 	"gopkg.in/mgo.v2/bson"
 	"time"
 )
@@ -16,10 +17,25 @@ func InitRepo() {
 	userCollection = c
 }
 
+func Get(id string) (User, bool) {
+	var user User
+	if err := userCollection.Find(bson.M{"id": id}).One(&user); err != nil {
+		return User{}, false
+	}
+	return user, true
+}
+
 func GetList() []User {
 	var userList []User
 	_ = userCollection.Find(bson.M{}).All(&userList)
 	return userList
+}
+
+func Add(user User) string {
+	user.ID = uuid.NewV4().String()
+	user.Date = time.Now()
+	_ = userCollection.Insert(&user)
+	return user.ID
 }
 
 func InsertSampleData() {

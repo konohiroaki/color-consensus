@@ -5,65 +5,51 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/domains/user"
-	"github.com/konohiroaki/color-consensus/backend/repository"
-	"github.com/twinj/uuid"
 	"net/http"
-	"time"
 )
 
 type UserController struct{}
 
-func (UserController) GetPresenceFromCookie(c *gin.Context) {
+func (UserController) GetUserIDFromCookie(c *gin.Context) {
 	session := sessions.Default(c)
 	userID := session.Get("userID")
 	if userID == nil {
 		c.Status(http.StatusNotFound)
-	} else if _, found := findUser(userID.(string)); !found {
+	} else if _, found := user.Get(userID.(string)); found {
+		c.JSON(http.StatusOK, gin.H{"userID": userID})
+	} else {
 		// this case shouldn't exist
 		c.Status(http.StatusPaymentRequired)
-	} else {
-		c.JSON(http.StatusOK, gin.H{"userID": userID})
 	}
 }
 
-func (UserController) ConfirmPresence(c *gin.Context) {
-	var user user.User
-	if err := c.BindJSON(&user); err != nil {
+func (UserController) SetCookieIfUserExist(c *gin.Context) {
+	var u user.User
+	if err := c.BindJSON(&u); err != nil {
 		fmt.Println(err)
 	}
-	if _, found := findUser(user.ID); !found {
-		c.Status(http.StatusNotFound)
-	} else {
+	fmt.Println(u.ID)
+	if _, found := user.Get(u.ID); found {
 		session := sessions.Default(c)
-		session.Set("userID", user.ID)
-		c.JSON(http.StatusOK, gin.H{"userID": user.ID})
+		session.Set("userID", u.ID)
+		c.Status(http.StatusOK)
+	} else {
+		c.Status(http.StatusNotFound)
 	}
 }
 
-func (UserController) RegisterUser(c *gin.Context) {
-	var user user.User
-	if err := c.BindJSON(&user); err != nil {
+func (UserController) AddUserAndSetCookie(c *gin.Context) {
+	var u user.User
+	if err := c.BindJSON(&u); err != nil {
 		// TODO: error handling
 		fmt.Println(err)
 	}
-	user.ID = uuid.NewV4().String()
-	user.Date = time.Now()
-	repository.Users = append(repository.Users, &user)
-	// TODO: move session related logic to non-api endpoint.
+	id := user.Add(u)
 	session := sessions.Default(c)
-	session.Set("userID", user.ID)
+	session.Set("userID", id)
 	if err := session.Save(); err != nil {
 		// TODO: error handling
 		fmt.Println(err)
 	}
-	c.JSON(200, user);
-}
-
-func findUser(userID string) (*user.User, bool) {
-	for _, user := range repository.Users {
-		if user.ID == userID {
-			return user, true
-		}
-	}
-	return nil, false
+	c.JSON(200, u);
 }

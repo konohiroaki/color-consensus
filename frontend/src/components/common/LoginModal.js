@@ -118,8 +118,8 @@ class LoginModal extends Component {
 
     handleLoginClick() {
         axios.post("http://localhost:5000/api/v1/users/presence", {id: this.state.userIdInput})
-            .then(({data}) => {
-                this.props.setUserId(data.userID);
+            .then(() => {
+                this.props.setUserId(this.state.userIdInput);
                 this.runAndResetCallback();
             })
             .catch(() => {

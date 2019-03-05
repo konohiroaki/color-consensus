@@ -96,7 +96,11 @@ class VotingPage extends Component {
 
     submit() {
         const {lang, name} = this.state.target;
-        axios.post(`http://localhost:5000/api/v1/votes/${lang}/${name}`, this.selected)
+        axios.post(`http://localhost:5000/api/v1/votes`, {
+            "lang": lang,
+            "name": name,
+            "colors": this.selected
+        })
             .then(() => {
                 console.log("submitted data");
                 this.props.history.push("/statistics");

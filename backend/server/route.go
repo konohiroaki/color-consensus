@@ -28,14 +28,12 @@ func NewRouter() *gin.Engine {
 			consensus := new(controllers.ConsensusController)
 			v1api.GET("/colors/keys", consensus.GetAllConsensusKey)
 			v1api.GET("/colors/detail", consensus.GetAllConsensus)
-			v1api.GET("/colors/keys/:lang", consensus.GetAllConsensusKeyForLang)
-			v1api.GET("/colors/detail/:lang", consensus.GetAllConsensusForLang)
 			v1api.GET("/colors/detail/:lang/:color", consensus.GetConsensus)
 			v1api.GET("/colors/candidates/:code", consensus.GetCandidateList)
 			v1api.POST("/colors", consensus.AddColor)
 
 			vote := new(controllers.VoteController)
-			v1api.POST("/votes/:lang/:color", vote.Vote)
+			v1api.POST("/votes", vote.Vote)
 			v1api.GET("/votes/:lang/:color/raw", vote.GetVotes)
 
 			userController := new(controllers.UserController)

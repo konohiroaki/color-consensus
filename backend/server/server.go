@@ -3,7 +3,9 @@ package server
 import (
 	"fmt"
 	"github.com/konohiroaki/color-consensus/backend/config"
+	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"github.com/konohiroaki/color-consensus/backend/domains/user"
+	"github.com/konohiroaki/color-consensus/backend/domains/vote"
 	"os"
 )
 
@@ -26,6 +28,8 @@ func tryConfig() {
 
 func initRepo(env string) {
 	user.InitRepo()
+	vote.InitRepo()
+	consensus.InitRepo()
 
 	if env == "development" {
 		fmt.Println("detected development mode. inserting sample data.")
@@ -35,4 +39,6 @@ func initRepo(env string) {
 
 func insertSampleData() {
 	user.InsertSampleData()
+	vote.InsertSampleData()
+	consensus.InsertSampleData()
 }

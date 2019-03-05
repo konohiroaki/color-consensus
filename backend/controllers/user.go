@@ -28,7 +28,6 @@ func (UserController) SetCookieIfUserExist(c *gin.Context) {
 	if err := c.BindJSON(&u); err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(u.ID)
 	if _, found := user.Get(u.ID); found {
 		session := sessions.Default(c)
 		session.Set("userID", u.ID)
@@ -41,14 +40,12 @@ func (UserController) SetCookieIfUserExist(c *gin.Context) {
 func (UserController) AddUserAndSetCookie(c *gin.Context) {
 	var u user.User
 	if err := c.BindJSON(&u); err != nil {
-		// TODO: error handling
 		fmt.Println(err)
 	}
 	id := user.Add(u)
 	session := sessions.Default(c)
 	session.Set("userID", id)
 	if err := session.Save(); err != nil {
-		// TODO: error handling
 		fmt.Println(err)
 	}
 	c.JSON(200, u);

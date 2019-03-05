@@ -3,8 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/models"
-	"github.com/konohiroaki/color-consensus/backend/repository"
+	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"net/http"
 	"sort"
 	"strconv"
@@ -13,49 +12,20 @@ import (
 type ConsensusController struct{}
 
 func (ConsensusController) GetAllConsensusKey(c *gin.Context) {
-	type ResponseElement struct {
-		Language string `json:"lang"`
-		Color    string `json:"name"`
-		BaseCode string `json:"code"`
-	}
-	list := []ResponseElement{}
-	for _, e := range repository.Consensus {
-		list = append(list, ResponseElement{e.Language, e.Color, e.Code})
-	}
-	c.JSON(200, list)
+	fmt.Println(consensus.GetKeys())
+	c.JSON(200, consensus.GetKeys())
 }
 
 func (ConsensusController) GetAllConsensus(c *gin.Context) {
-	c.JSON(200, repository.Consensus)
-}
-
-func (ConsensusController) GetAllConsensusKeyForLang(c *gin.Context) {
-	lang := c.Param("lang")
-	type ResponseElement struct {
-		Language string `json:"lang"`
-		Color    string `json:"name"`
-		BaseCode string `json:"code"`
-	}
-	list := []ResponseElement{}
-	for _, e := range repository.Consensus {
-		if e.Language == lang {
-			list = append(list, ResponseElement{e.Language, e.Color, e.Code})
-		}
-	}
-	c.JSON(200, list)
-}
-
-func (ConsensusController) GetAllConsensusForLang(c *gin.Context) {
-	list := findConsensusListOfLang(c.Param("lang"))
-	c.JSON(200, list)
+	c.JSON(200, consensus.GetList())
 }
 
 func (ConsensusController) GetConsensus(c *gin.Context) {
 	lang := c.Param("lang")
 	color := c.Param("color")
-	sum, found := findSum(lang, color)
+	cc, found := consensus.Get(lang, color)
 	if found {
-		c.JSON(200, sum)
+		c.JSON(200, cc)
 	} else {
 		c.AbortWithStatus(404)
 	}
@@ -72,12 +42,10 @@ func (ConsensusController) GetCandidateList(c *gin.Context) {
 }
 
 func (ConsensusController) AddColor(c *gin.Context) {
-	var colorConsensus models.ColorConsensus
-	// TODO: error handling.
-	c.BindJSON(&colorConsensus)
-	colorConsensus.Colors = map[string]int{}
-	colorConsensus.Vote = 0
-	repository.Consensus = append(repository.Consensus, &colorConsensus)
+	var colorConsensus consensus.ColorConsensus
+	_ = c.BindJSON(&colorConsensus)
+	consensus.Add(colorConsensus)
+
 	c.Status(http.StatusCreated);
 }
 
@@ -111,16 +79,6 @@ func generateCandidateList(code string, size int) []string {
 		}
 	}
 	return result
-}
-
-func findConsensusListOfLang(lang string) []models.ColorConsensus {
-	list := []models.ColorConsensus{}
-	for _, ele := range repository.Consensus {
-		if ele.Language == lang {
-			list = append(list, *ele)
-		}
-	}
-	return list
 }
 
 func fromHex(hex string) int {

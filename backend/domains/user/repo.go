@@ -8,6 +8,15 @@ import (
 	"time"
 )
 
+type User struct {
+	ID string `json:"id"`
+	// https://ja.wikipedia.org/wiki/ISO_3166-1
+	Nationality string    `json:"nationality" bson:"nationality"`
+	Gender      string    `json:"gender" bson:"gender"`
+	Birth       int       `json:"birth" bson:"birth"`
+	Date        time.Time `json:"date" bson:"date"`
+}
+
 var userCollection *mgo.Collection
 
 func InitRepo() {

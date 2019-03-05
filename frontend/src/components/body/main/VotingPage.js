@@ -26,12 +26,19 @@ class VotingPage extends Component {
 
         return (
             <div>
-                <div className="row">
-                    <div className="mr-auto ml-5">
-                        <p>Language: {this.props.target.lang}</p>
-                        <p>Color Name: {this.props.target.name}</p>
+                <div className="card bg-dark border border-secondary">
+                    <div className="card-body">
+                        <div className="row ml-0 mr-0">
+                            <div className="col-3 card bg-dark border border-secondary p-2 text-center">
+                                <div className="row">
+                                    <span className="col-4 border-right border-secondary p-3">{this.props.target.lang}</span>
+                                    <span className="col-8 p-3">{this.props.target.name}</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
+                </div>
+                <div className="row">
                     <div className="ml-auto">
                         <div>
                             <button className="btn btn-secondary m-3" onClick={() => this.props.history.push("/statistics")}>

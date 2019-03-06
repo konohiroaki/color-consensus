@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import {Route, Switch} from "react-router-dom";
-import VotingPage from "./VotingPage";
-import StatisticsPage from "./StatisticsPage";
+import VotingPage from "./vote/VotingPage";
+import StatisticsPage from "./statistics/StatisticsPage";
 
 class MainContent extends Component {
 

@@ -21,6 +21,7 @@ class CandidateList extends Component {
         if (this.selected[i][j] !== selected) {
             const border = update(this.state.border, {
                 [i]: {
+                    // [i][j-1] (left cell)'s right border is active when left cell is selected and current cell is NOT selected.
                     [j - 1]: {right: {$set: this.selected[i][j - 1] && !selected}},
                     [j]: {
                         top: {$set: selected && !this.selected[i - 1][j]},

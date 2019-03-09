@@ -7,15 +7,15 @@ import (
 
 var config *viper.Viper
 
-func Init(env string) {
+func Init() {
 	var err error
 	config = viper.New()
 	config.SetConfigType("yaml")
-	config.SetConfigName(env)
-	config.AddConfigPath("config/")
+	config.SetConfigName("common")
+	config.AddConfigPath("backend/config/")
 	err = config.ReadInConfig()
 	if err != nil {
-		log.Fatal("error on parsing configuration file. env: " + env)
+		log.Fatal(err)
 	}
 }
 

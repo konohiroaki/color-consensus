@@ -9,7 +9,7 @@ import (
 func main() {
 	env := flag.String("env", "production", "specify environment")
 	flag.Parse()
-	config.Init(*env)
 
+	config.Init()
 	server.Init(*env)
 }

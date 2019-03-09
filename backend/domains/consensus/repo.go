@@ -63,9 +63,9 @@ func Update(lang, name string, add []string) {
 
 func InsertSampleData() {
 	votes := []*ColorConsensus{
-		{Language: "en", ColorName: "red", ColorCode: "#ff0000", VoteCount: 10, Colors: map[string]int{"#ff0000": 10}},
-		{Language: "en", ColorName: "green", ColorCode: "#008000", VoteCount: 10, Colors: map[string]int{"#008000": 10}},
-		{Language: "ja", ColorName: "赤", ColorCode: "#bf1e33", VoteCount: 15, Colors: map[string]int{"#bf1e33": 15}},
+		{Language: "en", ColorName: "red", ColorCode: "#ff0000", VoteCount: 2, Colors: map[string]int{"#ff0000": 1, "#f00000": 1}},
+		{Language: "en", ColorName: "green", ColorCode: "#008000", VoteCount: 1, Colors: map[string]int{"#008000": 1}},
+		{Language: "ja", ColorName: "赤", ColorCode: "#bf1e33", VoteCount: 1, Colors: map[string]int{"#bf1e33": 1}},
 		{Language: "en", ColorName: "gray", ColorCode: "#808080", VoteCount: 0, Colors: map[string]int{}},
 	}
 

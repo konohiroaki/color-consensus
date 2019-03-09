@@ -48,10 +48,10 @@ func Add(vote ColorVote) bool {
 
 func InsertSampleData() {
 	votes := []*ColorVote{
-		{Language: "en", ColorName: "red", User: "foo", Date: time.Now(), Colors: []string{"#ff0000", "#ff007f"}},
-		{Language: "en", ColorName: "red", User: "bar", Date: time.Now(), Colors: []string{"#ff0000", "#ff007f"}},
-		{Language: "en", ColorName: "red", User: "baz", Date: time.Now(), Colors: []string{"#ff0000", "#ff007f"}},
-		{Language: "en", ColorName: "red", User: "aaa", Date: time.Now(), Colors: []string{"#ff0000", "#ff007f"}},
+		{Language: "en", ColorName: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Date: time.Now(), Colors: []string{"#ff0000"}},
+		{Language: "en", ColorName: "green", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now(), Colors: []string{"#008000"}},
+		{Language: "ja", ColorName: "赤", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#bf1e33"}},
+		{Language: "en", ColorName: "red", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#f00000"}},
 	}
 
 	_, _ = voteCollection.RemoveAll(nil)

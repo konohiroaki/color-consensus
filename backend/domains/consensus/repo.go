@@ -58,16 +58,16 @@ func Add(consensus ColorConsensus) {
 func Update(lang, name string, add []string) {
 	colorMap := map[string]int{}
 	for i := 0; i < len(add); i++ {
-		colorMap["add."+add[i]] = 1
+		colorMap["colors."+add[i]] = 1
 	}
 	_, _ = consensusCollection.Upsert(bson.M{"lang": lang, "name": name}, bson.M{"$inc": colorMap})
 }
 
 func InsertSampleData() {
 	votes := []*ColorConsensus{
-		{Language: "en", ColorName: "red", ColorCode: "#ff0000", VoteCount: 10, Colors: map[string]int{"#ff0000": 10, "#ff007f": 3}},
-		{Language: "en", ColorName: "green", ColorCode: "#008000", VoteCount: 10, Colors: map[string]int{"#00ff00": 10, "#00ff33": 3}},
-		{Language: "ja", ColorName: "赤", ColorCode: "#bf1e33", VoteCount: 15, Colors: map[string]int{"#ff0000": 15, "#ff007f": 5}},
+		{Language: "en", ColorName: "red", ColorCode: "#ff0000", VoteCount: 10, Colors: map[string]int{"#ff0000": 10}},
+		{Language: "en", ColorName: "green", ColorCode: "#008000", VoteCount: 10, Colors: map[string]int{"#008000": 10}},
+		{Language: "ja", ColorName: "赤", ColorCode: "#bf1e33", VoteCount: 15, Colors: map[string]int{"#bf1e33": 15}},
 		{Language: "en", ColorName: "gray", ColorCode: "#808080", VoteCount: 0, Colors: map[string]int{}},
 	}
 

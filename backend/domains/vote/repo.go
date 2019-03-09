@@ -1,7 +1,6 @@
 package vote
 
 import (
-	"github.com/konohiroaki/color-consensus/backend/config"
 	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -19,10 +18,9 @@ type ColorVote struct {
 
 var voteCollection *mgo.Collection
 
-func InitRepo() {
-	uri := config.GetConfig().Get("mongo.url").(string)
+func InitRepo(uri, db string) {
 	session, _ := mgo.Dial(uri)
-	c := session.DB("cc").C("vote")
+	c := session.DB(db).C("vote")
 	voteCollection = c
 }
 

@@ -3,7 +3,7 @@ import Header from "./header/Header";
 import Body from "./body/Body";
 import LoginModal from "./common/LoginModal";
 
-// TODO: do updateBorderState for react app (jest?)
+// TODO: do updateSelectedState for react app (jest?)
 class App extends Component {
 
     constructor(props) {

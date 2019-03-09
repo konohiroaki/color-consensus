@@ -7,6 +7,21 @@ class ResultCell extends Component {
         this.cellSize = "15px";
     }
 
+    shouldComponentUpdate(nextProps) {
+        // when color is changed, need to update
+        if (this.props.color !== nextProps.color) {
+            return true;
+        }
+        // when border state changed, need to update
+        if (this.props.border.top !== nextProps.border.top
+            || this.props.border.right !== nextProps.border.right
+            || this.props.border.bottom !== nextProps.border.bottom
+            || this.props.border.left !== nextProps.border.left) {
+            return true;
+        }
+        return false;
+    }
+
     render() {
         console.log("rendering candidate cell");
         return (

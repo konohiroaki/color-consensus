@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import ResultCell from "./ResultCell";
 import axios from "axios";
+import update from "immutability-helper";
 
 class ResultList extends Component {
 
@@ -13,7 +14,10 @@ class ResultList extends Component {
                 {top: false, right: false, bottom: false, left: false}
             ))
         };
-        this.updateBorderState = this.updateBorderState.bind(this);
+        this.colorMapping = {};
+        this.hasSetBorder = false;
+
+        this.updateSelectedState = this.updateSelectedState.bind(this);
     }
 
     render() {
@@ -30,6 +34,7 @@ class ResultList extends Component {
                 const ii = i + 1, jj = j + 1;
                 row.push(<ResultCell key={key} color={this.props.items[key]}
                                      border={this.state.border[ii][jj]}/>);
+                this.colorMapping = update(this.colorMapping, {[this.props.items[key]]: {$set: {ii: ii, jj: jj}}});
             }
             list.push(<div key={i}>{row}</div>);
         }
@@ -41,14 +46,32 @@ class ResultList extends Component {
     }
 
     componentDidMount() {
-        this.updateBorderState();
+        if (this.props.items.length !== 0 && !this.hasSetBorder) {
+            this.updateSelectedState();
+        }
     }
 
-    updateBorderState() {
+    componentDidUpdate() {
+        if (this.props.items.length !== 0 && !this.hasSetBorder) {
+            this.updateSelectedState();
+        }
+    }
+
+    // FIXME: fix ugly code.
+    // when item list comes, modify the this.state.border to show the statistics.
+    updateSelectedState() {
         axios.get(`http://localhost:5000/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`)
             .then(({data}) => {
                 console.log(data.colors);
-                // TODO: update this.state.border according to the consensus.
+                let border = this.state.border;
+                for (let color in data.colors) {
+                    const map = this.colorMapping[color];
+                    border = update(border, {[map.ii]: {[map.jj]: {$set: {top: true, right: true, bottom: true, left: true}}}});
+                }
+                this.hasSetBorder = true;
+                // FIXME: set proper border.
+                // TODO: instead of setting #fff or transparent, categorize the colors to several percentiles and border with several colors for each category.
+                this.setState({border: border});
             });
     }
 }

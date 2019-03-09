@@ -23,7 +23,7 @@ class ResultCell extends Component {
     }
 
     render() {
-        console.log("rendering candidate cell");
+        console.log("rendering result cell");
         return (
             <div style={{
                 display: "inline-block", padding: "1px",

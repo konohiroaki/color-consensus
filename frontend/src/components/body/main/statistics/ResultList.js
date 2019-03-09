@@ -14,13 +14,14 @@ class ResultList extends Component {
                 {top: false, right: false, bottom: false, left: false}
             ))
         };
-        this.colorMapping = {};
+        this.coordForColor = {};
         this.hasSetBorder = false;
 
         this.updateSelectedState = this.updateSelectedState.bind(this);
     }
 
     render() {
+        console.log("rendering result list page");
         if (this.props.items.length === 0) {
             console.log("candidate list is empty");
             return <div/>;
@@ -34,7 +35,7 @@ class ResultList extends Component {
                 const ii = i + 1, jj = j + 1;
                 row.push(<ResultCell key={key} color={this.props.items[key]}
                                      border={this.state.border[ii][jj]}/>);
-                this.colorMapping = update(this.colorMapping, {[this.props.items[key]]: {$set: {ii: ii, jj: jj}}});
+                this.coordForColor = update(this.coordForColor, {[this.props.items[key]]: {$set: {ii: ii, jj: jj}}});
             }
             list.push(<div key={i}>{row}</div>);
         }
@@ -65,8 +66,8 @@ class ResultList extends Component {
                 console.log(data.colors);
                 let border = this.state.border;
                 for (let color in data.colors) {
-                    const map = this.colorMapping[color];
-                    border = update(border, {[map.ii]: {[map.jj]: {$set: {top: true, right: true, bottom: true, left: true}}}});
+                    const coord = this.coordForColor[color];
+                    border = update(border, {[coord.ii]: {[coord.jj]: {$set: {top: true, right: true, bottom: true, left: true}}}});
                 }
                 this.hasSetBorder = true;
                 // FIXME: set proper border.

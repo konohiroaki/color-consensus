@@ -47,8 +47,9 @@ func Add(user User) string {
 
 func InsertSampleData() {
 	users := []*User{
-		{ID: "0da04f70-dc71-4674-b47b-365c3b0805c4", Nationality: "Japan", Gender: "Male", Birth: 1990, Date: time.Now()},
-		{ID: "20af3406-8c7e-411a-851f-31732416fa83", Nationality: "Japan", Gender: "Male", Birth: 1991, Date: time.Now()},
+		{ID: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Nationality: "Japan", Gender: "Male", Birth: 1985, Date: time.Now()},
+		{ID: "0da04f70-dc71-4674-b47b-365c3b0805c4", Nationality: "America", Gender: "Male", Birth: 1990, Date: time.Now()},
+		{ID: "20af3406-8c7e-411a-851f-31732416fa83", Nationality: "Japan", Gender: "Female", Birth: 1995, Date: time.Now()},
 	}
 
 	_, _ = userCollection.RemoveAll(nil)

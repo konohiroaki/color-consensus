@@ -47,7 +47,7 @@ class CandidateList extends Component {
         console.log("rendering candidate list");
         if (this.props.items.length === 0) {
             console.log("candidate list is empty");
-            return <div/>;
+            return null;
         }
         let list = [];
         for (let i = 0; i < this.props.candidateSize; i++) {

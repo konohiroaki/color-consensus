@@ -3,3 +3,4 @@ test: "config is working"
 port: "5000"
 
 mongo.url: "mongodb://localhost:27017/"
+mongo.db: "cc"

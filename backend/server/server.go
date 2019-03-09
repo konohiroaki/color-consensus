@@ -27,9 +27,12 @@ func tryConfig() {
 }
 
 func initRepo(env string) {
-	user.InitRepo()
-	vote.InitRepo()
-	consensus.InitRepo()
+	uri := config.GetConfig().Get("mongo.url").(string)
+	db := config.GetConfig().Get("mongo.db").(string)
+
+	user.InitRepo(uri, db)
+	vote.InitRepo(uri, db)
+	consensus.InitRepo(uri, db)
 
 	if env == "development" {
 		fmt.Println("detected development mode. inserting sample data.")

@@ -2,7 +2,6 @@ package user
 
 import (
 	"github.com/globalsign/mgo"
-	"github.com/konohiroaki/color-consensus/backend/config"
 	"github.com/twinj/uuid"
 	"gopkg.in/mgo.v2/bson"
 	"time"
@@ -19,10 +18,9 @@ type User struct {
 
 var userCollection *mgo.Collection
 
-func InitRepo() {
-	uri := config.GetConfig().Get("mongo.url").(string)
+func InitRepo(uri, db string) {
 	session, _ := mgo.Dial(uri)
-	c := session.DB("cc").C("user")
+	c := session.DB(db).C("user")
 	userCollection = c
 }
 

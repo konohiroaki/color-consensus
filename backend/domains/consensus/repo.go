@@ -1,7 +1,6 @@
 package consensus
 
 import (
-	"github.com/konohiroaki/color-consensus/backend/config"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -20,10 +19,9 @@ type ColorConsensus struct {
 
 var consensusCollection *mgo.Collection
 
-func InitRepo() {
-	uri := config.GetConfig().Get("mongo.url").(string)
+func InitRepo(uri, db string) {
 	session, _ := mgo.Dial(uri)
-	c := session.DB("cc").C("consensus")
+	c := session.DB(db).C("consensus")
 	consensusCollection = c
 }
 

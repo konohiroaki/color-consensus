@@ -18,7 +18,8 @@ func NewRouter() *gin.Engine {
 
 	router.GET("/debug/vars", expvar.Handler())
 	router.Use(cors.Default())
-	router.Use(static.Serve("/", static.LocalFile("../frontend/dist", false)))
+	router.Use(static.Serve("/", static.LocalFile("frontend/dist", false)))
+	router.NoRoute(func(c *gin.Context) { c.File("frontend/dist/index.html") })
 	router.Use(sessions.Sessions("session", cookie.NewStore([]byte("secret"))))
 
 	api := router.Group("/api")

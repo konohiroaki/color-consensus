@@ -10,7 +10,6 @@ import (
 )
 
 func Init(env string) {
-	tryConfig()
 	initRepo(env)
 
 	router := NewRouter()
@@ -22,13 +21,12 @@ func Init(env string) {
 	_ = router.Run(":" + port)
 }
 
-func tryConfig() {
-	fmt.Println(config.GetConfig().Get("test"))
-}
-
 func initRepo(env string) {
-	uri := config.GetConfig().Get("mongo.url").(string)
-	db := config.GetConfig().Get("mongo.db").(string)
+	uri := os.Getenv("MONGODB_URI")
+	if uri == "" {
+		uri = config.GetConfig().Get("mongo.url").(string)
+	}
+	db := "cc"
 
 	user.InitRepo(uri, db)
 	vote.InitRepo(uri, db)

@@ -1,6 +1,0 @@
-# ignore vendor packages
-vendor/*
-!vendor/vendor.json
-
-# don't show prod config
-config/production.yaml

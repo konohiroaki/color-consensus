@@ -1,5 +1,0 @@
-# ignore node packages
-node_modules/
-
-# ignore dist files
-dist/

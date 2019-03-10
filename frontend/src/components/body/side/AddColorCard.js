@@ -17,7 +17,7 @@ class AddColorCard extends Component {
     }
 
     handleClick() {
-        axios.post("http://localhost:5000/api/v1/colors", this.state)
+        axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, this.state)
             .then(() => {
                 this.props.updateColorList();
             });

@@ -61,7 +61,7 @@ class ResultList extends Component {
     // FIXME: fix ugly code.
     // when item list comes, modify the this.state.border to show the statistics.
     updateSelectedState() {
-        axios.get(`http://localhost:5000/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`)
+        axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`)
             .then(({data}) => {
                 console.log(data.colors);
                 let border = this.state.border;

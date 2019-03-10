@@ -81,7 +81,7 @@ class VotingPage extends Component {
     updateCandidateList() {
         if (this.props.target !== this.state.target) {
             const target = this.props.target;
-            axios.get(`http://localhost:5000/api/v1/colors/candidates/${target.code.substring(1)}?size=${Math.pow(this.candidateSize, 2)}`)
+            axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${target.code.substring(1)}?size=${Math.pow(this.candidateSize, 2)}`)
                 .then(({data}) => {
                     console.log("main content got candidate list from server");
                     this.candidates = data;
@@ -103,7 +103,7 @@ class VotingPage extends Component {
 
     submit() {
         const {lang, name} = this.state.target;
-        axios.post(`http://localhost:5000/api/v1/votes`, {
+        axios.post(`${process.env.WEBAPI_HOST}/api/v1/votes`, {
             "lang": lang,
             "name": name,
             "colors": this.selected

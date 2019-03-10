@@ -96,7 +96,7 @@ class LoginModal extends Component {
     }
 
     componentDidMount() {
-        axios.get("http://localhost:5000/api/v1/users/presence")
+        axios.get(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
             .then(({data}) => {
                 this.props.setUserId(data.userID);
             })
@@ -106,7 +106,7 @@ class LoginModal extends Component {
     }
 
     handleSignUpClick() {
-        axios.post("http://localhost:5000/api/v1/users", {
+        axios.post(`${process.env.WEBAPI_HOST}/api/v1/users`, {
             nationality: this.state.nationality,
             gender: this.state.gender,
             birth: Number(this.state.birth)
@@ -117,7 +117,7 @@ class LoginModal extends Component {
     }
 
     handleLoginClick() {
-        axios.post("http://localhost:5000/api/v1/users/presence", {id: this.state.userIdInput})
+        axios.post(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, {id: this.state.userIdInput})
             .then(() => {
                 this.props.setUserId(this.state.userIdInput);
                 this.runAndResetCallback();

@@ -24,8 +24,7 @@ class SideContent extends Component {
     }
 
     updateColorList() {
-        // TODO: use dotenv? for environmental variables.
-        return axios.get("http://localhost:5000/api/v1/colors/keys").then(({data}) => {
+        return axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/keys`).then(({data}) => {
             console.log("side content got color list from server: ", data);
             this.setState({colorList: data});
         });

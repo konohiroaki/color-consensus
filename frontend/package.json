@@ -39,6 +39,7 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.2.1",
     "core-js": "^2.6.3",
+    "dotenv-webpack": "^1.7.0",
     "immutability-helper": "^3.0.0",
     "jquery": "^3.3.1",
     "mustache": "^3.0.1",

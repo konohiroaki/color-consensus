@@ -27,12 +27,18 @@ func InitRepo(uri, db string) {
 func GetList() []ColorVote {
 	var voteList []ColorVote
 	_ = voteCollection.Find(bson.M{}).All(&voteList)
+	if voteList == nil {
+		return []ColorVote{}
+	}
 	return voteList
 }
 
 func FindList(lang, name string) []ColorVote {
 	var voteList []ColorVote
 	_ = voteCollection.Find(bson.M{"lang": lang, "name": name}).All(&voteList)
+	if voteList == nil {
+		return []ColorVote{}
+	}
 	return voteList
 }
 

@@ -42,6 +42,9 @@ func GetList() []ColorConsensus {
 func GetKeys() []interface{} {
 	var keyList []interface{}
 	_ = consensusCollection.Find(nil).Select(bson.M{"lang": 1, "name": 1, "code": 1}).All(&keyList)
+	if keyList == nil {
+		return []interface{}{}
+	}
 	return keyList
 }
 

@@ -35,6 +35,9 @@ func Get(id string) (User, bool) {
 func GetList() []User {
 	var userList []User
 	_ = userCollection.Find(bson.M{}).All(&userList)
+	if userList == nil {
+		return []User{}
+	}
 	return userList
 }
 

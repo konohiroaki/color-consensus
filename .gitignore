@@ -1,11 +1,8 @@
 main.exe
 
-# ignore vendor packages
 backend/vendor/*
 !backend/vendor/vendor.json
 
-# ignore node packages
 frontend/node_modules/
 
-# ignore dist files
 frontend/dist/

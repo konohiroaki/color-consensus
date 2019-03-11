@@ -1,9 +1,9 @@
 import React, {Component} from "react";
-import ResultCell from "./ResultCell";
+import ColorCell from "./ColorCell";
 import axios from "axios";
 import update from "immutability-helper";
 
-class ResultList extends Component {
+class ColorBoard extends Component {
 
     constructor(props) {
         super(props);
@@ -33,8 +33,8 @@ class ResultList extends Component {
             for (let j = 0; j < this.props.candidateSize; j++) {
                 const key = i * this.props.candidateSize + j;
                 const ii = i + 1, jj = j + 1;
-                row.push(<ResultCell key={key} color={this.props.items[key]}
-                                     border={this.state.border[ii][jj]}/>);
+                row.push(<ColorCell key={key} color={this.props.items[key]}
+                                    border={this.state.border[ii][jj]}/>);
                 this.coordForColor = update(this.coordForColor, {[this.props.items[key]]: {$set: {ii: ii, jj: jj}}});
             }
             list.push(<div key={i}>{row}</div>);
@@ -77,4 +77,4 @@ class ResultList extends Component {
     }
 }
 
-export default ResultList;
+export default ColorBoard;

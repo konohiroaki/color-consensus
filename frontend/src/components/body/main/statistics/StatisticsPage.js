@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import StatisticsContentHeader from "./StatisticsContentHeader";
-import ResultList from "./ResultList";
+import StatisticsHeader from "./StatisticsHeader";
+import ColorBoard from "./ColorBoard";
 import axios from "axios";
 
 class StatisticsPage extends Component {
@@ -19,12 +19,11 @@ class StatisticsPage extends Component {
             return null;
         }
 
-        return (
-            <div>
-                <StatisticsContentHeader target={this.props.target} history={this.props.history}/>
-                <ResultList target={this.props.target} items={this.candidates} candidateSize={this.candidateSize}/>
-            </div>
-        );
+        return <div>
+            <StatisticsHeader target={this.props.target} history={this.props.history}/>
+            <VotingPageButton history={this.props.history}/>
+            <ColorBoard target={this.props.target} items={this.candidates} candidateSize={this.candidateSize}/>
+        </div>;
     }
 
     componentDidMount() {
@@ -37,15 +36,24 @@ class StatisticsPage extends Component {
 
     updateCandidateList() {
         if (this.props.target !== this.state.target) {
-            const target = this.props.target;
-            axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${target.code.substring(1)}?size=${Math.pow(this.candidateSize, 2)}`)
-                .then(({data}) => {
-                    console.log("main content got candidate list from server");
-                    this.candidates = data;
-                    this.setState({target: target});
-                });
+            const url = `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${this.props.target.code.substring(1)}?size=${Math.pow(this.candidateSize, 2)}`;
+            axios.get(url).then(({data}) => {
+                console.log("main content got candidate list from server");
+                this.candidates = data;
+                this.setState({target: this.props.target});
+            });
         }
     }
 }
+
+const VotingPageButton = (props) => (
+    <div className="row">
+        <div className="ml-auto">
+            <button className="btn btn-secondary m-3" onClick={() => props.history.push("/")}>
+                Back to voting
+            </button>
+        </div>
+    </div>
+);
 
 export default StatisticsPage;

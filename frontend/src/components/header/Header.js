@@ -12,7 +12,7 @@ class Header extends Component {
     }
 
     render() {
-        console.log("rendering header");
+        console.log("rendering header", this.props.userId);
         const userId = this.props.userId;
         const button = userId === undefined || userId === null
                        ? this.signUpLoginButton()

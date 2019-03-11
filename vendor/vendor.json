@@ -165,46 +165,32 @@
 			"revisionTime": "2019-03-06T14:29:09Z"
 		},
 		{
-			"checksumSHA1": "XKnZmY+i1Jb8wiqf/MCp2mp4TFk=",
 			"path": "github.com/konohiroaki/color-consensus/backend",
-			"revision": "cdbf3a38bcb2d9e10c8a8e5d4be99fc4deace125",
-			"revisionTime": "2019-03-09T22:39:38Z"
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "dRMhXdfxznAgFJYMg5c4+pwaG8o=",
 			"path": "github.com/konohiroaki/color-consensus/backend/config",
-			"revision": "cdbf3a38bcb2d9e10c8a8e5d4be99fc4deace125",
-			"revisionTime": "2019-03-09T22:39:38Z"
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "nSynAEmoBLS7tzW/2cE25b+nUtc=",
 			"path": "github.com/konohiroaki/color-consensus/backend/controllers",
-			"revision": "cdbf3a38bcb2d9e10c8a8e5d4be99fc4deace125",
-			"revisionTime": "2019-03-09T22:39:38Z"
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "kylJZJbh3WEr+UxsE+T9v/EIkHo=",
 			"path": "github.com/konohiroaki/color-consensus/backend/domains/consensus",
-			"revision": "cdbf3a38bcb2d9e10c8a8e5d4be99fc4deace125",
-			"revisionTime": "2019-03-09T22:39:38Z"
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "u7kNMAFiNWkeSyj/UfWAr8T2LUY=",
 			"path": "github.com/konohiroaki/color-consensus/backend/domains/user",
-			"revision": "cdbf3a38bcb2d9e10c8a8e5d4be99fc4deace125",
-			"revisionTime": "2019-03-09T22:39:38Z"
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "MbneEFKi7hakOiUkh4ORobFPCiQ=",
 			"path": "github.com/konohiroaki/color-consensus/backend/domains/vote",
-			"revision": "cdbf3a38bcb2d9e10c8a8e5d4be99fc4deace125",
-			"revisionTime": "2019-03-09T22:39:38Z"
+			"revision": ""
 		},
 		{
-			"checksumSHA1": "L7+X2HWiyk9iPrq6/LHrpERmMLQ=",
 			"path": "github.com/konohiroaki/color-consensus/backend/server",
-			"revision": "cdbf3a38bcb2d9e10c8a8e5d4be99fc4deace125",
-			"revisionTime": "2019-03-09T22:39:38Z"
+			"revision": ""
 		},
 		{
 			"checksumSHA1": "q/hSyd1yaEPDHNQoA790H6F6lu8=",

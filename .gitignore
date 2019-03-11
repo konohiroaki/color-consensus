@@ -1,7 +1,7 @@
 main.exe
 
-backend/vendor/*
-!backend/vendor/vendor.json
+vendor/*
+!vendor/vendor.json
 
 frontend/node_modules/
 

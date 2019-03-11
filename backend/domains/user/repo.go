@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/globalsign/mgo"
 	"github.com/twinj/uuid"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
 )
@@ -41,11 +41,11 @@ func GetList() []User {
 	return userList
 }
 
-func Add(user User) string {
+func Add(user User) User {
 	user.ID = uuid.NewV4().String()
 	user.Date = time.Now()
 	_ = userCollection.Insert(&user)
-	return user.ID
+	return user
 }
 
 func InsertSampleData() {

@@ -28,7 +28,9 @@ class App extends Component {
 
         return (
             <div className="bg-dark text-light" style={{display: "flex", flexDirection: "column", height: "100%"}}>
-                <LoginModal ref={this.loginModalRef} setUserId={this.setUserId} userId={this.state.userId}/>
+                <LoginModal ref={this.loginModalRef}
+                            setUserId={(userId) => this.setState({userId: userId})}
+                            userId={this.state.userId}/>
                 <Header style={{flex: "0 0 80px"}} userId={this.state.userId} loginModalRef={loginModalRef}/>
                 <Body style={{flex: "1 1 auto"}} userId={this.state.userId} loginModalRef={loginModalRef}/>
             </div>

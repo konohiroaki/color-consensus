@@ -42,9 +42,9 @@ func (UserController) AddUserAndSetCookie(c *gin.Context) {
 	if err := c.BindJSON(&u); err != nil {
 		fmt.Println(err)
 	}
-	id := user.Add(u)
+	u = user.Add(u)
 	session := sessions.Default(c)
-	session.Set("userID", id)
+	session.Set("userID", u.ID)
 	if err := session.Save(); err != nil {
 		fmt.Println(err)
 	}

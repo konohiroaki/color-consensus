@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import {SelectableCandidateCell} from "./CandidateCell";
+import {SelectableColorCell} from "./ColorCell";
 import update from "immutability-helper";
 
-class CandidateList extends Component {
+class ColorBoard extends Component {
 
     constructor(props) {
         super(props);
@@ -15,6 +15,29 @@ class CandidateList extends Component {
         };
         this.selected = Array(this.boardSize).fill(Array(this.boardSize).fill(false));
         this.setCellState = this.setCellState.bind(this);
+    }
+
+    // TODO: place cells more nicely.
+    render() {
+        console.log("rendering color board for voting");
+        if (this.props.colors.length === 0) {
+            console.log("colors array was empty");
+            return null;
+        }
+
+        return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
+            {this.getCellList()}
+        </div>;
+    };
+
+    getCellList() {
+        const list = this.props.colors.map((v, k) => {
+            const i = Math.floor(k / this.props.candidateSize) + 1;
+            const j = k % this.props.candidateSize + 1;
+            return <SelectableColorCell key={k} color={this.props.colors[k]} border={this.state.border[i][j]}
+                                        setCellState={this.setCellState.bind(null, {i: i, j: j})}/>;
+        });
+        return list.split(this.props.candidateSize).map((v, k) => <div key={k}>{v}</div>);
     }
 
     setCellState({i, j}, selected) {
@@ -41,32 +64,16 @@ class CandidateList extends Component {
             this.forceUpdate();
         }
     }
-
-    // TODO: place cells more nicely.
-    render() {
-        console.log("rendering candidate list");
-        if (this.props.items.length === 0) {
-            console.log("candidate list is empty");
-            return null;
-        }
-        let list = [];
-        for (let i = 0; i < this.props.candidateSize; i++) {
-            let row = [];
-            for (let j = 0; j < this.props.candidateSize; j++) {
-                const key = i * this.props.candidateSize + j;
-                const ii = i + 1, jj = j + 1;
-                row.push(<SelectableCandidateCell key={key} color={this.props.items[key]}
-                                                  border={this.state.border[ii][jj]}
-                                                  setCellState={this.setCellState.bind(null, {i: ii, j: jj})}/>);
-            }
-            list.push(<div key={i}>{row}</div>);
-        }
-        return (
-            <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
-                {list}
-            </div>
-        );
-    }
 }
 
-export default CandidateList;
+Array.prototype.split = function (n) {
+    let array = this;
+    let result = [];
+
+    for (let i = 0; i < array.length; i += n) {
+        result.push(array.slice(i, i + n));
+    }
+    return result;
+};
+
+export default ColorBoard;

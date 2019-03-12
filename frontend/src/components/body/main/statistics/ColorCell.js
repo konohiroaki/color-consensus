@@ -23,23 +23,21 @@ class ColorCell extends Component {
     }
 
     render() {
-        console.log("rendering result cell");
-        return (
-            <div style={{
-                display: "inline-block", padding: "1px",
-                borderWidth: "1px", borderStyle: "solid",
-                borderTopColor: getBorderColor(this.props.border.top),
-                borderRightColor: getBorderColor(this.props.border.right),
-                borderBottomColor: getBorderColor(this.props.border.bottom),
-                borderLeftColor: getBorderColor(this.props.border.left),
-                userSelect: "none", userDrag: "none"
-            }}>
-                <div style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.color}}/>
-            </div>
-        );
+        console.log("rendering color cell for statistics");
+        return <div style={{
+            display: "inline-block", padding: "1px",
+            borderWidth: "1px", borderStyle: "solid",
+            borderTopColor: getBorderColor(this.props.border.top),
+            borderRightColor: getBorderColor(this.props.border.right),
+            borderBottomColor: getBorderColor(this.props.border.bottom),
+            borderLeftColor: getBorderColor(this.props.border.left),
+            userSelect: "none", userDrag: "none"
+        }}>
+            <div style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.color}}/>
+        </div>;
     }
 }
 
-const getBorderColor = (hasBorder) => hasBorder ? "#fff" : "transparent";
+const getBorderColor = hasBorder => hasBorder ? "#fff" : "transparent";
 
 export default ColorCell;

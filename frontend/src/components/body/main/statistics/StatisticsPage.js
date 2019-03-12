@@ -21,8 +21,8 @@ class StatisticsPage extends Component {
 
         return <div>
             <StatisticsHeader target={this.props.target} history={this.props.history}/>
-            <VotingPageButton history={this.props.history}/>
-            <ColorBoard target={this.props.target} items={this.candidates} candidateSize={this.candidateSize}/>
+            <StatisticsPageButtons history={this.props.history}/>
+            <ColorBoard target={this.props.target} colors={this.candidates} candidateSize={this.candidateSize}/>
         </div>;
     }
 
@@ -36,9 +36,10 @@ class StatisticsPage extends Component {
 
     updateCandidateList() {
         if (this.props.target !== this.state.target) {
-            const url = `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${this.props.target.code.substring(1)}?size=${Math.pow(this.candidateSize, 2)}`;
+            const colorCode = this.props.target.code.substring(1);
+            const size = Math.pow(this.candidateSize, 2);
+            const url = `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${colorCode}?size=${size}`;
             axios.get(url).then(({data}) => {
-                console.log("main content got candidate list from server");
                 this.candidates = data;
                 this.setState({target: this.props.target});
             });
@@ -46,7 +47,7 @@ class StatisticsPage extends Component {
     }
 }
 
-const VotingPageButton = (props) => (
+const StatisticsPageButtons = (props) => (
     <div className="row">
         <div className="ml-auto">
             <button className="btn btn-secondary m-3" onClick={() => props.history.push("/")}>

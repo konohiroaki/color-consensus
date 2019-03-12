@@ -21,10 +21,10 @@ class ColorBoard extends Component {
     }
 
     render() {
-        console.log("rendering result list page");
-        if (this.props.items.length === 0) {
-            console.log("candidate list is empty");
-            return <div/>;
+        console.log("rendering color board for statistics");
+        if (this.props.colors.length === 0) {
+            console.log("colors array was empty");
+            return null;
         }
 
         let list = [];
@@ -33,33 +33,31 @@ class ColorBoard extends Component {
             for (let j = 0; j < this.props.candidateSize; j++) {
                 const key = i * this.props.candidateSize + j;
                 const ii = i + 1, jj = j + 1;
-                row.push(<ColorCell key={key} color={this.props.items[key]}
+                row.push(<ColorCell key={key} color={this.props.colors[key]}
                                     border={this.state.border[ii][jj]}/>);
-                this.coordForColor = update(this.coordForColor, {[this.props.items[key]]: {$set: {ii: ii, jj: jj}}});
+                this.coordForColor = update(this.coordForColor, {[this.props.colors[key]]: {$set: {ii: ii, jj: jj}}});
             }
             list.push(<div key={i}>{row}</div>);
         }
-        return (
-            <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
-                {list}
-            </div>
-        );
+        return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
+            {list}
+        </div>;
     }
 
     componentDidMount() {
-        if (this.props.items.length !== 0 && !this.hasSetBorder) {
+        if (this.props.colors.length !== 0 && !this.hasSetBorder) {
             this.updateSelectedState();
         }
     }
 
     componentDidUpdate() {
-        if (this.props.items.length !== 0 && !this.hasSetBorder) {
+        if (this.props.colors.length !== 0 && !this.hasSetBorder) {
             this.updateSelectedState();
         }
     }
 
     // FIXME: fix ugly code.
-    // when item list comes, modify the this.state.border to show the statistics.
+    // when colors array comes, modify the this.state.border to show the statistics.
     updateSelectedState() {
         axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`)
             .then(({data}) => {

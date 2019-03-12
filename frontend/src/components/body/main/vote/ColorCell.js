@@ -1,10 +1,11 @@
 import React, {Component} from "react";
 import {createSelectable} from "react-selectable-fast";
 
-export class CandidateCell extends Component {
+class ColorCell extends Component {
 
     constructor(props) {
         super(props);
+        // TODO: have this data at MainContent? it's duplicated in statistics color cell.
         this.cellSize = "15px";
     }
 
@@ -29,25 +30,19 @@ export class CandidateCell extends Component {
     }
 
     render() {
-        console.log("rendering candidate cell");
-        return (
-            <div style={{
-                display: "inline-block", padding: "1px",
-                borderWidth: "1px", borderStyle: "solid",
-                borderTopColor: CandidateCell.getBorderColor(this.props.border.top),
-                borderRightColor: CandidateCell.getBorderColor(this.props.border.right),
-                borderBottomColor: CandidateCell.getBorderColor(this.props.border.bottom),
-                borderLeftColor: CandidateCell.getBorderColor(this.props.border.left),
-                userSelect: "none", userDrag: "none"
-            }}>
-                <div ref={this.props.selectableRef}
-                     style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.color}}/>
-            </div>
-        );
-    }
-
-    static getBorderColor(hasBorder) {
-        return hasBorder ? "#fff" : "transparent";
+        console.log("rendering color cell for voting");
+        return <div style={{
+            display: "inline-block", padding: "1px",
+            borderWidth: "1px", borderStyle: "solid",
+            borderTopColor: getBorderColor(this.props.border.top),
+            borderRightColor: getBorderColor(this.props.border.right),
+            borderBottomColor: getBorderColor(this.props.border.bottom),
+            borderLeftColor: getBorderColor(this.props.border.left),
+            userSelect: "none", userDrag: "none"
+        }}>
+            <div ref={this.props.selectableRef}
+                 style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.color}}/>
+        </div>;
     }
 
     componentDidUpdate() {
@@ -55,6 +50,8 @@ export class CandidateCell extends Component {
     }
 }
 
-const SelectableCandidateCell = createSelectable(CandidateCell);
+const getBorderColor = hasBorder => hasBorder ? "#fff" : "transparent";
 
-export {SelectableCandidateCell};
+const SelectableColorCell = createSelectable(ColorCell);
+
+export {SelectableColorCell};

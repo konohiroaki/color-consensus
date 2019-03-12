@@ -36,7 +36,7 @@ const GithubLink = () => (
 const HeaderRightPart = (props) => {
     return props.userId === undefined || props.userId === null
            ? <SignUpLoginModalButton loginModalRef={props.loginModalRef}/>
-           : <UserIdCopyButton userId={this.userId}/>;
+           : <UserIdCopyButton userId={props.userId}/>;
 };
 
 const SignUpLoginModalButton = (props) => (

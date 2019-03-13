@@ -33,23 +33,23 @@ const GithubLink = () => (
     </a>
 );
 
-const HeaderRightPart = (props) => {
-    return props.userId === undefined || props.userId === null
-           ? <SignUpLoginModalButton loginModalRef={props.loginModalRef}/>
-           : <UserIdCopyButton userId={props.userId}/>;
+const HeaderRightPart = ({userId, loginModalRef}) => {
+    return userId === undefined || userId === null
+           ? <SignUpLoginModalButton loginModalRef={loginModalRef}/>
+           : <UserIdCopyButton userId={userId}/>;
 };
 
-const SignUpLoginModalButton = (props) => (
-    <button className="btn btn-outline-light" onClick={() => props.loginModalRef.openLoginModal()}>
+const SignUpLoginModalButton = ({loginModalRef}) => (
+    <button className="btn btn-outline-light" onClick={() => loginModalRef.openLoginModal()}>
         Sign Up / Login
     </button>
 );
 
 // TODO: show a dialog(?) to notify a user that id is copied to their clipboard.
-const UserIdCopyButton = (props) => (
-    <CopyToClipboard text={props.userId}>
+const UserIdCopyButton = ({userId}) => (
+    <CopyToClipboard text={userId}>
         <button className="btn btn-outline-secondary">
-            ID: {props.userId}
+            ID: {userId}
         </button>
     </CopyToClipboard>
 );

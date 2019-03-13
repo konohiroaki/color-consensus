@@ -81,14 +81,14 @@ class VotingPage extends Component {
     }
 }
 
-const VotingHeader = (props) => (
+const VotingHeader = ({target}) => (
     <div className="card bg-dark border border-secondary">
         <div className="card-body">
             <div className="row ml-0 mr-0">
                 <div className="col-3 card bg-dark border border-secondary p-2 text-center">
                     <div className="row">
-                        <span className="col-4 border-right border-secondary p-3">{props.target.lang}</span>
-                        <span className="col-8 p-3">{props.target.name}</span>
+                        <span className="col-4 border-right border-secondary p-3">{target.lang}</span>
+                        <span className="col-8 p-3">{target.name}</span>
                     </div>
                 </div>
             </div>
@@ -96,14 +96,14 @@ const VotingHeader = (props) => (
     </div>
 );
 
-const VotingPageButtons = (props) => (
+const VotingPageButtons = ({history, handleSubmitClick}) => (
     <div className="row">
         <div className="ml-auto">
             <div>
-                <button className="btn btn-secondary m-3" onClick={() => props.history.push("/statistics")}>
+                <button className="btn btn-secondary m-3" onClick={() => history.push("/statistics")}>
                     Skip to statistics
                 </button>
-                <button className="btn btn-primary m-3" onClick={props.handleSubmitClick}>
+                <button className="btn btn-primary m-3" onClick={handleSubmitClick}>
                     Submit
                 </button>
             </div>

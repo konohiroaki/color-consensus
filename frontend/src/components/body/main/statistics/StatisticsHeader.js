@@ -14,11 +14,11 @@ class StatisticsHeader extends Component {
     }
 }
 
-const ColorCard = (props) => (
+const ColorCard = ({target}) => (
     <div className="col-3 card bg-dark border border-secondary p-2 text-center">
         <div className="row">
-            <span className="col-4 border-right border-secondary p-3">{props.target.lang}</span>
-            <span className="col-8 p-3">{props.target.name}</span>
+            <span className="col-4 border-right border-secondary p-3">{target.lang}</span>
+            <span className="col-8 p-3">{target.name}</span>
         </div>
     </div>
 );

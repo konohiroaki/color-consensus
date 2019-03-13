@@ -43,7 +43,7 @@ class SideContent extends Component {
     }
 }
 
-const SearchBar = (props) => (
+const SearchBar = props => (
     <div className="input-group" style={{borderRadius: "0px"}}>
         <LangFilterSelector langList={props.langList}
                             langFilter={props.langFilter} langFilterSetter={props.langFilterSetter}/>
@@ -51,19 +51,18 @@ const SearchBar = (props) => (
     </div>
 );
 
-const LangFilterSelector = (props) => {
-    const langList = getLangList(props.langList).map(lang =>
-        <option key={lang} value={lang}>{lang !== "" ? lang : "Language"}</option>);
+const LangFilterSelector = ({langList, langFilter, langFilterSetter}) => {
+    const langOptions = getLangList(langList)
+        .map(lang => <option key={lang} value={lang}>{lang !== "" ? lang : "Language"}</option>);
 
     return <div className="input-group-prepend">
-        <select className="custom-select" value={props.langFilter} style={{borderRadius: "0"}}
-                onChange={props.langFilterSetter}>
-            {langList}
+        <select className="custom-select" value={langFilter} style={{borderRadius: "0"}} onChange={langFilterSetter}>
+            {langOptions}
         </select>
     </div>;
 };
 
-const getLangList = (langList) => {
+const getLangList = langList => {
     return langList.reduce((acc, current) => {
         if (!acc.includes(current)) {
             acc.push(current);
@@ -72,8 +71,8 @@ const getLangList = (langList) => {
     }, [""]);
 };
 
-const NameFilterInput = (props) => (
-    <input type="text" className="form-control" value={props.nameFilter} onChange={props.nameFilterSetter}/>
+const NameFilterInput = ({nameFilter, nameFilterSetter}) => (
+    <input type="text" className="form-control" value={nameFilter} onChange={nameFilterSetter}/>
 );
 
 const Cards = (props) => (
@@ -91,18 +90,17 @@ const ColorCards = (props) => {
         // TODO: sort on server side.
         // ascending order for lang -> name
         .sort((a, b) => a.lang === b.lang ? a.name - b.name : a.lang - b.lang)
-        .map(color => <ColorCard key={color.lang + ":" + color.name} color={color}
-                                 style={{display: "block"}} setTarget={props.setTarget}/>);
+        .map(color => <ColorCard key={color.lang + ":" + color.name} color={color} setTarget={props.setTarget}/>);
 
     return <div>{colorCards}</div>;
 };
 
-const ColorCard =(props) => (
-    <a className="card btn bg-dark border border-secondary m-2" style={props.style}
-       onClick={() => props.setTarget(props.color)}>
+const ColorCard = ({color, setTarget}) => (
+    <a className="card btn bg-dark border border-secondary m-2" style={{display: "block"}}
+       onClick={() => setTarget(color)}>
         <div className="row">
-            <div className="col-3 border-right border-secondary p-3">{props.color.lang}</div>
-            <div className="col-9 p-3">{props.color.name}</div>
+            <div className="col-3 border-right border-secondary p-3">{color.lang}</div>
+            <div className="col-9 p-3">{color.name}</div>
         </div>
     </a>
 );

@@ -72,11 +72,11 @@ const ModalBody = ({props}) => (
     </div>
 );
 
-const ModalFooter = (props) => (
+const ModalFooter = ({handleClick}) => (
     <div className="modal-footer">
         <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
         {/* TODO: dismiss the modal only when submit is success */}
-        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={props.handleClick}>
+        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleClick}>
             Add Color
         </button>
     </div>

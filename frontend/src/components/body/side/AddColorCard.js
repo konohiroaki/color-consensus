@@ -16,68 +16,70 @@ class AddColorCard extends Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    handleClick() {
-        axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, this.state)
-            .then(() => {
-                this.props.updateColorList();
-            });
-        this.setState({lang: "", name: "", code: ""});
-    }
-
     render() {
         console.log("rendering add color card");
-        return (
-            <div>
-                <a className="card btn bg-dark border border-secondary m-2" data-toggle="modal" data-target="#color-add-modal">
-                    <div className="p-3">
-                        <FontAwesomeIcon icon={faPlus}/>
-                    </div>
-                </a>
-                <AddColorModal lang={this.state.lang}
-                               langSetter={e => this.setState({lang: e.target.value})}
-                               name={this.state.name}
-                               nameSetter={e => this.setState({name: e.target.value})}
-                               code={this.state.code}
-                               codeSetter={e => this.setState({code: e.target.value})}
-                               handleClick={this.handleClick}/>
-            </div>
-        );
+        return <div>
+            <Card/>
+            <AddColorModal lang={this.state.lang} langSetter={e => this.setState({lang: e.target.value})}
+                           name={this.state.name} nameSetter={e => this.setState({name: e.target.value})}
+                           code={this.state.code} codeSetter={e => this.setState({code: e.target.value})}
+                           handleClick={this.handleClick}/>
+        </div>;
+    }
+
+    handleClick() {
+        axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, this.state)
+            .then(() => this.props.updateColorList());
+        this.setState({lang: "", name: "", code: ""});
     }
 }
 
-class AddColorModal extends Component {
-    render() {
-        return (
-            <div className="modal fade" tabIndex="-1" id="color-add-modal">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content bg-dark">
-                        <div className="modal-header">
-                            <span className="modal-title">Add Color</span>
-                        </div>
-                        <div className="modal-body">
-                            {/* TODO: should be drop down */}
-                            Language:
-                            <input type="text" className="form-control" id="add-color-lang" placeholder="en"
-                                   value={this.props.lang} onChange={this.props.langSetter}/>
-                            Color Name:
-                            <input type="text" className="form-control" id="add-color-name" placeholder="red"
-                                   value={this.props.name} onChange={this.props.nameSetter}/>
-                            Base Color Code:
-                            <input type="text" className="form-control" placeholder="#ff0000"
-                                   value={this.props.code} onChange={this.props.codeSetter}/>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            {/* TODO: dismiss the modal only when submit is success */}
-                            <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={this.props.handleClick}>
-                                Add Color
-                            </button>
-                        </div>
-                    </div>
-                </div>
+const Card = () => (
+    <a className="card btn bg-dark border border-secondary m-2" data-toggle="modal" data-target="#color-add-modal">
+        <div className="p-3">
+            <FontAwesomeIcon icon={faPlus}/>
+        </div>
+    </a>
+);
+
+const AddColorModal = (props) => (
+    <div className="modal fade" tabIndex="-1" id="color-add-modal">
+        <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content bg-dark">
+                <ModalHeader/>
+                <ModalBody props={props}/>
+                <ModalFooter handleClick={props.handleClick}/>
             </div>
-        );
-    }
-}
+        </div>
+    </div>
+);
+
+const ModalHeader = () => (
+    <div className="modal-header">
+        <span className="modal-title">Add Color</span>
+    </div>
+);
+
+const ModalBody = ({props}) => (
+    <div className="modal-body">
+        {/* TODO: should be drop down */}
+        Language:
+        <input type="text" className="form-control" placeholder="en" value={props.lang} onChange={props.langSetter}/>
+        Color Name:
+        <input type="text" className="form-control" placeholder="red" value={props.name} onChange={props.nameSetter}/>
+        Base Color Code:
+        <input type="text" className="form-control" placeholder="#ff0000" value={props.code} onChange={props.codeSetter}/>
+    </div>
+);
+
+const ModalFooter = (props) => (
+    <div className="modal-footer">
+        <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        {/* TODO: dismiss the modal only when submit is success */}
+        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={props.handleClick}>
+            Add Color
+        </button>
+    </div>
+);
 
 export default AddColorCard;

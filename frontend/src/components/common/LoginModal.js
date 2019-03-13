@@ -19,7 +19,6 @@ class LoginModal extends Component {
 
         this.callback = () => {};
 
-        this.loginModal = this.loginModal.bind(this);
         this.handleSignUpClick = this.handleSignUpClick.bind(this);
         this.handleLoginClick = this.handleLoginClick.bind(this);
         this.runAndResetCallback = this.runAndResetCallback.bind(this);
@@ -31,10 +30,6 @@ class LoginModal extends Component {
     }
 
     render() {
-        return this.loginModal();
-    }
-
-    loginModal() {
         return (
             <div className="modal fade" tabIndex="-1" id="signup-login-modal">
                 <div className="modal-dialog modal-dialog-centered">
@@ -97,12 +92,8 @@ class LoginModal extends Component {
 
     componentDidMount() {
         axios.get(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
-            .then(({data}) => {
-                this.props.setUserId(data.userID);
-            })
-            .catch(() => {
-                this.props.setUserId(null);
-            });
+            .then(({data}) => this.props.setUserId(data.userID))
+            .catch(() => this.props.setUserId(null));
     }
 
     handleSignUpClick() {

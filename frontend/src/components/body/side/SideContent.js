@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import axios from "axios";
-import ColorCard from "./ColorCard";
 import AddColorCard from "./AddColorCard";
 
 class SideContent extends Component {
@@ -23,93 +22,89 @@ class SideContent extends Component {
         });
     }
 
+    render() {
+        console.log("rendering side content");
+
+        return <div className={this.props.className} style={this.props.style}>
+            <SearchBar langList={this.state.colorList.map(color => color.lang)}
+                       langFilter={this.state.langFilter} langFilterSetter={e => this.setState({langFilter: e.target.value})}
+                       nameFilter={this.state.nameFilter} nameFilterSetter={e => this.setState({nameFilter: e.target.value})}/>
+            <Cards colorList={this.state.colorList} setTarget={this.props.setTarget}
+                   langFilter={this.state.langFilter} nameFilter={this.state.nameFilter}
+                   updateColorList={this.updateColorList}/>
+        </div>;
+    }
+
     updateColorList() {
         return axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/keys`).then(({data}) => {
             console.log("side content got color list from server: ", data);
             this.setState({colorList: data});
         });
     }
-
-    render() {
-        console.log("rendering side content");
-
-        return (
-            <div className={this.props.className} style={this.props.style}>
-                <SearchBar langList={this.state.colorList.map(color => color.lang)}
-                           langFilter={this.state.langFilter}
-                           langFilterSetter={e => this.setState({langFilter: e.target.value})}
-                           nameFilter={this.state.nameFilter}
-                           nameFilterSetter={e => this.setState({nameFilter: e.target.value})}/>
-                <div style={{overflowY: "auto", height: "100%"}}>
-                    <ColorCards colorList={this.state.colorList}
-                                langFilter={this.state.langFilter}
-                                nameFilter={this.state.nameFilter}
-                                setTarget={this.props.setTarget}/>
-                    <AddColorCard updateColorList={this.updateColorList}/>
-                </div>
-            </div>
-        );
-    }
 }
 
-class SearchBar extends Component {
+const SearchBar = (props) => (
+    <div className="input-group" style={{borderRadius: "0px"}}>
+        <LangFilterSelector langList={props.langList}
+                            langFilter={props.langFilter} langFilterSetter={props.langFilterSetter}/>
+        <NameFilterInput nameFilter={props.nameFilter} nameFilterSetter={props.nameFilterSetter}/>
+    </div>
+);
 
-    getLangList() {
-        return this.props.langList.reduce((acc, current) => {
-            if (!acc.includes(current)) {
-                acc.push(current);
-            }
-            return acc;
-        }, [""]);
-    }
+const LangFilterSelector = (props) => {
+    const langList = getLangList(props.langList).map(lang =>
+        <option key={lang} value={lang}>{lang !== "" ? lang : "Language"}</option>);
 
-    render() {
-        const langList = this.getLangList().map(lang => (
-            <option key={lang} value={lang}>{lang !== "" ? lang : "Language"}</option>
-        ));
+    return <div className="input-group-prepend">
+        <select className="custom-select" value={props.langFilter} style={{borderRadius: "0"}}
+                onChange={props.langFilterSetter}>
+            {langList}
+        </select>
+    </div>;
+};
 
-        return (
-            <div className="input-group" style={{borderRadius: "0px"}}>
-                <div className="input-group-prepend">
-                    <select className="custom-select" value={this.props.langFilter} style={{borderRadius: "0"}}
-                            onChange={this.props.langFilterSetter}>
-                        {langList}
-                    </select>
-                </div>
-                <input type="text" className="form-control" value={this.props.nameFilter}
-                       onChange={this.props.nameFilterSetter}/>
-            </div>
-        );
-    }
-}
-
-class ColorCards extends Component {
-
-    render() {
-        const colorCards = this.props.colorList
-            .filter(color => this.props.nameFilter === "" || color.name.includes(this.props.nameFilter.toLowerCase()))
-            .filter(color => this.props.langFilter === "" || color.lang === this.props.langFilter)
-            // TODO: sort on server side.
-            .sort((a, b) => ColorCards.colorComparator(a, b))
-            .map(color => (
-                <ColorCard key={color.lang + ":" + color.name} color={color}
-                           style={{display: "block"}} setTarget={this.props.setTarget}/>
-            ));
-
-        return (
-            <div>
-                {colorCards}
-            </div>
-        );
-    }
-
-    // ascending order for lang -> name
-    static colorComparator(a, b) {
-        if (a.lang === b.lang) {
-            return a.name - b.name;
+const getLangList = (langList) => {
+    return langList.reduce((acc, current) => {
+        if (!acc.includes(current)) {
+            acc.push(current);
         }
-        return a.lang - b.lang;
-    }
-}
+        return acc;
+    }, [""]);
+};
+
+const NameFilterInput = (props) => (
+    <input type="text" className="form-control" value={props.nameFilter} onChange={props.nameFilterSetter}/>
+);
+
+const Cards = (props) => (
+    <div style={{overflowY: "auto", height: "100%"}}>
+        <ColorCards colorList={props.colorList} setTarget={props.setTarget}
+                    langFilter={props.langFilter} nameFilter={props.nameFilter}/>
+        <AddColorCard updateColorList={props.updateColorList}/>
+    </div>
+);
+
+const ColorCards = (props) => {
+    const colorCards = props.colorList
+        .filter(color => props.nameFilter === "" || color.name.includes(props.nameFilter.toLowerCase()))
+        .filter(color => props.langFilter === "" || color.lang === props.langFilter)
+        // TODO: sort on server side.
+        // ascending order for lang -> name
+        .sort((a, b) => a.lang === b.lang ? a.name - b.name : a.lang - b.lang)
+        .map(color => <ColorCard key={color.lang + ":" + color.name} color={color}
+                                 style={{display: "block"}} setTarget={props.setTarget}/>);
+
+    return <div>{colorCards}</div>;
+};
+
+const ColorCard =(props) => (
+    <a className="card btn bg-dark border border-secondary m-2" style={props.style}
+       onClick={() => props.setTarget(props.color)}>
+        <div className="row">
+            <div className="col-3 border-right border-secondary p-3">{props.color.lang}</div>
+            <div className="col-9 p-3">{props.color.name}</div>
+        </div>
+    </a>
+);
 
 export default SideContent;

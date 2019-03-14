@@ -50,7 +50,8 @@ func (ConsensusController) AddColor(c *gin.Context) {
 }
 
 // TODO: I think the sort order shouldn't be measured only by diff scale but should also consider about the ratio between each RGB.
-// It shows very bad result for gray.
+// For example of #808080, #707070 is farther than #806080, which would be opposite from how human feels.
+// So currently it shows very bad result for gray-ish colors.
 func generateCandidateList(code string, size int) []string {
 	r := fromHex(code[0:2])
 	g := fromHex(code[2:4])
@@ -63,10 +64,13 @@ func generateCandidateList(code string, size int) []string {
 	for i := 0; i < 256; i += 16 {
 		for j := 0; j < 256; j += 16 {
 			for k := 0; k < 256; k += 16 {
-				list = append(list, Candidate{
-					"#" + toHex(i) + toHex(j) + toHex(k),
-					abs(r-i) + abs(g-j) + abs(b-k),
-				})
+				diff := abs(r-i) + abs(g-j) + abs(b-k)
+				if diff != 0 {
+					list = append(list, Candidate{
+						"#" + toHex(i) + toHex(j) + toHex(k),
+						abs(r-i) + abs(g-j) + abs(b-k),
+					})
+				}
 			}
 		}
 	}

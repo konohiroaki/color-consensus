@@ -15,7 +15,7 @@ class ColorBoard extends Component {
             ))
         };
         this.coordForColor = {};
-        this.hasSetBorder = false;
+        this.target = {};
 
         this.updateSelectedState = this.updateSelectedState.bind(this);
     }
@@ -39,6 +39,20 @@ class ColorBoard extends Component {
         </div>;
     }
 
+    componentDidMount() {
+        if (this.props.colors.length !== 0
+            && (this.target.lang !== this.props.target.lang || this.target.name !== this.props.target.name)) {
+            this.updateSelectedState();
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.colors.length !== 0
+            && (this.target.lang !== this.props.target.lang || this.target.name !== this.props.target.name)) {
+            this.updateSelectedState();
+        }
+    }
+
     getCellList() {
         return this.props.colors.map((v, k) => {
             const ii = Math.floor(k / this.props.candidateSize) + 1;
@@ -55,34 +69,27 @@ class ColorBoard extends Component {
         }, {});
     }
 
-    componentDidMount() {
-        if (this.props.colors.length !== 0 && !this.hasSetBorder) {
-            this.updateSelectedState();
-        }
-    }
-
-    componentDidUpdate() {
-        if (this.props.colors.length !== 0 && !this.hasSetBorder) {
-            this.updateSelectedState();
-        }
-    }
-
     // FIXME: fix ugly code.
     // when colors array comes, modify the this.state.border to show the statistics.
     updateSelectedState() {
-        axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`)
-            .then(({data}) => {
-                console.log(data.colors);
-                let border = this.state.border;
-                for (let color in data.colors) {
-                    const coord = this.coordForColor[color];
-                    border = update(border, {[coord.ii]: {[coord.jj]: {$set: {top: true, right: true, bottom: true, left: true}}}});
+        const url = `${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`;
+        axios.get(url).then(({data}) => {
+            this.target = this.props.target;
+            console.log(data.colors);
+            let border = this.state.border;
+            for (let ii = 1; ii < border.length - 1; ii++) {
+                for (let jj = 1; jj < border[0].length - 1; jj++) {
+                    border = update(border, {[ii]: {[jj]: {$set: {top: false, right: false, bottom: false, left: false}}}});
                 }
-                this.hasSetBorder = true;
-                // FIXME: set proper border.
-                // TODO: instead of setting #fff or transparent, categorize the colors to several percentiles and border with several colors for each category.
-                this.setState({border: border});
-            });
+            }
+            for (let color in data.colors) {
+                const coord = this.coordForColor[color];
+                border = update(border, {[coord.ii]: {[coord.jj]: {$set: {top: true, right: true, bottom: true, left: true}}}});
+            }
+            // FIXME: set proper border.
+            // TODO: instead of setting #fff or transparent, categorize the colors to several percentiles and border with several colors for each category.
+            this.setState({border: border});
+        });
     }
 }
 

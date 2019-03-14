@@ -26,18 +26,21 @@ class ColorBoard extends Component {
         }
 
         return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
-            {this.getCellList()}
+            {
+                this.getCellList()
+                    .split(this.props.candidateSize)
+                    .map((v, k) => <div key={k}>{v}</div>)
+            }
         </div>;
     };
 
     getCellList() {
-        const list = this.props.colors.map((v, k) => {
+        return this.props.colors.map((v, k) => {
             const i = Math.floor(k / this.props.candidateSize) + 1;
             const j = k % this.props.candidateSize + 1;
             return <SelectableColorCell key={k} color={this.props.colors[k]} border={this.state.border[i][j]}
                                         setCellState={this.setCellState.bind(null, {i: i, j: j})}/>;
         });
-        return list.split(this.props.candidateSize).map((v, k) => <div key={k}>{v}</div>);
     }
 
     setCellState({i, j}, selected) {

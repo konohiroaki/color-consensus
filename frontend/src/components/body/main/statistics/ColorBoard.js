@@ -27,21 +27,32 @@ class ColorBoard extends Component {
             return null;
         }
 
-        let list = [];
-        for (let i = 0; i < this.props.candidateSize; i++) {
-            let row = [];
-            for (let j = 0; j < this.props.candidateSize; j++) {
-                const key = i * this.props.candidateSize + j;
-                const ii = i + 1, jj = j + 1;
-                row.push(<ColorCell key={key} color={this.props.colors[key]}
-                                    border={this.state.border[ii][jj]}/>);
-                this.coordForColor = update(this.coordForColor, {[this.props.colors[key]]: {$set: {ii: ii, jj: jj}}});
-            }
-            list.push(<div key={i}>{row}</div>);
-        }
+        const list = this.getCellList();
+        this.setCoordForColor(list);
+
         return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
-            {list}
+            {
+                list
+                    .split(this.props.candidateSize)
+                    .map((v, k) => <div key={k}>{v}</div>)
+            }
         </div>;
+    }
+
+    getCellList() {
+        return this.props.colors.map((v, k) => {
+            const ii = Math.floor(k / this.props.candidateSize) + 1;
+            const jj = k % this.props.candidateSize + 1;
+            return <ColorCell key={k} color={this.props.colors[k]} coord={{ii: ii, jj: jj}}
+                              border={this.state.border[ii][jj]}/>;
+        });
+    }
+
+    setCoordForColor(list) {
+        this.coordForColor = list.reduce((acc, v) => {
+            acc[v.props.color] = {ii: v.props.coord.ii, jj: v.props.coord.jj};
+            return acc;
+        }, {});
     }
 
     componentDidMount() {

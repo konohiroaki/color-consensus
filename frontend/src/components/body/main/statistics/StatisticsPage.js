@@ -22,7 +22,7 @@ class StatisticsPage extends Component {
         return <div>
             <StatisticsHeader target={this.props.target} history={this.props.history}/>
             <StatisticsPageButtons history={this.props.history}/>
-            <ColorBoard target={this.props.target} colors={this.candidates} candidateSize={this.candidateSize}/>
+            <ColorBoard target={this.state.target} colors={this.candidates} candidateSize={this.candidateSize}/>
         </div>;
     }
 

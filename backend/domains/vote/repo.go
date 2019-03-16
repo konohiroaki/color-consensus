@@ -48,8 +48,17 @@ func FindList(lang, name string) []ColorVote {
 func Add(vote ColorVote) bool {
 	vote.Date = time.Now()
 	_ = voteCollection.Insert(&vote)
-	consensus.Update(vote.Language, vote.ColorName, vote.Colors)
+	consensus.Update(vote.Language, vote.ColorName, vote.Colors, []string{})
 	return true
+}
+
+func RemoveForUser(userID string) {
+	var votes []ColorVote
+	_ = voteCollection.Find(bson.M{"user": userID}).All(&votes)
+	for _, vote := range votes {
+		consensus.Update(vote.Language, vote.ColorName, []string{}, vote.Colors)
+	}
+	_, _ = voteCollection.RemoveAll(bson.M{"user": userID})
 }
 
 func InsertSampleData() {

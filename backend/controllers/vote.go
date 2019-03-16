@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/konohiroaki/color-consensus/backend/domains/user"
 	"github.com/konohiroaki/color-consensus/backend/domains/vote"
 )
 
@@ -30,4 +31,11 @@ func (VoteController) GetVotes(c *gin.Context) {
 	color := c.Param("color")
 	list := vote.FindList(lang, color)
 	c.JSON(200, list)
+}
+
+func (VoteController) DeleteVotesForUser(c *gin.Context) {
+	var user user.User
+	_ = c.BindJSON(&user)
+	vote.RemoveForUser(user.ID)
+	c.Status(200)
 }

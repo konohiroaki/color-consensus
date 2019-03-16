@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import {DeselectAll, SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import ColorBoard from "./ColorBoard";
-import update from "immutability-helper";
 
 class VotingPage extends Component {
 

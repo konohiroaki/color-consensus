@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import {SelectableColorCell} from "./ColorCell";
-import update from "immutability-helper";
 
 class ColorBoard extends Component {
 
@@ -9,11 +8,11 @@ class ColorBoard extends Component {
         // +2 to avoid array out of bound error.
         this.boardSize = this.props.candidateSize + 2;
         this.state = {
-            border: Array(this.boardSize).fill(Array(this.boardSize).fill(
-                {top: false, right: false, bottom: false, left: false}
-            ))
+            border: Array(this.boardSize).fill(0)
+                .map(() => Array(this.boardSize).fill({top: false, right: false, bottom: false, left: false}))
         };
-        this.selected = Array(this.boardSize).fill(Array(this.boardSize).fill(false));
+        this.selected = Array(this.boardSize).fill(0)
+            .map(() => Array(this.boardSize).fill(false));
         this.setCellState = this.setCellState.bind(this);
     }
 
@@ -45,25 +44,21 @@ class ColorBoard extends Component {
 
     setCellState({i, j}, selected) {
         if (this.selected[i][j] !== selected) {
-            const border = update(this.state.border, {
-                [i]: {
-                    // [i][j-1] (left cell)'s right border is active when left cell is selected and current cell is NOT selected.
-                    [j - 1]: {right: {$set: this.selected[i][j - 1] && !selected}},
-                    [j]: {
-                        top: {$set: selected && !this.selected[i - 1][j]},
-                        right: {$set: selected && !this.selected[i][j + 1]},
-                        bottom: {$set: selected && !this.selected[i + 1][j]},
-                        left: {$set: selected && !this.selected[i][j - 1]}
-                    },
-                    [j + 1]: {left: {$set: this.selected[i][j + 1] && !selected}}
-                },
-                [i - 1]: {[j]: {bottom: {$set: this.selected[i - 1][j] && !selected}}},
-                [i + 1]: {[j]: {top: {$set: this.selected[i + 1][j] && !selected}}}
-            });
-            this.selected = update(this.selected, {[i]: {[j]: {$set: selected}}});
+            // deep copy
+            let b = JSON.parse(JSON.stringify(this.state.border));
+            b[i][j].top = selected && !this.selected[i - 1][j];
+            b[i][j].right = selected && !this.selected[i][j + 1];
+            b[i][j].bottom = selected && !this.selected[i + 1][j];
+            b[i][j].left = selected && !this.selected[i][j - 1];
+            b[i - 1][j].bottom = this.selected[i - 1][j] && !selected;
+            b[i][j + 1].left = this.selected[i][j + 1] && !selected;
+            b[i + 1][j].top = this.selected[i + 1][j] && !selected;
+            b[i][j - 1].right = this.selected[i][j - 1] && !selected;
+
+            this.selected[i][j] = selected;
 
             // TODO: alternative way for this anti pattern. (but this works fine..)
-            this.state.border = border;
+            this.state.border = b;
             this.forceUpdate();
         }
     }

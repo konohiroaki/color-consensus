@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import ColorCell from "./ColorCell";
 import axios from "axios";
-import update from "immutability-helper";
 
 class ColorBoard extends Component {
 
@@ -10,11 +9,11 @@ class ColorBoard extends Component {
         // +2 to avoid array out of bound error.
         this.boardSize = this.props.candidateSize + 2;
         this.state = {
-            border: Array(this.boardSize).fill(Array(this.boardSize).fill(
-                {top: 0, right: 0, bottom: 0, left: 0}
-            ))
+            border: Array(this.boardSize).fill(0)
+                .map(() => Array(this.boardSize).fill({top: 0, right: 0, bottom: 0, left: 0}))
         };
-        this.ratio = Array(this.boardSize).fill(Array(this.boardSize).fill(0));
+        this.ratio = Array(this.boardSize).fill(0)
+            .map(() => Array(this.boardSize).fill(0));
         this.coordForColor = {};
         this.target = {};
 
@@ -82,24 +81,25 @@ class ColorBoard extends Component {
     }
 
     setRatio(vote, colors) {
+        this.ratio = Array(this.boardSize).fill(0)
+            .map(() => Array(this.boardSize).fill(0));
         for (let color in colors) {
             const coord = this.coordForColor[color];
-            this.ratio = update(this.ratio, {[coord.ii]: {[coord.jj]: {$set: getCategory(colors[color] / vote)}}});
+            this.ratio[coord.ii][coord.jj] = getCategory(colors[color] / vote);
         }
-        console.log(vote, this.ratio);
     }
 
     updateBorderState() {
-        let border = this.state.border;
+        let border = JSON.parse(JSON.stringify(this.state.border));
         const ratio = this.ratio;
-        for (let ii = 1; ii < this.state.border.length - 1; ii++) {
-            for (let jj = 1; jj < this.state.border.length - 1; jj++) {
-                let top, right, bottom, left;
-                top = ratio[ii - 1][jj] === ratio[ii][jj] ? 0 : ratio[ii][jj];
-                right = ratio[ii][jj + 1] === ratio[ii][jj] ? 0 : ratio[ii][jj];
-                bottom = ratio[ii + 1][jj] === ratio[ii][jj] ? 0 : ratio[ii][jj];
-                left = ratio[ii][jj - 1] === ratio[ii][jj] ? 0 : ratio[ii][jj];
-                border = update(border, {[ii]: {[jj]: {$set: {top: top, right: right, bottom: bottom, left: left}}}});
+        for (let ii = 1; ii < border.length - 1; ii++) {
+            for (let jj = 1; jj < border.length - 1; jj++) {
+                border[ii][jj] = {
+                    top: ratio[ii - 1][jj] === ratio[ii][jj] ? 0 : ratio[ii][jj],
+                    right: ratio[ii][jj + 1] === ratio[ii][jj] ? 0 : ratio[ii][jj],
+                    bottom: ratio[ii + 1][jj] === ratio[ii][jj] ? 0 : ratio[ii][jj],
+                    left: ratio[ii][jj - 1] === ratio[ii][jj] ? 0 : ratio[ii][jj]
+                };
             }
         }
         this.setState({border: border});
@@ -107,9 +107,9 @@ class ColorBoard extends Component {
 }
 
 const getCategory = ratio => {
-    if (ratio < 0.2) {
+    if (ratio < 0.25) {
         return 0;
-    } else if (ratio < 0.7) {
+    } else if (ratio < 0.75) {
         return 1;
     }
     return 2;

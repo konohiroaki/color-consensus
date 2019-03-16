@@ -1,6 +1,7 @@
 package vote
 
 import (
+	"fmt"
 	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -42,13 +43,19 @@ func FindList(lang, name string) []ColorVote {
 	return voteList
 }
 
-// TODO: check consensus document existence before update
-// TODO: do transaction management with mgo/txn
-// TODO: if there's already same lang,name,user document, overwrite it.
+// TODO: do transaction management with mgo/txn?
 func Add(vote ColorVote) bool {
+	var existingVote ColorVote
+	if err := voteCollection.Find(bson.M{"lang": vote.Language, "name": vote.ColorName, "user": vote.User}).
+		Select(bson.M{"colors": 1}).One(&existingVote); err != nil {
+		fmt.Println(err)
+	} else {
+		_ = voteCollection.Remove(bson.M{"lang": vote.Language, "name": vote.ColorName, "user": vote.User})
+		fmt.Println(existingVote)
+	}
 	vote.Date = time.Now()
 	_ = voteCollection.Insert(&vote)
-	consensus.Update(vote.Language, vote.ColorName, vote.Colors, []string{})
+	consensus.Update(vote.Language, vote.ColorName, vote.Colors, existingVote.Colors)
 	return true
 }
 

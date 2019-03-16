@@ -11,13 +11,15 @@ class ColorBoard extends Component {
         this.boardSize = this.props.candidateSize + 2;
         this.state = {
             border: Array(this.boardSize).fill(Array(this.boardSize).fill(
-                {top: false, right: false, bottom: false, left: false}
+                {top: 0, right: 0, bottom: 0, left: 0}
             ))
         };
+        this.ratio = Array(this.boardSize).fill(Array(this.boardSize).fill(0));
         this.coordForColor = {};
         this.target = {};
 
         this.updateSelectedState = this.updateSelectedState.bind(this);
+        this.updateBorderState = this.updateBorderState.bind(this);
     }
 
     render() {
@@ -62,6 +64,7 @@ class ColorBoard extends Component {
         });
     }
 
+    // result will look like {#ff0000: {ii: 1, jj: 1}, #f00000: {ii: 1, jj: 2}, ...}
     setCoordForColor(list) {
         this.coordForColor = list.reduce((acc, v) => {
             acc[v.props.color] = {ii: v.props.coord.ii, jj: v.props.coord.jj};
@@ -69,28 +72,47 @@ class ColorBoard extends Component {
         }, {});
     }
 
-    // FIXME: fix ugly code.
-    // when colors array comes, modify the this.state.border to show the statistics.
     updateSelectedState() {
         const url = `${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`;
         axios.get(url).then(({data}) => {
             this.target = this.props.target;
-            console.log(data.colors);
-            let border = this.state.border;
-            for (let ii = 1; ii < border.length - 1; ii++) {
-                for (let jj = 1; jj < border[0].length - 1; jj++) {
-                    border = update(border, {[ii]: {[jj]: {$set: {top: false, right: false, bottom: false, left: false}}}});
-                }
-            }
-            for (let color in data.colors) {
-                const coord = this.coordForColor[color];
-                border = update(border, {[coord.ii]: {[coord.jj]: {$set: {top: true, right: true, bottom: true, left: true}}}});
-            }
-            // FIXME: set proper border.
-            // TODO: instead of setting #fff or transparent, categorize the colors to several percentiles and border with several colors for each category.
-            this.setState({border: border});
+            this.setRatio(data.vote, data.colors);
+            this.updateBorderState();
         });
     }
+
+    setRatio(vote, colors) {
+        for (let color in colors) {
+            const coord = this.coordForColor[color];
+            this.ratio = update(this.ratio, {[coord.ii]: {[coord.jj]: {$set: getCategory(colors[color] / vote)}}});
+        }
+        console.log(vote, this.ratio);
+    }
+
+    updateBorderState() {
+        let border = this.state.border;
+        const ratio = this.ratio;
+        for (let ii = 1; ii < this.state.border.length - 1; ii++) {
+            for (let jj = 1; jj < this.state.border.length - 1; jj++) {
+                let top, right, bottom, left;
+                top = ratio[ii - 1][jj] === ratio[ii][jj] ? 0 : ratio[ii][jj];
+                right = ratio[ii][jj + 1] === ratio[ii][jj] ? 0 : ratio[ii][jj];
+                bottom = ratio[ii + 1][jj] === ratio[ii][jj] ? 0 : ratio[ii][jj];
+                left = ratio[ii][jj - 1] === ratio[ii][jj] ? 0 : ratio[ii][jj];
+                border = update(border, {[ii]: {[jj]: {$set: {top: top, right: right, bottom: bottom, left: left}}}});
+            }
+        }
+        this.setState({border: border});
+    }
 }
+
+const getCategory = ratio => {
+    if (ratio < 0.2) {
+        return 0;
+    } else if (ratio < 0.7) {
+        return 1;
+    }
+    return 2;
+};
 
 export default ColorBoard;

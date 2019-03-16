@@ -36,6 +36,7 @@ func NewRouter() *gin.Engine {
 			vote := new(controllers.VoteController)
 			v1api.POST("/votes", vote.Vote)
 			v1api.GET("/votes/:lang/:color/raw", vote.GetVotes)
+			v1api.DELETE("/votes", vote.DeleteVotesForUser)
 
 			userController := new(controllers.UserController)
 			v1api.GET("/users/presence", userController.GetUserIDFromCookie)

@@ -12,7 +12,6 @@ import (
 type ConsensusController struct{}
 
 func (ConsensusController) GetAllConsensusKey(c *gin.Context) {
-	fmt.Println(consensus.GetKeys())
 	c.JSON(200, consensus.GetKeys())
 }
 

@@ -56,12 +56,14 @@ func Add(consensus ColorConsensus) {
 }
 
 // TODO: should receive removed vote as well when vote is overwriting another vote.
-func Update(lang, name string, add []string) {
-	colorMap := map[string]int{}
-	for i := 0; i < len(add); i++ {
-		colorMap["colors."+add[i]] = 1
+func Update(lang, name string, colors []string) {
+	incrementMap := map[string]int{}
+	for i := 0; i < len(colors); i++ {
+		incrementMap["colors."+colors[i]] = 1
 	}
-	_, _ = consensusCollection.Upsert(bson.M{"lang": lang, "name": name}, bson.M{"$inc": colorMap})
+	incrementMap["vote"] = 1
+
+	_, _ = consensusCollection.Upsert(bson.M{"lang": lang, "name": name}, bson.M{"$inc": incrementMap})
 }
 
 func InsertSampleData() {

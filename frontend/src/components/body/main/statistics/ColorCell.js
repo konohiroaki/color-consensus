@@ -38,6 +38,14 @@ class ColorCell extends Component {
     }
 }
 
-const getBorderColor = hasBorder => hasBorder ? "#fff" : "transparent";
+const getBorderColor = category => {
+    if (category === 0) {
+        return "transparent";
+    } else if (category === 1) {
+        return "#aaa";
+    } else {
+        return "#fff";
+    }
+};
 
 export default ColorCell;

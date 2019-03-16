@@ -1,7 +1,6 @@
 package vote
 
 import (
-	"fmt"
 	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -48,10 +47,8 @@ func Add(vote ColorVote) bool {
 	var existingVote ColorVote
 	if err := voteCollection.Find(bson.M{"lang": vote.Language, "name": vote.ColorName, "user": vote.User}).
 		Select(bson.M{"colors": 1}).One(&existingVote); err != nil {
-		fmt.Println(err)
 	} else {
 		_ = voteCollection.Remove(bson.M{"lang": vote.Language, "name": vote.ColorName, "user": vote.User})
-		fmt.Println(existingVote)
 	}
 	vote.Date = time.Now()
 	_ = voteCollection.Insert(&vote)

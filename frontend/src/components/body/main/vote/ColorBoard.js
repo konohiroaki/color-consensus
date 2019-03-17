@@ -6,13 +6,13 @@ class ColorBoard extends Component {
     constructor(props) {
         super(props);
         // +2 to avoid array out of bound error.
-        this.boardSize = this.props.candidateSize + 2;
+        const boardSize = this.props.candidateSize + 2;
         this.state = {
-            border: Array(this.boardSize).fill(0)
-                .map(() => Array(this.boardSize).fill({top: false, right: false, bottom: false, left: false}))
+            border: Array(boardSize).fill(0)
+                .map(() => Array(boardSize).fill({top: false, right: false, bottom: false, left: false}))
         };
-        this.selected = Array(this.boardSize).fill(0)
-            .map(() => Array(this.boardSize).fill(false));
+        this.selected = Array(boardSize).fill(0)
+            .map(() => Array(boardSize).fill(false));
         this.setCellState = this.setCellState.bind(this);
     }
 

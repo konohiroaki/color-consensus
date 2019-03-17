@@ -7,13 +7,13 @@ class ColorBoard extends Component {
     constructor(props) {
         super(props);
         // +2 to avoid array out of bound error.
-        this.boardSize = this.props.candidateSize + 2;
+        const boardSize = this.props.candidateSize + 2;
         this.state = {
-            border: Array(this.boardSize).fill(0)
-                .map(() => Array(this.boardSize).fill({top: 0, right: 0, bottom: 0, left: 0}))
+            border: Array(boardSize).fill(0)
+                .map(() => Array(boardSize).fill({top: 0, right: 0, bottom: 0, left: 0}))
         };
-        this.ratio = Array(this.boardSize).fill(0)
-            .map(() => Array(this.boardSize).fill(0));
+        this.ratio = Array(boardSize).fill(0)
+            .map(() => Array(boardSize).fill(0));
         this.coordForColor = {};
         this.target = {};
 
@@ -81,8 +81,7 @@ class ColorBoard extends Component {
     }
 
     setRatio(vote, colors) {
-        this.ratio = Array(this.boardSize).fill(0)
-            .map(() => Array(this.boardSize).fill(0));
+        this.ratio = this.ratio.map((e) => e.map(() => 0));
         for (let color in colors) {
             const coord = this.coordForColor[color];
             this.ratio[coord.ii][coord.jj] = getCategory(colors[color] / vote);
@@ -107,12 +106,14 @@ class ColorBoard extends Component {
 }
 
 const getCategory = ratio => {
-    if (ratio < 0.25) {
+    if (ratio <= 0.10) {
         return 0;
-    } else if (ratio < 0.75) {
+    } else if (ratio <= 0.50) {
         return 1;
+    } else if (ratio <= 0.75) {
+        return 2;
     }
-    return 2;
+    return 3;
 };
 
 export default ColorBoard;

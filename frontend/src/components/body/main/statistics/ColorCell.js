@@ -42,7 +42,9 @@ const getBorderColor = category => {
     if (category === 0) {
         return "transparent";
     } else if (category === 1) {
-        return "#aaa";
+        return "#999";
+    } else if (category === 2) {
+        return "#ccc";
     } else {
         return "#fff";
     }

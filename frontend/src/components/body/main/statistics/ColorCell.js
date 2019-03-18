@@ -23,7 +23,7 @@ class ColorCell extends Component {
     }
 
     render() {
-        console.log("rendering color cell for statistics");
+        console.log("rendering statistics color cell");
         return <div style={{
             display: "inline-block", padding: "1px",
             borderWidth: "1px", borderStyle: "solid",

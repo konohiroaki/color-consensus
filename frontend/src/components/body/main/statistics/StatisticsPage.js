@@ -7,7 +7,9 @@ class StatisticsPage extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            voteCount: 0
+        };
 
         this.candidateSize = 31;
         this.candidates = [];
@@ -20,9 +22,10 @@ class StatisticsPage extends Component {
         }
 
         return <div>
-            <StatisticsHeader target={this.props.target} history={this.props.history}/>
+            <StatisticsHeader target={this.props.target} voteCount={this.state.voteCount} history={this.props.history}/>
             <StatisticsPageButtons history={this.props.history}/>
-            <ColorBoard target={this.state.target} colors={this.candidates} candidateSize={this.candidateSize}/>
+            <ColorBoard target={this.state.target} colors={this.candidates} candidateSize={this.candidateSize}
+                        setVoteCount={(count) => this.setState({voteCount: count})}/>
         </div>;
     }
 

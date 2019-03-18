@@ -20,6 +20,7 @@ class VotingPage extends Component {
     }
 
     render() {
+        console.log("rendering voting page");
         if (this.props.target === undefined) {
             return null;
         }

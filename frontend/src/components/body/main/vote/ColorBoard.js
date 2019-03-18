@@ -18,7 +18,7 @@ class ColorBoard extends Component {
 
     // TODO: place cells more nicely.
     render() {
-        console.log("rendering color board for voting");
+        console.log("rendering voting color board");
         if (this.props.colors.length === 0) {
             console.log("colors array was empty");
             return null;

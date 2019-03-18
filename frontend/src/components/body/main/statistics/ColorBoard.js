@@ -22,9 +22,8 @@ class ColorBoard extends Component {
     }
 
     render() {
-        console.log("rendering color board for statistics");
+        console.log("rendering statistics color board");
         if (this.props.colors.length === 0) {
-            console.log("colors array was empty");
             return null;
         }
 
@@ -75,6 +74,7 @@ class ColorBoard extends Component {
         const url = `${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`;
         axios.get(url).then(({data}) => {
             this.target = this.props.target;
+            this.props.setVoteCount(data.vote);
             this.setRatio(data.vote, data.colors);
             this.updateBorderState();
         });

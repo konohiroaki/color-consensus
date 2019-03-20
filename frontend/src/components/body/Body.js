@@ -17,15 +17,13 @@ class Body extends Component {
 
     render() {
         console.log("rendering body", this.props.userId, this.state.target);
-        return (
-            <Router>
-                <div style={Object.assign({display: "flex", flexDirection: "row"}, this.props.style)}>
-                    <MainContent style={{flex: "1 1 auto"}} userId={this.props.userId} target={this.state.target}
-                                 loginModalRef={this.props.loginModalRef}/>
-                    <SideContent style={{flex: "0 0 auto"}} className="border-left border-secondary" setTarget={this.setTarget}/>
-                </div>
-            </Router>
-        );
+        return <Router>
+            <div className="d-flex flex-row" style={this.props.style}>
+                <MainContent style={{flex: "1 1 auto"}} userId={this.props.userId} target={this.state.target}
+                             loginModalRef={this.props.loginModalRef}/>
+                <SideContent style={{flex: "0 0 auto"}} className="border-left border-secondary" setTarget={this.setTarget}/>
+            </div>
+        </Router>;
     }
 }
 

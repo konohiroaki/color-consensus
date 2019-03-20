@@ -44,7 +44,7 @@ class SideContent extends Component {
 }
 
 const SearchBar = props => (
-    <div className="input-group" style={{borderRadius: "0px"}}>
+    <div className="input-group rounded-0">
         <LangFilterSelector langList={props.langList}
                             langFilter={props.langFilter} langFilterSetter={props.langFilterSetter}/>
         <NameFilterInput nameFilter={props.nameFilter} nameFilterSetter={props.nameFilterSetter}/>
@@ -56,7 +56,7 @@ const LangFilterSelector = ({langList, langFilter, langFilterSetter}) => {
         .map(lang => <option key={lang} value={lang}>{lang !== "" ? lang : "Language"}</option>);
 
     return <div className="input-group-prepend">
-        <select className="custom-select" value={langFilter} style={{borderRadius: "0"}} onChange={langFilterSetter}>
+        <select className="custom-select rounded-0" value={langFilter} onChange={langFilterSetter}>
             {langOptions}
         </select>
     </div>;
@@ -96,13 +96,12 @@ const ColorCards = (props) => {
 };
 
 const ColorCard = ({color, setTarget}) => (
-    <a className="card btn bg-dark border border-secondary m-2" style={{display: "block"}}
-       onClick={() => setTarget(color)}>
+    <div className="d-block m-2 card btn bg-dark text-light border border border-secondary" onClick={() => setTarget(color)}>
         <div className="row">
             <div className="col-3 border-right border-secondary p-3">{color.lang}</div>
             <div className="col-9 p-3">{color.name}</div>
         </div>
-    </a>
+    </div>
 );
 
 export default SideContent;

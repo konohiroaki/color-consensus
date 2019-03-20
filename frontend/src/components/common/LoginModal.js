@@ -19,13 +19,13 @@ class LoginModal extends Component {
         return <div className="modal fade" tabIndex="-1" id="signup-login-modal">
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content bg-dark">
-                    {/* FIXME: this layer shouldn't know `e.target.value`. */}
+                    <ModalHeader/>
                     <ModalBody
-                        setNationalityInput={e => this.setState({nationality: e.target.value})}
-                        setGenderInput={e => this.setState({gender: e.target.value})}
-                        setBirthInput={e => this.setState({birth: e.target.value})}
+                        setNationalityInput={input => this.setState({nationality: input})}
+                        setGenderInput={input => this.setState({gender: input})}
+                        setBirthInput={input => this.setState({birth: input})}
                         handleSignUpClick={this.handleSignUpClick}
-                        setUserIdInput={e => this.setState({userIdInput: e.target.value})}
+                        setUserIdInput={input => this.setState({userIdInput: input})}
                         handleLoginClick={this.handleLoginClick}/>
                 </div>
             </div>
@@ -73,26 +73,20 @@ class LoginModal extends Component {
     }
 }
 
-const ModalBody = props => (
-    <div className="modal-body">
-        <TabList/>
-        <TabContents props={props}/>
+const ModalHeader = () => (
+    <div className="modal-header pb-0">
+        <ul className="nav nav-tabs border-bottom-0" role="tablist">
+            <li className="nav-item text-light"><SingUpTabLink/></li>
+            <li className="nav-item text-light"><LoginTabLink/></li>
+        </ul>
     </div>
 );
 
-const TabList = () => (
-    <ul className="nav nav-tabs" role="tablist" style={tabListStyle}>
-        <li className="nav-item text-light"><SingUpTabLink/></li>
-        <li className="nav-item text-light"><LoginTabLink/></li>
-    </ul>
+const ModalBody = props => (
+    <div className="modal-body">
+        <TabContents props={props}/>
+    </div>
 );
-
-const tabListStyle = {
-    // deny .modal-body's 1em padding for right and left.
-    marginLeft: "-1em", marginRight: "-1em",
-    // deny .nav style and use <ul> style
-    marginBottom: "1rem", paddingLeft: "40px"
-};
 
 const SingUpTabLink = () => <div className="nav-link active" href="#signup-tab" data-toggle="tab" role="tab">Sign Up</div>;
 const LoginTabLink = () => <div className="nav-link" href="#login-tab" data-toggle="tab" role="tab">Login</div>;
@@ -120,25 +114,25 @@ const SingUpTabPanel = props => (
 
 const SignUpNationalityInput = ({setNationalityInput}) => (
     <div>
-        <label>Nationality:</label>
+        <label className="mb-0">Nationality:</label>
         <input type="text" className="form-control" placeholder="ex) Japan"
-               onChange={setNationalityInput}/>
+               onChange={e => setNationalityInput(e.target.value)}/>
     </div>
 );
 
 const SignUpGenderInput = ({setGenderInput}) => (
     <div>
-        <label>Gender:</label>
+        <label className="mb-0">Gender:</label>
         <input type="text" className="form-control" placeholder="ex) Male"
-               onChange={setGenderInput}/>
+               onChange={e => setGenderInput(e.target.value)}/>
     </div>
 );
 
 const SignUpBirthInput = ({setBirthInput}) => (
     <div>
-        <label>Birth:</label>
+        <label className="mb-0">Birth:</label>
         <input type="text" className="form-control" placeholder="ex) 1990"
-               onChange={setBirthInput}/>
+               onChange={e => setBirthInput(e.target.value)}/>
     </div>
 );
 
@@ -161,7 +155,7 @@ const LoginIdInput = ({setUserIdInput}) => (
     <div>
         <label>ID:</label>
         <input type="text" className="form-control" placeholder="00000000-0000-0000-0000-000000000000"
-               onChange={setUserIdInput}/>
+               onChange={e => setUserIdInput(e.target.value)}/>
     </div>
 );
 

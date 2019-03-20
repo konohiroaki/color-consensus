@@ -20,9 +20,9 @@ class AddColorCard extends Component {
         console.log("rendering add color card");
         return <div>
             <Card/>
-            <AddColorModal lang={this.state.lang} langSetter={e => this.setState({lang: e.target.value})}
-                           name={this.state.name} nameSetter={e => this.setState({name: e.target.value})}
-                           code={this.state.code} codeSetter={e => this.setState({code: e.target.value})}
+            <AddColorModal lang={this.state.lang} langSetter={input => this.setState({lang: input})}
+                           name={this.state.name} nameSetter={input => this.setState({name: input})}
+                           code={this.state.code} codeSetter={input => this.setState({code: input})}
                            handleClick={this.handleClick}/>
         </div>;
     }
@@ -63,12 +63,33 @@ const ModalHeader = () => (
 const ModalBody = ({props}) => (
     <div className="modal-body">
         {/* TODO: should be drop down */}
-        Language:
-        <input type="text" className="form-control" placeholder="en" value={props.lang} onChange={props.langSetter}/>
-        Color Name:
-        <input type="text" className="form-control" placeholder="red" value={props.name} onChange={props.nameSetter}/>
-        Base Color Code:
-        <input type="text" className="form-control" placeholder="#ff0000" value={props.code} onChange={props.codeSetter}/>
+        <LanguageInput lang={props.lang} langSetter={props.langSetter}/>
+        <ColorNameInput name={props.name} nameSetter={props.nameSetter}/>
+        <ColorCodeInput code={props.code} codeSetter={props.codeSetter}/>
+    </div>
+);
+
+const LanguageInput = props => (
+    <div>
+        <label className="mb-0">Language:</label>
+        <input type="text" className="form-control" placeholder="en"
+               value={props.lang} onChange={e => props.langSetter(e.target.value)}/>
+    </div>
+);
+
+const ColorNameInput = props => (
+    <div>
+        <label className="mb-0">Color Name:</label>
+        <input type="text" className="form-control" placeholder="red"
+               value={props.name} onChange={e => props.nameSetter(e.target.value)}/>
+    </div>
+);
+
+const ColorCodeInput = props => (
+    <div>
+        <label className="mb-0">Base Color Code:</label>
+        <input type="text" className="form-control" placeholder="#ff0000"
+               value={props.code} onChange={e => props.codeSetter(e.target.value)}/>
     </div>
 );
 

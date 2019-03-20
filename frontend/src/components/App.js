@@ -26,7 +26,7 @@ class App extends Component {
     render() {
         const loginModalRef = this.loginModalRef.current;
 
-        return <div className="bg-dark text-light" style={{display: "flex", flexDirection: "column", height: "100%"}}>
+        return <div className="d-flex flex-column bg-dark text-light" style={{height: "100%"}}>
             <LoginModal ref={this.loginModalRef} userId={this.state.userId}
                         setUserId={(userId) => this.setState({userId: userId})}/>
 

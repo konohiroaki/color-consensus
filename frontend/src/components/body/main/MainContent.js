@@ -8,7 +8,7 @@ class MainContent extends Component {
     render() {
         console.log("rendering main content");
 
-        return <div className="container-fluid pt-3" style={Object.assign({overflowY: "auto"}, this.props.style)}>
+        return <div className="overflow-auto container-fluid pt-3" style={this.props.style}>
             <Switch>
                 <Route exact path={"/"} render={({history}) => (
                     <VotingPage userId={this.props.userId} target={this.props.target} history={history}

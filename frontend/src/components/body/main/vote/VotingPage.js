@@ -98,24 +98,18 @@ const VotingHeader = ({target}) => (
 
 const VotingPageButtons = ({history, handleSubmitClick}) => (
     <div className="row">
-        <div className="ml-auto">
-            <div>
-                <button className="btn btn-secondary m-3" onClick={() => history.push("/statistics")}>
-                    Skip to statistics
-                </button>
-                <button className="btn btn-primary m-3" onClick={handleSubmitClick}>
-                    Submit
-                </button>
-            </div>
-        </div>
+        <button className="ml-auto btn btn-secondary m-3" onClick={() => history.push("/statistics")}>
+            Skip to statistics
+        </button>
+        <button className="btn btn-primary m-3" onClick={handleSubmitClick}>
+            Submit
+        </button>
     </div>
 );
 
 const DeselectAllButton = () => (
     <div className="row">
-        <div className="ml-auto">
-            <DeselectAll className="btn btn-secondary m-3">Clear</DeselectAll>
-        </div>
+        <DeselectAll className="ml-auto btn btn-secondary m-3">Clear</DeselectAll>
     </div>
 );
 

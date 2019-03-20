@@ -52,11 +52,9 @@ class StatisticsPage extends Component {
 
 const StatisticsPageButtons = props => (
     <div className="row">
-        <div className="ml-auto">
-            <button className="btn btn-secondary m-3" onClick={() => props.history.push("/")}>
-                Back to voting
-            </button>
-        </div>
+        <button className="ml-auto btn btn-secondary m-3" onClick={() => props.history.push("/")}>
+            Back to voting
+        </button>
     </div>
 );
 

@@ -85,6 +85,7 @@ const Cards = (props) => (
 );
 
 const ColorCards = (props) => {
+    console.log(props.colorList);
     const targetCard = props.colorList
         .filter(c => isSameColor(c, props.target))
         .map(c => <TargetColorCard key={c.lang + ":" + c.name} color={c}/>);
@@ -92,10 +93,7 @@ const ColorCards = (props) => {
         .filter(c => !isSameColor(c, props.target))
         .filter(c => isLangMatchingFilter(c.lang, props.langFilter))
         .filter(c => isNameMatchingFilter(c.name, props.nameFilter))
-        // TODO: sort on server side.
-        // ascending order for lang -> name
-        // FIXME: sort not working.
-        .sort((c1, c2) => c1.lang === c2.lang ? c1.name - c2.name : c1.lang - c2.lang)
+        .sort(colorComparator)
         .map(c => <ColorCard key={c.lang + ":" + c.name} color={c} setTarget={props.setTarget}/>);
 
     return <div>
@@ -106,6 +104,7 @@ const ColorCards = (props) => {
 
 const isLangMatchingFilter = (lang, filter) => filter === "" || lang === filter;
 const isNameMatchingFilter = (name, filter) => filter === "" || name.includes(filter.toLowerCase());
+const colorComparator = (c1, c2) => c1.lang !== c2.lang ? (c1.lang > c2.lang ? 1 : -1) : (c1.name > c2.name ? 1 : -1);
 
 const TargetColorCard = ({color}) => (
     <div className="d-block m-2 card btn bg-dark text-light border border border-primary">

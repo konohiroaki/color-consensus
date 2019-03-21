@@ -3,7 +3,7 @@ import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
-class AddColorCard extends Component {
+class NewColorCard extends Component {
 
     constructor(props) {
         super(props);
@@ -103,4 +103,4 @@ const ModalFooter = ({handleClick}) => (
     </div>
 );
 
-export default AddColorCard;
+export default NewColorCard;

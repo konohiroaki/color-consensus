@@ -9,7 +9,7 @@ class ColorCell extends Component {
 
     shouldComponentUpdate(nextProps) {
         // when color is changed, need to update
-        if (this.props.color !== nextProps.color) {
+        if (this.props.colorCode !== nextProps.colorCode) {
             return true;
         }
         // when border state changed, need to update
@@ -33,7 +33,7 @@ class ColorCell extends Component {
             borderLeftColor: getBorderColor(this.props.border.left),
             userSelect: "none", userDrag: "none"
         }}>
-            <div style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.color}}/>
+            <div style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.colorCode}}/>
         </div>;
     }
 }

@@ -11,8 +11,8 @@ class StatisticsPage extends Component {
             voteCount: 0
         };
 
-        this.candidateSize = 31;
-        this.candidates = [];
+        this.boardSideLength = 31;
+        this.colorCodeList = [];
     }
 
     render() {
@@ -24,26 +24,26 @@ class StatisticsPage extends Component {
         return <div>
             <StatisticsHeader target={this.props.target} voteCount={this.state.voteCount} history={this.props.history}/>
             <StatisticsPageButtons history={this.props.history}/>
-            <ColorBoard target={this.state.target} colors={this.candidates} candidateSize={this.candidateSize}
+            <ColorBoard target={this.state.target} colorCodes={this.colorCodeList} boardSideLength={this.boardSideLength}
                         setVoteCount={(count) => this.setState({voteCount: count})}/>
         </div>;
     }
 
     componentDidMount() {
-        this.updateCandidateList();
+        this.updateColorCodeList();
     }
 
     componentDidUpdate() {
-        this.updateCandidateList();
+        this.updateColorCodeList();
     }
 
-    updateCandidateList() {
+    updateColorCodeList() {
         if (this.props.target !== this.state.target) {
-            const colorCode = this.props.target.code.substring(1);
-            const size = Math.pow(this.candidateSize, 2);
-            const url = `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${colorCode}?size=${size}`;
+            const baseCode = this.props.target.code.substring(1);
+            const size = Math.pow(this.boardSideLength, 2);
+            const url = `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${baseCode}?size=${size}`;
             axios.get(url).then(({data}) => {
-                this.candidates = data;
+                this.colorCodeList = data;
                 this.setState({target: this.props.target});
             });
         }

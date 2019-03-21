@@ -9,8 +9,8 @@ class VotingPage extends Component {
         super(props);
         this.state = {};
 
-        this.candidateSize = 31;
-        this.candidates = [];
+        this.boardSideLength = 31;
+        this.colorCodeList = [];
         this.selected = [];
 
         this.updateCandidateList = this.updateCandidateList.bind(this);
@@ -31,7 +31,7 @@ class VotingPage extends Component {
             <SelectableGroup enableDeselect allowClickWithoutSelected
                              onSelectionFinish={this.handleSelectionFinish}>
                 <DeselectAllButton/>
-                <ColorBoard colors={this.candidates} candidateSize={this.candidateSize}/>
+                <ColorBoard colorCodes={this.colorCodeList} boardSideLength={this.boardSideLength}/>
             </SelectableGroup>
         </div>;
     }
@@ -49,10 +49,10 @@ class VotingPage extends Component {
     updateCandidateList() {
         if (this.props.target !== this.state.target) {
             const code = this.props.target.code.substring(1); // remove "#"
-            const size = Math.pow(this.candidateSize, 2);
+            const size = Math.pow(this.boardSideLength, 2);
             const url = `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${code}?size=${size}`;
             axios.get(url).then(({data}) => {
-                this.candidates = data;
+                this.colorCodeList = data;
                 // FIXME: doesn't deselect on color change.
                 this.selected = [];
                 this.setState({target: this.props.target});

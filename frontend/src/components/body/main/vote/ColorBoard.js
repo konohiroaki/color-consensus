@@ -6,20 +6,20 @@ class ColorBoard extends Component {
     constructor(props) {
         super(props);
         // +2 to avoid array out of bound error.
-        const boardSize = this.props.candidateSize + 2;
+        const boardSideLength = this.props.boardSideLength + 2;
         this.state = {
-            border: Array(boardSize).fill(0)
-                .map(() => Array(boardSize).fill({top: false, right: false, bottom: false, left: false}))
+            border: Array(boardSideLength).fill(0)
+                .map(() => Array(boardSideLength).fill({top: false, right: false, bottom: false, left: false}))
         };
-        this.selected = Array(boardSize).fill(0)
-            .map(() => Array(boardSize).fill(false));
+        this.selected = Array(boardSideLength).fill(0)
+            .map(() => Array(boardSideLength).fill(false));
         this.setCellState = this.setCellState.bind(this);
     }
 
     // TODO: place cells more nicely.
     render() {
         console.log("rendering voting color board");
-        if (this.props.colors.length === 0) {
+        if (this.props.colorCodes.length === 0) {
             console.log("colors array was empty");
             return null;
         }
@@ -27,17 +27,17 @@ class ColorBoard extends Component {
         return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
             {
                 this.getCellList()
-                    .split(this.props.candidateSize)
+                    .split(this.props.boardSideLength)
                     .map((v, k) => <div key={k}>{v}</div>)
             }
         </div>;
     };
 
     getCellList() {
-        return this.props.colors.map((v, k) => {
-            const i = Math.floor(k / this.props.candidateSize) + 1;
-            const j = k % this.props.candidateSize + 1;
-            return <SelectableColorCell key={k} color={this.props.colors[k]} border={this.state.border[i][j]}
+        return this.props.colorCodes.map((v, k) => {
+            const i = Math.floor(k / this.props.boardSideLength) + 1;
+            const j = k % this.props.boardSideLength + 1;
+            return <SelectableColorCell key={k} colorCode={this.props.colorCodes[k]} border={this.state.border[i][j]}
                                         setCellState={this.setCellState.bind(null, {i: i, j: j})}/>;
         });
     }

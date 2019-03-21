@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import axios from "axios";
 import AddColorCard from "./AddColorCard";
+import {isSameColor} from "../../common/Utility";
 
 class SideContent extends Component {
 
@@ -29,7 +30,7 @@ class SideContent extends Component {
             <SearchBar langList={this.state.colorList.map(color => color.lang)}
                        langFilter={this.state.langFilter} langFilterSetter={e => this.setState({langFilter: e.target.value})}
                        nameFilter={this.state.nameFilter} nameFilterSetter={e => this.setState({nameFilter: e.target.value})}/>
-            <Cards colorList={this.state.colorList} setTarget={this.props.setTarget}
+            <Cards colorList={this.state.colorList} target={this.props.target} setTarget={this.props.setTarget}
                    langFilter={this.state.langFilter} nameFilter={this.state.nameFilter}
                    updateColorList={this.updateColorList}/>
         </div>;
@@ -77,23 +78,43 @@ const NameFilterInput = ({nameFilter, nameFilterSetter}) => (
 
 const Cards = (props) => (
     <div style={{overflowY: "auto", height: "100%"}}>
-        <ColorCards colorList={props.colorList} setTarget={props.setTarget}
+        <ColorCards colorList={props.colorList} target={props.target} setTarget={props.setTarget}
                     langFilter={props.langFilter} nameFilter={props.nameFilter}/>
         <AddColorCard updateColorList={props.updateColorList}/>
     </div>
 );
 
 const ColorCards = (props) => {
-    const colorCards = props.colorList
-        .filter(color => props.nameFilter === "" || color.name.includes(props.nameFilter.toLowerCase()))
-        .filter(color => props.langFilter === "" || color.lang === props.langFilter)
+    const targetCard = props.colorList
+        .filter(c => isSameColor(c, props.target))
+        .map(c => <TargetColorCard key={c.lang + ":" + c.name} color={c}/>);
+    const selectableCards = props.colorList
+        .filter(c => !isSameColor(c, props.target))
+        .filter(c => isLangMatchingFilter(c.lang, props.langFilter))
+        .filter(c => isNameMatchingFilter(c.name, props.nameFilter))
         // TODO: sort on server side.
         // ascending order for lang -> name
-        .sort((a, b) => a.lang === b.lang ? a.name - b.name : a.lang - b.lang)
-        .map(color => <ColorCard key={color.lang + ":" + color.name} color={color} setTarget={props.setTarget}/>);
+        // FIXME: sort not working.
+        .sort((c1, c2) => c1.lang === c2.lang ? c1.name - c2.name : c1.lang - c2.lang)
+        .map(c => <ColorCard key={c.lang + ":" + c.name} color={c} setTarget={props.setTarget}/>);
 
-    return <div>{colorCards}</div>;
+    return <div>
+        {targetCard}
+        {selectableCards}
+    </div>;
 };
+
+const isLangMatchingFilter = (lang, filter) => filter === "" || lang === filter;
+const isNameMatchingFilter = (name, filter) => filter === "" || name.includes(filter.toLowerCase());
+
+const TargetColorCard = ({color}) => (
+    <div className="d-block m-2 card btn bg-dark text-light border border border-primary">
+        <div className="row">
+            <div className="col-3 border-right border-secondary p-3">{color.lang}</div>
+            <div className="col-9 p-3">{color.name}</div>
+        </div>
+    </div>
+);
 
 const ColorCard = ({color, setTarget}) => (
     <div className="d-block m-2 card btn bg-dark text-light border border border-secondary" onClick={() => setTarget(color)}>

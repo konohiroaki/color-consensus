@@ -21,7 +21,8 @@ class Body extends Component {
             <div className="d-flex flex-row" style={this.props.style}>
                 <MainContent style={{flex: "1 1 auto"}} userId={this.props.userId} target={this.state.target}
                              loginModalRef={this.props.loginModalRef}/>
-                <SideContent style={{flex: "0 0 auto"}} className="border-left border-secondary" setTarget={this.setTarget}/>
+                <SideContent style={{flex: "0 0 auto"}} className="border-left border-secondary"
+                             target={this.state.target} setTarget={this.setTarget}/>
             </div>
         </Router>;
     }

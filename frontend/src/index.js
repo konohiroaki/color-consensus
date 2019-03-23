@@ -13,9 +13,9 @@ import "core-js/fn/set";
 import App from "./components/App";
 
 import store from "./store";
-import {actions as freezer} from "./ducks/freezer";
-import * as FLAVORS from "./constants/flavors";
-import {actions as employees} from "./ducks/employees";
+// import {actions as freezer} from "./ducks/freezer";
+// import * as FLAVORS from "./constants/flavors";
+// import {actions as employees} from "./ducks/employees";
 import {actions as colors} from "./ducks/colors";
 
 // store.dispatch(freezer.updateTemperature(-8));

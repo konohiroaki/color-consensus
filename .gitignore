@@ -6,3 +6,11 @@ vendor/*
 frontend/node_modules/
 
 frontend/dist/
+
+# temporal igonres for "Redux in Motion" code.
+frontend/src/constants/flavors.js
+frontend/src/ducks/__tests__/freezer/
+frontend/src/ducks/__tests__/orders/
+frontend/src/ducks/freezer.js
+frontend/src/ducks/orders.js
+frontend/src/ducks/employees.js

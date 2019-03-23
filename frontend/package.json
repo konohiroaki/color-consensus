@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "jest --watch",
     "start": "cross-env BABEL_ENV=dev webpack-dev-server --open --config webpack.dev.js",
     "build": "cross-env BABEL_ENV=prod webpack --config webpack.prod.js"
   },
@@ -50,10 +51,17 @@
     "react-dom": "^16.7.0",
     "react-router-dom": "^4.3.1",
     "react-selectable-fast": "^2.2.1",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14",
     "webpack-merge": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "jest": "^24.5.0",
+    "redux-devtools-extension": "^2.13.8"
   }
 }

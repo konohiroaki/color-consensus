@@ -2,18 +2,15 @@ import React, {Component} from "react";
 import {DeselectAll, SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import ColorBoard from "./ColorBoard";
+import {connect} from "react-redux";
 
 class VotingPage extends Component {
 
     constructor(props) {
         super(props);
         this.state = {};
-
-        this.boardSideLength = 31;
-        this.colorCodeList = [];
         this.selected = [];
 
-        this.updateCandidateList = this.updateCandidateList.bind(this);
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
         this.handleSubmitClick = this.handleSubmitClick.bind(this);
         this.submit = this.submit.bind(this);
@@ -21,47 +18,24 @@ class VotingPage extends Component {
 
     render() {
         console.log("rendering voting page");
-        if (this.props.target === undefined) {
+        if (this.props.displayedColor === null) {
             return null;
         }
 
         return <div>
-            <VotingHeader target={this.props.target}/>
+            <VotingHeader displayedColor={this.props.displayedColor}/>
             <VotingPageButtons history={this.props.history} handleSubmitClick={this.handleSubmitClick}/>
             <SelectableGroup enableDeselect allowClickWithoutSelected
                              onSelectionFinish={this.handleSelectionFinish}>
                 <DeselectAllButton/>
-                <ColorBoard colorCodes={this.colorCodeList} boardSideLength={this.boardSideLength}/>
+                <ColorBoard colorCodes={this.props.displayedColorList} boardSideLength={this.props.boardSideLength}/>
             </SelectableGroup>
         </div>;
     }
 
-    componentDidMount() {
-        this.updateCandidateList();
-    }
-
-    componentDidUpdate() {
-        this.updateCandidateList();
-    }
-
-    // this.props.target -> new target color
-    // this.state.target -> current target color
-    updateCandidateList() {
-        if (this.props.target !== this.state.target) {
-            const code = this.props.target.code.substring(1); // remove "#"
-            const size = Math.pow(this.boardSideLength, 2);
-            const url = `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${code}?size=${size}`;
-            axios.get(url).then(({data}) => {
-                this.colorCodeList = data;
-                // FIXME: doesn't deselect on color change.
-                this.selected = [];
-                this.setState({target: this.props.target});
-            });
-        }
-    }
-
     handleSelectionFinish(selectedItems) {
-        this.selected = selectedItems.map(item => item.props.color);
+        this.selected = selectedItems.map(item => item.props.colorCode);
+        console.log(this.selected);
     };
 
     handleSubmitClick() {
@@ -74,21 +48,21 @@ class VotingPage extends Component {
     }
 
     submit() {
-        const {lang, name} = this.state.target;
+        const {lang, name} = this.props.displayedColor;
         const url = `${process.env.WEBAPI_HOST}/api/v1/votes`;
         const body = {"lang": lang, "name": name, "colors": this.selected};
         axios.post(url, body).then(() => this.props.history.push("/statistics"));
     }
 }
 
-const VotingHeader = ({target}) => (
+const VotingHeader = ({displayedColor}) => (
     <div className="card bg-dark border border-secondary">
         <div className="card-body">
             <div className="row ml-0 mr-0">
                 <div className="col-3 card bg-dark border border-secondary p-2 text-center">
                     <div className="row">
-                        <span className="col-4 border-right border-secondary p-3">{target.lang}</span>
-                        <span className="col-8 p-3">{target.name}</span>
+                        <span className="col-4 border-right border-secondary p-3">{displayedColor.lang}</span>
+                        <span className="col-8 p-3">{displayedColor.name}</span>
                     </div>
                 </div>
             </div>
@@ -113,4 +87,10 @@ const DeselectAllButton = () => (
     </div>
 );
 
-export default VotingPage;
+const mapStateToProps = state => ({
+    displayedColor: state.colors.displayedColor,
+    displayedColorList: state.colors.displayedColorList,
+    boardSideLength: state.colors.boardSideLength,
+});
+
+export default connect(mapStateToProps)(VotingPage);

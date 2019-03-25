@@ -11,11 +11,11 @@ class MainContent extends Component {
         return <div className="overflow-auto container-fluid pt-3" style={this.props.style}>
             <Switch>
                 <Route exact path={"/"} render={({history}) => (
-                    <VotingPage userId={this.props.userId} target={this.props.target} history={history}
+                    <VotingPage userId={this.props.userId} history={history}
                                 loginModalRef={this.props.loginModalRef}/>
                 )}/>
                 <Route path={"/statistics"} render={({history}) => (
-                    <StatisticsPage target={this.props.target} history={history}/>
+                    <StatisticsPage history={history}/>
                 )}/>
             </Switch>
         </div>;

@@ -41,7 +41,7 @@ class VotingPage extends Component {
     handleSubmitClick() {
         const userId = this.props.userId;
         if (userId === undefined || userId === null) {
-            this.props.loginModalRef.openLoginModal(this.submit);
+            this.props.loginModalRef.current.openLoginModal(this.submit);
         } else {
             this.submit();
         }
@@ -91,6 +91,7 @@ const mapStateToProps = state => ({
     displayedColor: state.colors.displayedColor,
     displayedColorList: state.colors.displayedColorList,
     boardSideLength: state.colors.boardSideLength,
+    userId: state.user.id,
 });
 
 export default connect(mapStateToProps)(VotingPage);

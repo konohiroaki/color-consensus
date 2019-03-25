@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {CopyToClipboard} from "react-copy-to-clipboard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGithub} from "@fortawesome/free-brands-svg-icons";
+import {connect} from "react-redux";
 
 class Header extends Component {
 
@@ -40,7 +41,7 @@ const HeaderRightPart = ({userId, loginModalRef}) => {
 };
 
 const SignUpLoginModalButton = ({loginModalRef}) => (
-    <button className="btn btn-outline-light" onClick={() => loginModalRef.openLoginModal()}>
+    <button className="btn btn-outline-light" onClick={() => loginModalRef.current.openLoginModal()}>
         Sign Up / Login
     </button>
 );
@@ -54,4 +55,8 @@ const UserIdCopyButton = ({userId}) => (
     </CopyToClipboard>
 );
 
-export default Header;
+const mapStateToProps = state => ({
+    userId: state.user.id,
+});
+
+export default connect(mapStateToProps)(Header);

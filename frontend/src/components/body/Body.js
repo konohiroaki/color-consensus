@@ -6,10 +6,10 @@ import {BrowserRouter as Router} from "react-router-dom";
 class Body extends Component {
 
     render() {
-        console.log("rendering body", this.props.userId);
+        console.log("rendering body");
         return <Router>
             <div className="d-flex flex-row" style={this.props.style}>
-                <MainContent style={{flex: "1 1 auto"}} userId={this.props.userId} loginModalRef={this.props.loginModalRef}/>
+                <MainContent style={{flex: "1 1 auto"}} loginModalRef={this.props.loginModalRef}/>
                 <SideContent style={{flex: "0 0 auto"}} className="border-left border-secondary"/>
             </div>
         </Router>;

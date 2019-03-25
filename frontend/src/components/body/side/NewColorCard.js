@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {actions as colors} from "../../../ducks/colors";
+import {connect} from "react-redux";
 
 class NewColorCard extends Component {
 
@@ -29,7 +31,7 @@ class NewColorCard extends Component {
 
     handleClick() {
         axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, this.state)
-            .then(() => this.props.updateColorList());
+            .then(() => this.props.fetchColors());
         this.setState({lang: "", name: "", code: ""});
     }
 }
@@ -103,4 +105,8 @@ const ModalFooter = ({handleClick}) => (
     </div>
 );
 
-export default NewColorCard;
+const mapDispatchToProps = dispatch => ({
+    fetchColors: () => dispatch(colors.fetchColors()),
+});
+
+export default connect(null, mapDispatchToProps)(NewColorCard);

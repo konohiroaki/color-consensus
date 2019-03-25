@@ -1,6 +1,7 @@
 import React, {Component} from "react";
-import axios from "axios";
 import $ from "jquery";
+import {connect} from "react-redux";
+import {actions as user} from "../../ducks/user";
 
 class LoginModal extends Component {
 
@@ -32,12 +33,6 @@ class LoginModal extends Component {
         </div>;
     }
 
-    componentDidMount() {
-        axios.get(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
-            .then(({data}) => this.props.setUserId(data.userID))
-            .catch(() => this.props.setUserId(null));
-    }
-
     openLoginModal(callback) {
         if (callback !== undefined) {
             this.callback = callback;
@@ -46,25 +41,13 @@ class LoginModal extends Component {
     }
 
     handleSignUpClick() {
-        axios.post(`${process.env.WEBAPI_HOST}/api/v1/users`, {
-            nationality: this.state.nationality,
-            gender: this.state.gender,
-            birth: Number(this.state.birth)
-        }).then(({data}) => {
-            this.props.setUserId(data.id);
-            this.runAndResetCallback();
-        });
+        this.props.signUp(this.state.nationality, this.state.gender, this.state.birth)
+            .then(() => this.runAndResetCallback());
     }
 
     handleLoginClick() {
-        axios.post(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, {id: this.state.userIdInput})
-            .then(() => {
-                this.props.setUserId(this.state.userIdInput);
-                this.runAndResetCallback();
-            })
-            .catch(() => {
-                // TODO: error handling
-            });
+        this.props.tryLogin(this.state.userIdInput)
+            .then(() => this.runAndResetCallback());
     }
 
     runAndResetCallback() {
@@ -167,4 +150,13 @@ const LoginButton = ({handleLoginClick}) => (
     </div>
 );
 
-export default LoginModal;
+const mapStateToProps = state => ({
+    userId: state.user.id,
+});
+
+const mapDispatchToProps = dispatch => ({
+    tryLogin: (id) => dispatch(user.tryLogin(id)),
+    signUp: (nationality, gender, birth) => dispatch(user.signUp(nationality, gender, birth))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(LoginModal);

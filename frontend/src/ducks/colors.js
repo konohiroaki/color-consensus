@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const types = {
+const types = {
     FETCH_COLORS_SUCCESS: "FETCH_COLORS_SUCCESS",
     FETCH_COLORS_FAILURE: "FETCH_COLORS_FAILURE",
     SET_DISPLAYED_COLOR: "SET_DISPLAYED_COLOR",

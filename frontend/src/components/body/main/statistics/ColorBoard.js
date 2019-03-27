@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import ColorCell from "./ColorCell";
 import axios from "axios";
+import {isSameColor} from "../../../common/Utility";
 
 class ColorBoard extends Component {
 
@@ -22,33 +23,24 @@ class ColorBoard extends Component {
     }
 
     render() {
-        console.log("rendering statistics color board");
         if (this.props.colorCodes.length === 0) {
             return null;
         }
+        console.log("rendering statistics color board");
 
         const list = this.getCellList();
         this.setCoordForColor(list);
 
         return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
             {
-                list
-                    .split(this.props.boardSideLength)
+                list.split(this.props.boardSideLength)
                     .map((v, k) => <div key={k}>{v}</div>)
             }
         </div>;
     }
 
     componentDidMount() {
-        if (this.props.colorCodes.length !== 0
-            && (this.target.lang !== this.props.target.lang || this.target.name !== this.props.target.name)) {
-            this.updateSelectedState();
-        }
-    }
-
-    componentDidUpdate() {
-        if (this.props.colorCodes.length !== 0
-            && (this.target.lang !== this.props.target.lang || this.target.name !== this.props.target.name)) {
+        if (this.props.colorCodes.length !== 0 && !isSameColor(this.props.target, this.target)) {
             this.updateSelectedState();
         }
     }

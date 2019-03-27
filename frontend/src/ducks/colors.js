@@ -12,7 +12,7 @@ const DEFAULT_STATE = {
     error: null,
     displayedColor: null,
     displayedColorList: [],
-    boardSideLength: 31
+    boardSideLength: 31,
 };
 
 export const reducer = (state = DEFAULT_STATE, action) => {

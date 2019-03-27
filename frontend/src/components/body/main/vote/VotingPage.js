@@ -17,10 +17,10 @@ class VotingPage extends Component {
     }
 
     render() {
-        console.log("rendering voting page");
         if (this.props.displayedColor === null) {
             return null;
         }
+        console.log("rendering voting page", this.props.displayedColorList.length, this.props.displayedColor);
 
         return <div>
             <VotingHeader displayedColor={this.props.displayedColor}/>

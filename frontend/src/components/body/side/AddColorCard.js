@@ -5,7 +5,7 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {actions as colors} from "../../../ducks/colors";
 import {connect} from "react-redux";
 
-class NewColorCard extends Component {
+class AddColorCard extends Component {
 
     constructor(props) {
         super(props);
@@ -19,7 +19,7 @@ class NewColorCard extends Component {
     }
 
     render() {
-        console.log("rendering add color card");
+        console.log("rendering new color card");
         return <div>
             <Card/>
             <AddColorModal lang={this.state.lang} langSetter={input => this.setState({lang: input})}
@@ -109,4 +109,4 @@ const mapDispatchToProps = dispatch => ({
     fetchColors: () => dispatch(colors.fetchColors()),
 });
 
-export default connect(null, mapDispatchToProps)(NewColorCard);
+export default connect(null, mapDispatchToProps)(AddColorCard);

@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import NewColorCard from "./NewColorCard";
+import AddColorCard from "./AddColorCard";
 import {isSameColor, isUndefinedColor} from "../../common/Utility";
 import {actions as colors} from "../../../ducks/colors";
 import {connect} from "react-redux";
@@ -33,7 +33,7 @@ class SideContent extends Component {
     }
 
     render() {
-        console.log("rendering side content", this.props.colorList);
+        console.log("rendering side content", this.props.colorList.length, this.props.displayedColor);
         return <div className={this.props.className} style={this.props.style}>
             <this.SearchBar/>
             <this.Cards/>
@@ -69,7 +69,7 @@ class SideContent extends Component {
         return <div style={{overflowY: "auto", height: "100%"}}>
             <this.TargetColorCard/>
             <this.SelectableColorCards/>
-            <NewColorCard/>
+            <AddColorCard/>
         </div>;
     }
 

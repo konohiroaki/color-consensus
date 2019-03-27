@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {actions as colors} from "../../../modules/colors";
+import {actions as colors} from "../../../modules/colors/colors";
 import {connect} from "react-redux";
 
 class AddColorCard extends Component {

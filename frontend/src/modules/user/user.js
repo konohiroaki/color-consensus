@@ -21,7 +21,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 
 export const actions = {
     verifyLoginState() {
-        return (dispatch, getState) => {
+        return (dispatch) => {
             return axios.get(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
                 .then(({data}) => dispatch({
                     type: types.SET_ID,
@@ -31,7 +31,7 @@ export const actions = {
         };
     },
     login(id) {
-        return (dispatch, getState) => {
+        return (dispatch) => {
             return axios.post(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, {id: id})
                 .then(() => dispatch({
                     type: types.SET_ID,
@@ -41,7 +41,7 @@ export const actions = {
         };
     },
     signUp(nationality, gender, birth) {
-        return (dispatch, getState) => {
+        return (dispatch) => {
             return axios.post(`${process.env.WEBAPI_HOST}/api/v1/users`, {
                 nationality: nationality,
                 gender: gender,

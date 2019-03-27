@@ -9,10 +9,9 @@ describe("verifyLoginState()", function () {
         mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
             .reply(200, fakeResponse);
 
-        const spy = jest.fn();
-        const thunk = actions.verifyLoginState();
-        thunk(spy).then(() => {
-            expect(spy.mock.calls[0][0]).toEqual({
+        const dispatch = jest.fn();
+        actions.verifyLoginState()(dispatch).then(() => {
+            expect(dispatch.mock.calls[0][0]).toEqual({
                 type: types.SET_ID,
                 payload: fakeResponse.userID,
             });
@@ -23,10 +22,9 @@ describe("verifyLoginState()", function () {
         mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
             .reply(404);
 
-        const spy = jest.fn();
-        const thunk = actions.verifyLoginState();
-        thunk(spy).then(() => {
-            expect(spy.mock.calls.length).toEqual(0);
+        const dispatch = jest.fn();
+        actions.verifyLoginState()(dispatch).then(() => {
+            expect(dispatch.mock.calls.length).toEqual(0);
         });
     });
 });
@@ -38,10 +36,9 @@ describe("login(id)", function () {
         mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, fakeId)
             .reply(200);
 
-        const spy = jest.fn();
-        const thunk = actions.login(fakeId.id);
-        thunk(spy).then(() => {
-            expect(spy.mock.calls[0][0]).toEqual({
+        const dispatch = jest.fn();
+        actions.login(fakeId.id)(dispatch).then(() => {
+            expect(dispatch.mock.calls[0][0]).toEqual({
                 type: types.SET_ID,
                 payload: fakeId.id,
             });
@@ -53,16 +50,15 @@ describe("login(id)", function () {
         mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, fakeId)
             .reply(404);
 
-        const spy = jest.fn();
-        const thunk = actions.login();
-        thunk(spy).then(() => {
-            expect(spy.mock.calls.length).toEqual(0);
+        const dispatch = jest.fn();
+        actions.login()(dispatch).then(() => {
+            expect(dispatch.mock.calls.length).toEqual(0);
         });
     });
 });
 
 describe("signUp(nationality, gender, birth)", function () {
-    it("should dispatch when user is present", () => {
+    it("should dispatch when user registration succeeds", () => {
         const fakeUser = {
             nationality: "Japan",
             gender: "Male",
@@ -79,30 +75,27 @@ describe("signUp(nationality, gender, birth)", function () {
         mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users`, fakeUser)
             .reply(200, fakeResponse);
 
-        const spy = jest.fn();
-        const thunk = actions.signUp(fakeUser.nationality,
-            fakeUser.gender, fakeUser.birth);
-        thunk(spy).then(() => {
-            expect(spy.mock.calls[0][0]).toEqual({
+        const dispatch = jest.fn();
+        actions.signUp(fakeUser.nationality, fakeUser.gender, fakeUser.birth)(dispatch).then(() => {
+            expect(dispatch.mock.calls[0][0]).toEqual({
                 type: types.SET_ID,
                 payload: fakeResponse.id
             });
         });
     });
-    it("should not dispatch when user is absent", () => {
+    it("should not dispatch when user registration fails", () => {
         const fakeUser = {
             nationality: "Japan",
-            gender: "Make",
+            gender: "Male",
             birth: 1990
         };
         const mockAxios = new MockAdapter(axios);
         mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users`, fakeUser)
             .reply(400);
 
-        const spy = jest.fn();
-        const thunk = actions.signUp();
-        thunk(spy).then(() => {
-            expect(spy.mock.calls.length).toEqual(0);
+        const dispatch = jest.fn();
+        actions.signUp()(dispatch).then(() => {
+            expect(dispatch.mock.calls.length).toEqual(0);
         });
     });
 });

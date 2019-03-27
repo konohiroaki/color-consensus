@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const types = {
+export const types = {
     SET_ID: "SET_ID",
 };
 
@@ -27,17 +27,17 @@ export const actions = {
                     type: types.SET_ID,
                     payload: data.userID
                 }))
-                .catch((err) => console.log(err));
+                .catch((err) => {});
         };
     },
-    tryLogin(id) {
+    login(id) {
         return (dispatch, getState) => {
             return axios.post(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, {id: id})
                 .then(() => dispatch({
                     type: types.SET_ID,
                     payload: id
                 }))
-                .catch((err) => console.log(err));
+                .catch((err) => {});
         };
     },
     signUp(nationality, gender, birth) {
@@ -51,7 +51,7 @@ export const actions = {
                     type: types.SET_ID,
                     payload: data.id
                 }))
-                .catch((err) => console.log(err));
+                .catch((err) => {});
         };
     }
 };

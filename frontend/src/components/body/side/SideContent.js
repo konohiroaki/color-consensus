@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import AddColorCard from "./AddColorCard";
 import {isSameColor, isUndefinedColor} from "../../common/Utility";
-import {actions as colors} from "../../../ducks/colors";
+import {actions as colors} from "../../../modules/colors";
 import {connect} from "react-redux";
 
 class SideContent extends Component {

@@ -18,16 +18,14 @@ class ColorBoard extends Component {
 
     // TODO: place cells more nicely.
     render() {
-        console.log("rendering voting color board");
         if (this.props.colorCodes.length === 0) {
-            console.log("colors array was empty");
             return null;
         }
+        console.log("rendering voting color board");
 
         return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
             {
-                this.getCellList()
-                    .split(this.props.boardSideLength)
+                this.getCellList().split(this.props.boardSideLength)
                     .map((v, k) => <div key={k}>{v}</div>)
             }
         </div>;

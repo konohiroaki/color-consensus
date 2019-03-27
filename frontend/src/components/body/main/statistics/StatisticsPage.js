@@ -13,10 +13,10 @@ class StatisticsPage extends Component {
     }
 
     render() {
-        console.log("rendering statistics page");
         if (this.props.displayedColor === null) {
             return null;
         }
+        console.log("rendering statistics page", this.props.displayedColor.code, this.props.displayedColorList[0]);
 
         return <div>
             <StatisticsHeader target={this.props.displayedColor} voteCount={this.state.voteCount} history={this.props.history}/>

@@ -8,7 +8,7 @@ it("should set id", () => {
     });
     expect(result.id).toEqual(fakeData);
 });
-it("should ", () => {
+it("should overwrite id", () => {
     const fakeData = "foo";
     const fakeData2 = "bar";
     const result = reducer({id: fakeData}, {

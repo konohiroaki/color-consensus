@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import $ from "jquery";
 import {connect} from "react-redux";
-import {actions as user} from "../../ducks/user";
+import {actions as user} from "../../modules/user/user";
 
 class LoginModal extends Component {
 
@@ -46,7 +46,7 @@ class LoginModal extends Component {
     }
 
     handleLoginClick() {
-        this.props.tryLogin(this.state.userIdInput)
+        this.props.login(this.state.userIdInput)
             .then(() => this.runAndResetCallback());
     }
 
@@ -155,7 +155,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    tryLogin: (id) => dispatch(user.tryLogin(id)),
+    login: (id) => dispatch(user.login(id)),
     signUp: (nationality, gender, birth) => dispatch(user.signUp(nationality, gender, birth))
 });
 

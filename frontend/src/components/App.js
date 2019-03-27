@@ -3,9 +3,8 @@ import {connect} from "react-redux";
 import Header from "./header/Header";
 import Body from "./body/Body";
 import LoginModal from "./common/LoginModal";
-import {actions as user} from "../ducks/user";
+import {actions as user} from "../modules/user/user";
 
-// TODO: do test for react app (jest?)
 class App extends Component {
 
     constructor(props) {

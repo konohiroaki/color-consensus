@@ -9,9 +9,7 @@ frontend/dist/
 
 # temporal ignores for "Redux in Motion" code.
 frontend/src/constants/flavors.js
-frontend/src/ducks/__tests__/freezer/
-frontend/src/ducks/__tests__/orders/
-frontend/src/ducks/__tests__/employees/
-frontend/src/ducks/freezer.js
-frontend/src/ducks/orders.js
-frontend/src/ducks/employees.js
+frontend/src/modules/__tests__/*
+frontend/src/modules/freezer.js
+frontend/src/modules/orders.js
+frontend/src/modules/employees.js

@@ -65,6 +65,7 @@ describe("setDisplayedColor(color)", function () {
 
         const dispatch = jest.fn();
         actions.setDisplayedColor()(dispatch, getState).then(() => {
+            // toEqual(1) because prior dispatch is executed with this getState.
             expect(dispatch.mock.calls.length).toEqual(1);
         });
     });

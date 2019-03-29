@@ -49,7 +49,7 @@ const SignUpLoginModalButton = ({loginModalRef}) => (
 // TODO: show a dialog(?) to notify a user that id is copied to their clipboard.
 const UserIdCopyButton = ({userId}) => (
     <CopyToClipboard text={userId}>
-        <button className="btn btn-outline-secondary">
+        <button className="btn btn-outline-light">
             ID: {userId}
         </button>
     </CopyToClipboard>

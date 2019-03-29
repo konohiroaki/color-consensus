@@ -3,6 +3,8 @@ import {CopyToClipboard} from "react-copy-to-clipboard";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faGithub} from "@fortawesome/free-brands-svg-icons";
 import {connect} from "react-redux";
+import ReactAwesomePopover from "react-awesome-popover";
+import "react-awesome-popover/dest/react-awesome-popover.css";
 
 class Header extends Component {
 
@@ -46,13 +48,15 @@ const SignUpLoginModalButton = ({loginModalRef}) => (
     </button>
 );
 
-// TODO: show a dialog(?) to notify a user that id is copied to their clipboard.
 const UserIdCopyButton = ({userId}) => (
-    <CopyToClipboard text={userId}>
-        <button className="btn btn-outline-light">
-            ID: {userId}
-        </button>
-    </CopyToClipboard>
+    <ReactAwesomePopover action="hover" placement="left" arrow={false}>
+        <CopyToClipboard text={userId}>
+            <button className="btn btn-outline-light">
+                ID: {userId}
+            </button>
+        </CopyToClipboard>
+        <div>Click to copy</div>
+    </ReactAwesomePopover>
 );
 
 const mapStateToProps = state => ({

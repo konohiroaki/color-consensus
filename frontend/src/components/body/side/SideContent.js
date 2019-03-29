@@ -93,7 +93,7 @@ class SideContent extends Component {
             .sort(colorComparator)
             .map(c => <this.ColorCard key={c.lang + ":" + c.name} color={c}/>);
 
-        return <div>{selectableCards}</div>;
+        return selectableCards.length !== 0 ? <div>{selectableCards}</div> : null;
     }
 
     ColorCard({color}) {

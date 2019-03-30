@@ -19,7 +19,7 @@ class AddColorCard extends Component {
     }
 
     render() {
-        console.log("rendering new color card");
+        console.log("rendering [add color card]");
         return <div>
             <Card/>
             <AddColorModal lang={this.state.lang} langSetter={input => this.setState({lang: input})}

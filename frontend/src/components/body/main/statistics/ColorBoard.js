@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import ColorCell from "./ColorCell";
 import axios from "axios";
 import {isSameColor} from "../../../common/Utility";
+import {connect} from "react-redux";
 
 class ColorBoard extends Component {
 
@@ -16,7 +17,7 @@ class ColorBoard extends Component {
         this.ratio = Array(boardSideLength).fill(0)
             .map(() => Array(boardSideLength).fill(0));
         this.coordForColor = {};
-        this.target = {};
+        this.baseColor = {};
 
         this.updateSelectedState = this.updateSelectedState.bind(this);
         this.updateBorderState = this.updateBorderState.bind(this);
@@ -26,7 +27,7 @@ class ColorBoard extends Component {
         if (this.props.colorCodeList.length === 0) {
             return null;
         }
-        console.log("rendering statistics color board");
+        console.log("rendering [statistics color board]");
 
         const list = this.getCellList();
         this.setCoordForColor(list);
@@ -40,7 +41,7 @@ class ColorBoard extends Component {
     }
 
     componentDidMount() {
-        if (this.props.colorCodeList.length !== 0 && !isSameColor(this.props.target, this.target)) {
+        if (this.props.colorCodeList.length !== 0 && !isSameColor(this.props.baseColor, this.baseColor)) {
             this.updateSelectedState();
         }
     }
@@ -63,10 +64,10 @@ class ColorBoard extends Component {
     }
 
     updateSelectedState() {
-        const url = `${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.target.lang}/${this.props.target.name}`;
+        const url = `${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.baseColor.lang}/${this.props.baseColor.name}`;
         axios.get(url).then(({data}) => {
             // data => {vote:10, colors:{#ff0000:5, #ff1000:3, ...}
-            this.target = this.props.target;
+            this.baseColor = this.props.baseColor;
             this.props.setVoteCount(data.vote);
             this.setRatio(data.vote, data.colors);
             this.updateBorderState();
@@ -110,4 +111,8 @@ const getCategory = ratio => {
     return 3;
 };
 
-export default ColorBoard;
+const mapStateToProps = state => ({
+    boardSideLength: state.board.sideLength,
+});
+
+export default connect(mapStateToProps)(ColorBoard);

@@ -13,7 +13,8 @@ class Header extends Component {
     }
 
     render() {
-        console.log("rendering header", this.props.userId);
+        console.log("rendering [header]",
+            "userId:", this.props.userId);
 
         return <nav className="navbar navbar-dark bg-dark border-bottom border-secondary" style={this.props.style}>
             <HeaderLeftPart/>

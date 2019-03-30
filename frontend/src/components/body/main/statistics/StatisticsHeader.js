@@ -3,7 +3,7 @@ import React, {Component} from "react";
 class StatisticsHeader extends Component {
 
     shouldComponentUpdate(nextProps) {
-        if (JSON.stringify(this.props.target) === JSON.stringify(nextProps.target)
+        if (JSON.stringify(this.props.baseColor) === JSON.stringify(nextProps.baseColor)
             && this.props.voteCount === nextProps.voteCount) {
             return false;
         }
@@ -11,11 +11,13 @@ class StatisticsHeader extends Component {
     }
 
     render() {
-        console.log("rendering statistics header", this.props.target.name, this.props.voteCount);
+        console.log("rendering [statistics header]",
+            "", this.props.baseColor.name,
+            "", this.props.voteCount);
         return <div className="card bg-dark border border-secondary">
             <div className="card-body">
                 <div className="row ml-0 mr-0">
-                    <ColorCard target={this.props.target}/>
+                    <ColorCard baseColor={this.props.baseColor}/>
                     <StatisticsFilter/>
                     <VoteCounter voteCount={this.props.voteCount}/>
                 </div>
@@ -24,11 +26,11 @@ class StatisticsHeader extends Component {
     }
 }
 
-const ColorCard = ({target}) => (
+const ColorCard = ({baseColor}) => (
     <div className="col-3 card bg-dark border border-secondary p-2 text-center">
         <div className="row">
-            <span className="col-4 border-right border-secondary p-3">{target.lang}</span>
-            <span className="col-8 p-3">{target.name}</span>
+            <span className="col-4 border-right border-secondary p-3">{baseColor.lang}</span>
+            <span className="col-8 p-3">{baseColor.name}</span>
         </div>
     </div>
 );

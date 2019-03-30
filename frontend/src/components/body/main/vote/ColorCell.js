@@ -25,7 +25,7 @@ class ColorCell extends Component {
     }
 
     render() {
-        console.log("rendering voting color cell");
+        console.log("rendering [voting color cell]");
         return <div style={{
             display: "inline-block", padding: "1px",
             borderWidth: "1px", borderStyle: "solid",

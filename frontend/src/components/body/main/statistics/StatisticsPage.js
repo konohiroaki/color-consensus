@@ -16,14 +16,17 @@ class StatisticsPage extends Component {
         if (this.props.baseColor === null) {
             return null;
         }
-        console.log("rendering statistics page", this.props.baseColor.code, this.props.colorCodeList[0]);
+        console.log("rendering [statistics page]",
+            "base:", this.props.baseColor.code,
+            "codeList[0]:", this.props.colorCodeList[0]);
 
         return <div>
-            <StatisticsHeader target={this.props.baseColor} voteCount={this.state.voteCount} history={this.props.history}/>
+            <StatisticsHeader baseColor={this.props.baseColor} voteCount={this.state.voteCount}
+                              history={this.props.history}/>
             <StatisticsPageButtons history={this.props.history}/>
             {this.props.baseColor.code === this.props.colorCodeList[0] &&
-             <ColorBoard target={this.props.baseColor} colorCodeList={this.props.colorCodeList}
-                         boardSideLength={this.props.boardSideLength} setVoteCount={(count) => this.setState({voteCount: count})}/>
+             <ColorBoard baseColor={this.props.baseColor} colorCodeList={this.props.colorCodeList}
+                         setVoteCount={(count) => this.setState({voteCount: count})}/>
             }
         </div>;
     }

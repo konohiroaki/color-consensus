@@ -6,7 +6,7 @@ import StatisticsPage from "./statistics/StatisticsPage";
 class MainContent extends Component {
 
     render() {
-        console.log("rendering main content");
+        console.log("rendering [main content]");
 
         return <div className="overflow-auto container-fluid pt-3" style={this.props.style}>
             <Switch>

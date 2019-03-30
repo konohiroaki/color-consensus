@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {connect} from "react-redux";
 import {SelectableColorCell} from "./ColorCell";
 
 class ColorBoard extends Component {
@@ -21,7 +22,7 @@ class ColorBoard extends Component {
         if (this.props.colorCodeList.length === 0) {
             return null;
         }
-        console.log("rendering voting color board");
+        console.log("rendering [voting color board]");
 
         return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
             {
@@ -72,4 +73,8 @@ Array.prototype.split = function (n) {
     return result;
 };
 
-export default ColorBoard;
+const mapStateToProps = state => ({
+    boardSideLength: state.board.sideLength,
+});
+
+export default connect(mapStateToProps)(ColorBoard);

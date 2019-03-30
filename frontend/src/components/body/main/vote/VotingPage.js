@@ -20,7 +20,7 @@ class VotingPage extends Component {
             return null;
         }
         console.log("rendering [voting page]",
-            "base:", this.props.baseColor !== null ? this.props.baseColor.code : null,
+            "base:", this.props.baseColor.code,
             "codeList[0]:", this.props.colorCodeList.length !== 0 ? this.props.colorCodeList[0] : null);
 
         return <div>
@@ -29,7 +29,7 @@ class VotingPage extends Component {
             <SelectableGroup enableDeselect allowClickWithoutSelected
                              onSelectionFinish={this.handleSelectionFinish}>
                 <DeselectAllButton/>
-                <ColorBoard colorCodeList={this.props.colorCodeList} boardSideLength={this.props.boardSideLength}/>
+                <ColorBoard colorCodeList={this.props.colorCodeList}/>
             </SelectableGroup>
         </div>;
     }

@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import AddColorCard from "./AddColorCard";
-import {isSameColor, isUndefinedColor} from "../../common/Utility";
+import {isSameColor} from "../../common/Utility";
 import {actions as colors} from "../../../modules/colors";
 import {actions as board} from "../../../modules/board";
 import {connect} from "react-redux";
@@ -18,7 +18,7 @@ class SideContent extends Component {
         this.LangFilterSelector = this.LangFilterSelector.bind(this);
         this.NameFilterInput = this.NameFilterInput.bind(this);
         this.Cards = this.Cards.bind(this);
-        this.TargetColorCard = this.TargetColorCard.bind(this);
+        this.BaseColorCard = this.BaseColorCard.bind(this);
         this.SelectableColorCards = this.SelectableColorCards.bind(this);
         this.ColorCard = this.ColorCard.bind(this);
     }
@@ -70,13 +70,13 @@ class SideContent extends Component {
 
     Cards() {
         return <div style={{overflowY: "auto", height: "100%"}}>
-            <this.TargetColorCard/>
+            <this.BaseColorCard/>
             <this.SelectableColorCards/>
             <AddColorCard/>
         </div>;
     }
 
-    TargetColorCard() {
+    BaseColorCard() {
         if (this.props.baseColor === null) {
             return null;
         }

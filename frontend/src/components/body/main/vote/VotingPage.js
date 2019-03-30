@@ -3,7 +3,7 @@ import {DeselectAll, SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import ColorBoard from "./ColorBoard";
 import {connect} from "react-redux";
-import {actions as board} from "../../../../modules/board/board";
+import {actions as board} from "../../../../modules/board";
 
 class VotingPage extends Component {
 

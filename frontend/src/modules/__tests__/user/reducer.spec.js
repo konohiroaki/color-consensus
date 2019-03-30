@@ -1,4 +1,4 @@
-import {reducer, types} from "./user";
+import {reducer, types} from "../../user";
 
 it("should set id", () => {
     const fakeData = "foo";

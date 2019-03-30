@@ -3,7 +3,7 @@ import {connect} from "react-redux";
 import Header from "./header/Header";
 import Body from "./body/Body";
 import LoginModal from "./common/LoginModal";
-import {actions as user} from "../modules/user/user";
+import {actions as user} from "../modules/user";
 
 class App extends Component {
 

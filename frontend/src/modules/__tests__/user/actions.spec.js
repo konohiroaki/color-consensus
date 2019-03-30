@@ -1,4 +1,4 @@
-import {actions, types} from "./user";
+import {actions, types} from "../../user";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import $ from "jquery";
 import {connect} from "react-redux";
-import {actions as user} from "../../modules/user/user";
+import {actions as user} from "../../modules/user";
 
 class LoginModal extends Component {
 

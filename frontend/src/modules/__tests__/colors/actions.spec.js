@@ -1,4 +1,4 @@
-import {actions, types} from "./colors";
+import {actions, types} from "../../colors";
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 

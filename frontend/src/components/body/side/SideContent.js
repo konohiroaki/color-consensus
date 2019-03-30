@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import AddColorCard from "./AddColorCard";
 import {isSameColor, isUndefinedColor} from "../../common/Utility";
 import {actions as colors} from "../../../modules/colors/colors";
+import {actions as board} from "../../../modules/board/board";
 import {connect} from "react-redux";
 
 class SideContent extends Component {
@@ -27,13 +28,15 @@ class SideContent extends Component {
     }
 
     componentDidUpdate() {
-        if (this.props.displayedColor === null) {
-            this.props.setDisplayedColor();
+        if (this.props.baseColor === null) {
+            this.props.setBaseColor();
         }
     }
 
     render() {
-        console.log("rendering side content", this.props.colorList.length, this.props.displayedColor);
+        console.log("rendering [side content]",
+            "list.length:", this.props.colorList.length,
+            "base:", this.props.baseColor !== null ? this.props.baseColor.code : null);
         return <div className={this.props.className} style={this.props.style}>
             <this.SearchBar/>
             <this.Cards/>
@@ -74,20 +77,20 @@ class SideContent extends Component {
     }
 
     TargetColorCard() {
-        if (this.props.displayedColor === null) {
+        if (this.props.baseColor === null) {
             return null;
         }
         return <div className="d-block m-2 card btn bg-dark text-light border border border-primary">
             <div className="row">
-                <div className="col-3 border-right border-secondary p-3">{this.props.displayedColor.lang}</div>
-                <div className="col-9 p-3">{this.props.displayedColor.name}</div>
+                <div className="col-3 border-right border-secondary p-3">{this.props.baseColor.lang}</div>
+                <div className="col-9 p-3">{this.props.baseColor.name}</div>
             </div>
         </div>;
     }
 
     SelectableColorCards() {
         const selectableCards = this.props.colorList
-            .filter(c => this.props.displayedColor !== null && !isSameColor(c, this.props.displayedColor))
+            .filter(c => this.props.baseColor !== null && !isSameColor(c, this.props.baseColor))
             .filter(c => isLangMatchingFilter(c.lang, this.state.langFilter))
             .filter(c => isNameMatchingFilter(c.name, this.state.nameFilter))
             .sort(colorComparator)
@@ -98,7 +101,7 @@ class SideContent extends Component {
 
     ColorCard({color}) {
         return <div className="d-block m-2 card btn bg-dark text-light border border border-secondary"
-                    onClick={() => this.props.setDisplayedColor(color)}>
+                    onClick={() => this.props.setBaseColor(color)}>
             <div className="row">
                 <div className="col-3 border-right border-secondary p-3">{color.lang}</div>
                 <div className="col-9 p-3">{color.name}</div>
@@ -122,11 +125,12 @@ const colorComparator = (c1, c2) => c1.lang !== c2.lang ? (c1.lang > c2.lang ? 1
 const mapStateToProps = state => ({
     colorList: state.colors.colors,
     displayedColor: state.colors.displayedColor,
+    baseColor: state.board.baseColor,
 });
 
 const mapDispatchToProps = dispatch => ({
     fetchColors: () => dispatch(colors.fetchColors()),
-    setDisplayedColor: color => dispatch(colors.setDisplayedColor(color)),
+    setBaseColor: color => dispatch(board.setBaseColor(color)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SideContent);

@@ -18,7 +18,7 @@ class ColorBoard extends Component {
 
     // TODO: place cells more nicely.
     render() {
-        if (this.props.colorCodes.length === 0) {
+        if (this.props.colorCodeList.length === 0) {
             return null;
         }
         console.log("rendering voting color board");
@@ -32,10 +32,10 @@ class ColorBoard extends Component {
     };
 
     getCellList() {
-        return this.props.colorCodes.map((v, k) => {
+        return this.props.colorCodeList.map((v, k) => {
             const i = Math.floor(k / this.props.boardSideLength) + 1;
             const j = k % this.props.boardSideLength + 1;
-            return <SelectableColorCell key={k} colorCode={this.props.colorCodes[k]} border={this.state.border[i][j]}
+            return <SelectableColorCell key={k} colorCode={this.props.colorCodeList[k]} border={this.state.border[i][j]}
                                         setCellState={this.setCellState.bind(null, {i: i, j: j})}/>;
         });
     }

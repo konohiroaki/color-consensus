@@ -1,13 +1,8 @@
 import React, {Component} from "react";
 import {createSelectable} from "react-selectable-fast";
+import {connect} from "react-redux";
 
 class ColorCell extends Component {
-
-    constructor(props) {
-        super(props);
-        // TODO: have this data at MainContent? it's duplicated in statistics color cell.
-        this.cellSize = "15px";
-    }
 
     shouldComponentUpdate(nextProps) {
         // when color is changed, need to update
@@ -41,7 +36,7 @@ class ColorCell extends Component {
             userSelect: "none", userDrag: "none"
         }}>
             <div ref={this.props.selectableRef}
-                 style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.colorCode}}/>
+                 style={{width: this.props.cellSize, height: this.props.cellSize, backgroundColor: this.props.colorCode}}/>
         </div>;
     }
 
@@ -52,6 +47,10 @@ class ColorCell extends Component {
 
 const getBorderColor = hasBorder => hasBorder ? "#fff" : "transparent";
 
-const SelectableColorCell = createSelectable(ColorCell);
+const mapStateToProps = state => ({
+    cellSize: state.board.cellSize,
+});
+
+const SelectableColorCell = createSelectable(connect(mapStateToProps)(ColorCell));
 
 export {SelectableColorCell};

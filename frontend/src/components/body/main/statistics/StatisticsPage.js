@@ -13,16 +13,16 @@ class StatisticsPage extends Component {
     }
 
     render() {
-        if (this.props.displayedColor === null) {
+        if (this.props.baseColor === null) {
             return null;
         }
-        console.log("rendering statistics page", this.props.displayedColor.code, this.props.displayedColorList[0]);
+        console.log("rendering statistics page", this.props.baseColor.code, this.props.colorCodeList[0]);
 
         return <div>
-            <StatisticsHeader target={this.props.displayedColor} voteCount={this.state.voteCount} history={this.props.history}/>
+            <StatisticsHeader target={this.props.baseColor} voteCount={this.state.voteCount} history={this.props.history}/>
             <StatisticsPageButtons history={this.props.history}/>
-            {this.props.displayedColor.code === this.props.displayedColorList[0] &&
-             <ColorBoard target={this.props.displayedColor} colorCodes={this.props.displayedColorList}
+            {this.props.baseColor.code === this.props.colorCodeList[0] &&
+             <ColorBoard target={this.props.baseColor} colorCodeList={this.props.colorCodeList}
                          boardSideLength={this.props.boardSideLength} setVoteCount={(count) => this.setState({voteCount: count})}/>
             }
         </div>;
@@ -38,9 +38,9 @@ const StatisticsPageButtons = props => (
 );
 
 const mapStateToProps = state => ({
-    displayedColor: state.colors.displayedColor,
-    displayedColorList: state.colors.displayedColorList,
-    boardSideLength: state.colors.boardSideLength,
+    boardSideLength: state.board.sideLength,
+    baseColor: state.board.baseColor,
+    colorCodeList: state.board.colorCodeList,
 });
 
 export default connect(mapStateToProps)(StatisticsPage);

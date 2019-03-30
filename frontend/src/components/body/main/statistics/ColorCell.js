@@ -1,11 +1,7 @@
 import React, {Component} from "react";
+import {connect} from "react-redux";
 
 class ColorCell extends Component {
-
-    constructor(props) {
-        super(props);
-        this.cellSize = "15px";
-    }
 
     shouldComponentUpdate(nextProps) {
         // when color is changed, need to update
@@ -33,7 +29,7 @@ class ColorCell extends Component {
             borderLeftColor: getBorderColor(this.props.border.left),
             userSelect: "none", userDrag: "none"
         }}>
-            <div style={{width: this.cellSize, height: this.cellSize, backgroundColor: this.props.colorCode}}/>
+            <div style={{width: this.props.cellSize, height: this.props.cellSize, backgroundColor: this.props.colorCode}}/>
         </div>;
     }
 }
@@ -50,4 +46,8 @@ const getBorderColor = category => {
     }
 };
 
-export default ColorCell;
+const mapStateToProps = state => ({
+    cellSize: state.board.cellSize,
+});
+
+export default connect(mapStateToProps)(ColorCell);

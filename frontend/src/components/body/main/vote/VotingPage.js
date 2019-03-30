@@ -3,13 +3,12 @@ import {DeselectAll, SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import ColorBoard from "./ColorBoard";
 import {connect} from "react-redux";
+import {actions as board} from "../../../../modules/board/board";
 
 class VotingPage extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
-        this.selected = [];
 
         this.handleSelectionFinish = this.handleSelectionFinish.bind(this);
         this.handleSubmitClick = this.handleSubmitClick.bind(this);
@@ -17,25 +16,26 @@ class VotingPage extends Component {
     }
 
     render() {
-        if (this.props.displayedColor === null) {
+        if (this.props.baseColor === null) {
             return null;
         }
-        console.log("rendering voting page", this.props.displayedColorList.length, this.props.displayedColor);
+        console.log("rendering [voting page]",
+            "base:", this.props.baseColor !== null ? this.props.baseColor.code : null,
+            "codeList[0]:", this.props.colorCodeList.length !== 0 ? this.props.colorCodeList[0] : null);
 
         return <div>
-            <VotingHeader displayedColor={this.props.displayedColor}/>
+            <VotingHeader baseColor={this.props.baseColor}/>
             <VotingPageButtons history={this.props.history} handleSubmitClick={this.handleSubmitClick}/>
             <SelectableGroup enableDeselect allowClickWithoutSelected
                              onSelectionFinish={this.handleSelectionFinish}>
                 <DeselectAllButton/>
-                <ColorBoard colorCodes={this.props.displayedColorList} boardSideLength={this.props.boardSideLength}/>
+                <ColorBoard colorCodeList={this.props.colorCodeList} boardSideLength={this.props.boardSideLength}/>
             </SelectableGroup>
         </div>;
     }
 
     handleSelectionFinish(selectedItems) {
-        this.selected = selectedItems.map(item => item.props.colorCode);
-        console.log(this.selected);
+        this.props.setSelectedColorCodeList(selectedItems.map(item => item.props.colorCode));
     };
 
     handleSubmitClick() {
@@ -48,21 +48,21 @@ class VotingPage extends Component {
     }
 
     submit() {
-        const {lang, name} = this.props.displayedColor;
+        const {lang, name} = this.props.baseColor;
         const url = `${process.env.WEBAPI_HOST}/api/v1/votes`;
-        const body = {"lang": lang, "name": name, "colors": this.selected};
+        const body = {"lang": lang, "name": name, "colors": this.props.selectedColorCodeList};
         axios.post(url, body).then(() => this.props.history.push("/statistics"));
     }
 }
 
-const VotingHeader = ({displayedColor}) => (
+const VotingHeader = ({baseColor}) => (
     <div className="card bg-dark border border-secondary">
         <div className="card-body">
             <div className="row ml-0 mr-0">
                 <div className="col-3 card bg-dark border border-secondary p-2 text-center">
                     <div className="row">
-                        <span className="col-4 border-right border-secondary p-3">{displayedColor.lang}</span>
-                        <span className="col-8 p-3">{displayedColor.name}</span>
+                        <span className="col-4 border-right border-secondary p-3">{baseColor.lang}</span>
+                        <span className="col-8 p-3">{baseColor.name}</span>
                     </div>
                 </div>
             </div>
@@ -88,10 +88,15 @@ const DeselectAllButton = () => (
 );
 
 const mapStateToProps = state => ({
-    displayedColor: state.colors.displayedColor,
-    displayedColorList: state.colors.displayedColorList,
-    boardSideLength: state.colors.boardSideLength,
+    boardSideLength: state.board.sideLength,
+    baseColor: state.board.baseColor,
+    colorCodeList: state.board.colorCodeList,
+    selectedColorCodeList: state.board.selectedColorCodeList,
     userId: state.user.id,
 });
 
-export default connect(mapStateToProps)(VotingPage);
+const mapDispatchToProps = dispatch => ({
+    setSelectedColorCodeList: colorCodeList => dispatch(board.setSelectedColorCodeList(colorCodeList)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(VotingPage);

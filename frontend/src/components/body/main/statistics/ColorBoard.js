@@ -23,7 +23,7 @@ class ColorBoard extends Component {
     }
 
     render() {
-        if (this.props.colorCodes.length === 0) {
+        if (this.props.colorCodeList.length === 0) {
             return null;
         }
         console.log("rendering statistics color board");
@@ -40,16 +40,16 @@ class ColorBoard extends Component {
     }
 
     componentDidMount() {
-        if (this.props.colorCodes.length !== 0 && !isSameColor(this.props.target, this.target)) {
+        if (this.props.colorCodeList.length !== 0 && !isSameColor(this.props.target, this.target)) {
             this.updateSelectedState();
         }
     }
 
     getCellList() {
-        return this.props.colorCodes.map((v, k) => {
+        return this.props.colorCodeList.map((v, k) => {
             const ii = Math.floor(k / this.props.boardSideLength) + 1;
             const jj = k % this.props.boardSideLength + 1;
-            return <ColorCell key={k} colorCode={this.props.colorCodes[k]} coord={{ii: ii, jj: jj}}
+            return <ColorCell key={k} colorCode={this.props.colorCodeList[k]} coord={{ii: ii, jj: jj}}
                               border={this.state.border[ii][jj]}/>;
         });
     }

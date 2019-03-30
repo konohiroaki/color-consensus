@@ -1,4 +1,4 @@
-import {actions, types} from "./board";
+import {actions, types} from "../../board";
 import MockAdapter from "axios-mock-adapter";
 import axios from "axios";
 

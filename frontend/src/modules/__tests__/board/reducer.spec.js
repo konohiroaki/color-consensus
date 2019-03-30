@@ -1,4 +1,4 @@
-import {reducer, types} from "./board";
+import {reducer, types} from "../../board";
 
 it("should set base color", () => {
     const fakeData = {foo: "bar"};

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/domains/user"
@@ -18,12 +19,17 @@ func (VoteController) Vote(c *gin.Context) {
 		userID = "testuser"
 	}
 
-	var v vote.ColorVote
-	_ = c.BindJSON(&v)
-	v.User = userID.(string)
-
-	vote.Add(v)
-
+	type request struct {
+		Lang   string `json:"lang"`
+		Name   string `json:"name"`
+		Colors []string `json:"colors"`
+	}
+	var req request
+	if err := c.ShouldBind(&req); err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(400)
+	}
+	vote.Add(userID.(string), req.Lang, req.Name, req.Colors)
 	c.Status(200)
 }
 
@@ -34,13 +40,14 @@ func (VoteController) GetVotes(c *gin.Context) {
 		Fields string `form:"fields"`
 	}
 	var req request
-	if (c.ShouldBind(&req)) == nil {
-		fields := strings.Split(req.Fields, ",")
-		votes := vote.GetVotes(req.Lang, req.Name, fields)
-		c.JSON(200, votes)
+	if err := c.ShouldBind(&req); err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(400)
 		return
 	}
-	c.AbortWithStatus(400)
+	fields := strings.Split(req.Fields, ",")
+	votes := vote.GetVotes(req.Lang, req.Name, fields)
+	c.JSON(200, votes)
 }
 
 func (VoteController) DeleteVotesForUser(c *gin.Context) {

@@ -20,7 +20,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 export const actions = {
     setStatistics(color) {
         return (dispatch) => {
-            // TODO: setup data from /votes/findByLangAndName/:lang/:name
+            // TODO: setup data from GET /votes
 
         };
     },

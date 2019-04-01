@@ -9,9 +9,9 @@ import (
 )
 
 type ColorVote struct {
-	Language  string    `json:"lang" bson:"lang"`
-	ColorName string    `json:"name" bson:"name"`
-	User      string    `json:"user" bson:"user"`
+	Language  string    `form:"lang" json:"lang" bson:"lang"`
+	ColorName string    `form:"name" json:"name" bson:"name"`
+	User      string    `form:"user" json:"user" bson:"user"`
 	Date      time.Time `json:"date" bson:"date"`
 	//FIXME: validate not working.
 	Colors []string `json:"colors" bson:"colors" validate:"dive,hexcolor"`
@@ -24,16 +24,18 @@ var userLookup = []bson.M{
 		"from":         "user",
 		"localField":   "user",
 		"foreignField": "id",
-		"as":           "userinfo",
+		"as":           "voter",
 	}},
-	{"$unwind": "$userinfo"},
+	{"$unwind": "$voter"},
 	{"$project": bson.M{
-		"_id":         0,
-		"nationality": "$userinfo.nationality",
-		"gender":      "$userinfo.gender",
-		"birth":       "$userinfo.birth",
-		"colors":      1,
-		"date":        1,
+		"_id":               0,
+		"voter.nationality": 1,
+		"voter.gender":      1,
+		"voter.birth":       1,
+		"lang":              1,
+		"name":              1,
+		"colors":            1,
+		"date":              1,
 	}},
 }
 
@@ -43,29 +45,48 @@ func InitRepo(uri, db string) {
 	voteCollection = c
 }
 
-func GetList() []ColorVote {
-	var voteList []ColorVote
-	_ = voteCollection.Find(bson.M{}).All(&voteList)
-	if voteList == nil {
-		return []ColorVote{}
-	}
-	return voteList
-}
+func GetVotes(lang, name string, fields []string) []bson.M {
+	var result []bson.M
+	err := voteCollection.
+		Pipe(getAggregators(lang, name, fields)).
+		All(&result)
 
-func FindByLangAndName(lang, name string) []bson.M {
-	var voteList []bson.M
-	pipe := voteCollection.Pipe(append([]bson.M{
-		{"$match": bson.M{
-			"lang": lang,
-			"name": name,
-		}},
-	}, userLookup...))
-	err := pipe.All(&voteList)
-	if err != nil {
-		fmt.Println(err)
+	if result == nil {
+		if err != nil {
+			fmt.Println(err)
+		}
 		return []bson.M{}
 	}
-	return voteList
+	return result
+}
+
+func getAggregators(lang, name string, fields []string) []bson.M {
+	var aggregators = []bson.M{}
+	aggregators = append(aggregators, bson.M{"$match": getMatcher(lang, name)})
+	aggregators = append(aggregators, userLookup...)
+	aggregators = append(aggregators, bson.M{"$project": getProjector(fields)})
+	return aggregators
+}
+
+func getMatcher(lang, name string) bson.M {
+	var matcher = bson.M{}
+	setIfValuePresent(matcher, "lang", lang)
+	setIfValuePresent(matcher, "name", name)
+	return matcher
+}
+
+func setIfValuePresent(m map[string]interface{}, key, value string) {
+	if (value != "") {
+		m[key] = value
+	}
+}
+
+func getProjector(fields []string) bson.M {
+	var projector = bson.M{}
+	for _, field := range fields {
+		projector[field] = 1;
+	}
+	return projector
 }
 
 // TODO: do transaction management with mgo/txn?

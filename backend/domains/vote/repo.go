@@ -1,6 +1,7 @@
 package vote
 
 import (
+	"fmt"
 	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -18,6 +19,24 @@ type ColorVote struct {
 
 var voteCollection *mgo.Collection
 
+var userLookup = []bson.M{
+	{"$lookup": bson.M{
+		"from":         "user",
+		"localField":   "user",
+		"foreignField": "id",
+		"as":           "userinfo",
+	}},
+	{"$unwind": "$userinfo"},
+	{"$project": bson.M{
+		"_id":         0,
+		"nationality": "$userinfo.nationality",
+		"gender":      "$userinfo.gender",
+		"birth":       "$userinfo.birth",
+		"colors":      1,
+		"date":        1,
+	}},
+}
+
 func InitRepo(uri, db string) {
 	session, _ := mgo.Dial(uri)
 	c := session.DB(db).C("vote")
@@ -33,11 +52,18 @@ func GetList() []ColorVote {
 	return voteList
 }
 
-func FindList(lang, name string) []ColorVote {
-	var voteList []ColorVote
-	_ = voteCollection.Find(bson.M{"lang": lang, "name": name}).All(&voteList)
-	if voteList == nil {
-		return []ColorVote{}
+func FindByLangAndName(lang, name string) []bson.M {
+	var voteList []bson.M
+	pipe := voteCollection.Pipe(append([]bson.M{
+		{"$match": bson.M{
+			"lang": lang,
+			"name": name,
+		}},
+	}, userLookup...))
+	err := pipe.All(&voteList)
+	if err != nil {
+		fmt.Println(err)
+		return []bson.M{}
 	}
 	return voteList
 }

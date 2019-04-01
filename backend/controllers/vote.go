@@ -26,10 +26,10 @@ func (VoteController) Vote(c *gin.Context) {
 	c.Status(200)
 }
 
-func (VoteController) GetVotes(c *gin.Context) {
+func (VoteController) FindVotes(c *gin.Context) {
 	lang := c.Param("lang")
-	color := c.Param("color")
-	list := vote.FindList(lang, color)
+	color := c.Param("name")
+	list := vote.FindByLangAndName(lang, color)
 	c.JSON(200, list)
 }
 

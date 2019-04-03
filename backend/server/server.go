@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/config"
+	"github.com/konohiroaki/color-consensus/backend/domains/color"
 	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"github.com/konohiroaki/color-consensus/backend/domains/user"
 	"github.com/konohiroaki/color-consensus/backend/domains/vote"
@@ -31,6 +32,7 @@ func initRepo(env string) {
 	user.InitRepo(uri, db)
 	vote.InitRepo(uri, db)
 	consensus.InitRepo(uri, db)
+	color.InitRepo(uri, db)
 
 	if env == "development" {
 		fmt.Println("detected development mode. inserting sample data.")
@@ -53,4 +55,5 @@ func insertSampleData() {
 	user.InsertSampleData()
 	vote.InsertSampleData()
 	consensus.InsertSampleData()
+	color.InsertSampleData()
 }

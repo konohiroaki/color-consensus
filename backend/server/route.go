@@ -26,6 +26,9 @@ func NewRouter() *gin.Engine {
 	{
 		v1api := api.Group("/v1")
 		{
+			color := new(controllers.ColorController)
+			v1api.GET("/colors", color.GetAll)
+
 			consensus := new(controllers.ConsensusController)
 			v1api.GET("/colors/keys", consensus.GetAllConsensusKey)
 			v1api.GET("/colors/detail", consensus.GetAllConsensus)

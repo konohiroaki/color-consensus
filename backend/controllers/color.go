@@ -1,12 +1,75 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/domains/color"
+	"sort"
+	"strconv"
 )
 
 type ColorController struct{}
 
 func (ColorController) GetAll(c *gin.Context) {
 	c.JSON(200, color.GetAll([]string{"lang", "name", "code"}))
+}
+
+func (ColorController) GetSimilarColors(c *gin.Context) {
+	code := c.Param("code")
+	if size, err := strconv.Atoi(c.Query("size")); err == nil {
+		candidates := generateCandidateList(code, size)
+		c.JSON(200, candidates)
+	} else {
+		c.AbortWithStatus(400)
+	}
+}
+
+// TODO: I think the sort order shouldn't be measured only by diff scale but should also consider about the ratio between each RGB.
+// For example of #808080, #707070 is farther than #806080, which would be opposite from how human feels.
+// So currently it shows very bad result for gray-ish colors.
+func generateCandidateList(code string, size int) []string {
+	r := fromHex(code[0:2])
+	g := fromHex(code[2:4])
+	b := fromHex(code[4:6])
+	type Candidate struct {
+		Code string
+		Diff int
+	}
+	list := []Candidate{{"#" + code, 0}}
+	for i := 0; i < 256; i += 16 {
+		for j := 0; j < 256; j += 16 {
+			for k := 0; k < 256; k += 16 {
+				diff := abs(r-i) + abs(g-j) + abs(b-k)
+				if diff != 0 {
+					list = append(list, Candidate{
+						"#" + toHex(i) + toHex(j) + toHex(k),
+						abs(r-i) + abs(g-j) + abs(b-k),
+					})
+				}
+			}
+		}
+	}
+	sort.Slice(list, func(i, j int) bool { return list[i].Diff < list[j].Diff })
+	result := []string{}
+	for _, candidate := range list {
+		result = append(result, candidate.Code)
+		if (len(result) == size) {
+			break;
+		}
+	}
+	return result
+}
+
+func fromHex(hex string) int {
+	num, _ := strconv.ParseInt(hex, 16, 64)
+	return int(num)
+}
+func toHex(num int) string {
+	return fmt.Sprintf("%02x", num)
+}
+func abs(num int) int {
+	if (num < 0) {
+		return -num;
+	}
+	return num;
 }

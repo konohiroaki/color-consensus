@@ -8,9 +8,9 @@ import (
 type ColorConsensus struct {
 	// https://ja.wikipedia.org/wiki/ISO_639-1
 	// https://godoc.org/golang.org/x/text/language
-	Language  string `json:"lang" bson:"lang"`
-	ColorName string `json:"name" bson:"name"`
-	ColorCode string `json:"code" bson:"code"`
+	Lang      string `json:"lang" bson:"lang"`
+	Name      string `json:"name" bson:"name"`
+	Code      string `json:"code" bson:"code"`
 	VoteCount int    `json:"vote" bson:"vote"`
 	//TODO: validate keys is v9 feature but gin still uses v8 validator.
 	// https://github.com/gin-gonic/gin/pull/1015
@@ -80,10 +80,10 @@ func Update(lang, name string, colorsToIncrement, colorsToDecrement []string) {
 
 func InsertSampleData() {
 	votes := []*ColorConsensus{
-		{Language: "en", ColorName: "red", ColorCode: "#ff0000", VoteCount: 2, Colors: map[string]int{"#ff0000": 1, "#f00000": 1}},
-		{Language: "en", ColorName: "green", ColorCode: "#008000", VoteCount: 1, Colors: map[string]int{"#008000": 1}},
-		{Language: "ja", ColorName: "赤", ColorCode: "#bf1e33", VoteCount: 1, Colors: map[string]int{"#bf1e33": 1}},
-		{Language: "en", ColorName: "gray", ColorCode: "#808080", VoteCount: 0, Colors: map[string]int{}},
+		{Lang: "en", Name: "red", Code: "#ff0000", VoteCount: 2, Colors: map[string]int{"#ff0000": 1, "#f00000": 1}},
+		{Lang: "en", Name: "green", Code: "#008000", VoteCount: 1, Colors: map[string]int{"#008000": 1}},
+		{Lang: "ja", Name: "赤", Code: "#bf1e33", VoteCount: 1, Colors: map[string]int{"#bf1e33": 1}},
+		{Lang: "en", Name: "gray", Code: "#808080", VoteCount: 0, Colors: map[string]int{}},
 	}
 
 	_, _ = consensusCollection.RemoveAll(nil)

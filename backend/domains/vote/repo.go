@@ -9,10 +9,10 @@ import (
 )
 
 type colorVote struct {
-	Language  string    `bson:"lang"`
-	ColorName string    `bson:"name"`
-	User      string    `bson:"user"`
-	Date      time.Time `bson:"date"`
+	Lang string    `bson:"lang"`
+	Name string    `bson:"name"`
+	User string    `bson:"user"`
+	Date time.Time `bson:"date"`
 	//FIXME: validate not working.
 	Colors []string `bson:"colors" validate:"dive,hexcolor"`
 }
@@ -93,7 +93,7 @@ func getProjector(fields []string) bson.M {
 func Add(user, lang, name string, newColors []string) bool {
 	oldColors := getOldVoteColors(user, lang, name)
 
-	vote := colorVote{Language: lang, ColorName: name, User: user, Date: time.Now(), Colors: newColors}
+	vote := colorVote{Lang: lang, Name: name, User: user, Date: time.Now(), Colors: newColors}
 	_, _ = voteCollection.Upsert(bson.M{"lang": lang, "name": name, "user": user}, &vote)
 
 	// maybe we can remove consensus collection. it's just an aggregated result of votes.
@@ -117,17 +117,17 @@ func RemoveForUser(userID string) {
 	var votes []colorVote
 	_ = voteCollection.Find(bson.M{"user": userID}).All(&votes)
 	for _, vote := range votes {
-		consensus.Update(vote.Language, vote.ColorName, []string{}, vote.Colors)
+		consensus.Update(vote.Lang, vote.Name, []string{}, vote.Colors)
 	}
 	_, _ = voteCollection.RemoveAll(bson.M{"user": userID})
 }
 
 func InsertSampleData() {
 	votes := []*colorVote{
-		{Language: "en", ColorName: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Date: time.Now(), Colors: []string{"#ff0000"}},
-		{Language: "en", ColorName: "green", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now(), Colors: []string{"#008000"}},
-		{Language: "ja", ColorName: "赤", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#bf1e33"}},
-		{Language: "en", ColorName: "red", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#f00000"}},
+		{Lang: "en", Name: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Date: time.Now(), Colors: []string{"#ff0000"}},
+		{Lang: "en", Name: "green", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now(), Colors: []string{"#008000"}},
+		{Lang: "ja", Name: "赤", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#bf1e33"}},
+		{Lang: "en", Name: "red", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#f00000"}},
 	}
 
 	_, _ = voteCollection.RemoveAll(nil)

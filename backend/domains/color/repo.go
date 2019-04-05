@@ -8,11 +8,11 @@ import (
 )
 
 type color struct {
-	Language string    `bson:"lang"`
-	Name     string    `bson:"name"`
-	Code     string    `bson:"code"`
-	User     string    `bson:"user"`
-	Date     time.Time `bson:"date"`
+	Lang string    `bson:"lang"`
+	Name string    `bson:"name"`
+	Code string    `bson:"code"`
+	User string    `bson:"user"`
+	Date time.Time `bson:"date"`
 }
 
 var colorCollection *mgo.Collection
@@ -49,11 +49,11 @@ func getProjector(fields []string) bson.M {
 
 func InsertSampleData() {
 	votes := []*color{
-		{Language: "en", Name: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Code: "#ff0000", Date: time.Now()},
-		{Language: "en", Name: "lime", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Code: "#00ff00", Date: time.Now()},
-		{Language: "en", Name: "green", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Code: "#008000", Date: time.Now()},
-		{Language: "ja", Name: "赤", User: "20af3406-8c7e-411a-851f-31732416fa83", Code: "#bf1e33", Date: time.Now()},
-		{Language: "en", Name: "gray", Code: "#808080", Date: time.Now()},
+		{Lang: "en", Name: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Code: "#ff0000", Date: time.Now()},
+		{Lang: "en", Name: "lime", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Code: "#00ff00", Date: time.Now()},
+		{Lang: "en", Name: "green", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Code: "#008000", Date: time.Now()},
+		{Lang: "ja", Name: "赤", User: "20af3406-8c7e-411a-851f-31732416fa83", Code: "#bf1e33", Date: time.Now()},
+		{Lang: "en", Name: "gray", Code: "#808080", Date: time.Now()},
 	}
 
 	_, _ = colorCollection.RemoveAll(nil)

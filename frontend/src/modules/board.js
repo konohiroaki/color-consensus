@@ -70,5 +70,5 @@ const getBaseColor = (colors, color) => color !== undefined && colors.includes(c
 const getColorListUrl = (baseColor, sideLength) => {
     const baseColorCode = baseColor.code.substring(1); // remove "#"
     const size = Math.pow(sideLength, 2);
-    return `${process.env.WEBAPI_HOST}/api/v1/colors/candidates/${baseColorCode}?size=${size}`;
+    return `${process.env.WEBAPI_HOST}/api/v1/colors/${baseColorCode}/neighbors?size=${size}`;
 };

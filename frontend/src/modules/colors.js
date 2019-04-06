@@ -24,7 +24,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 export const actions = {
     fetchColors() {
         return (dispatch) => {
-            return axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors/keys`)
+            return axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors`)
                 .then(({data}) => dispatch({type: types.FETCH_COLORS_SUCCESS, payload: data}))
                 .catch(err => {});
         };

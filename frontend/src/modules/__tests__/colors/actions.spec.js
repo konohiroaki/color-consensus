@@ -6,7 +6,7 @@ describe("fetchColors()", function () {
     it("should dispatch when fetch is success", () => {
         const fakeResponse = [{foo: "bar"}];
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors/keys`)
+        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors`)
             .reply(200, fakeResponse);
 
         const dispatch = jest.fn();
@@ -19,7 +19,7 @@ describe("fetchColors()", function () {
     });
     it("should not dispatch when error response", () => {
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors/keys`)
+        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors`)
             .reply(400);
 
         const dispatch = jest.fn();

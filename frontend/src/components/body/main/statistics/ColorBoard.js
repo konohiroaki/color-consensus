@@ -64,7 +64,7 @@ class ColorBoard extends Component {
     }
 
     updateSelectedState() {
-        const url = `${process.env.WEBAPI_HOST}/api/v1/colors/detail/${this.props.baseColor.lang}/${this.props.baseColor.name}`;
+        const url = `${process.env.WEBAPI_HOST}/api/v1/votes-stats?lang=${this.props.baseColor.lang}&name=${this.props.baseColor.name}`;
         axios.get(url).then(({data}) => {
             // data => {vote:10, colors:{#ff0000:5, #ff1000:3, ...}
             this.baseColor = this.props.baseColor;

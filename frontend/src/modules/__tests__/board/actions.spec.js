@@ -28,7 +28,7 @@ describe("setBaseColor(color)", function () {
     it("should dispatch for color list when get succeeds", () => {
         const fakeData = ["#ff0000", "#f00000"];
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors/candidates/oo?size=9`)
+        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors/oo/neighbors?size=9`)
             .reply(200, fakeData);
 
         const dispatch = jest.fn();
@@ -42,7 +42,7 @@ describe("setBaseColor(color)", function () {
     });
     it("should not dispatch for displayed color list when get fails", () => {
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors/candidates/oo?size=9`)
+        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/colors/oo/neighbors?size=9`)
             .reply(400);
 
         const dispatch = jest.fn();

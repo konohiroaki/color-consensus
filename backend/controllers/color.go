@@ -2,32 +2,57 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/domains/color"
+	"github.com/konohiroaki/color-consensus/backend/domains/user"
+	"net/http"
 	"sort"
 	"strconv"
 )
 
 type ColorController struct{}
 
-func (ColorController) GetAll(c *gin.Context) {
-	c.JSON(200, color.GetAll([]string{"lang", "name", "code"}))
+func (ColorController) GetAll(ctx *gin.Context) {
+	ctx.JSON(200, color.GetAll([]string{"lang", "name", "code"}))
 }
 
-func (ColorController) GetSimilarColors(c *gin.Context) {
-	code := c.Param("code")
-	if size, err := strconv.Atoi(c.Query("size")); err == nil {
-		candidates := generateCandidateList(code, size)
-		c.JSON(200, candidates)
+func (ColorController) Add(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	userID := session.Get("userID")
+	if userID == nil || !user.IsPresent(userID.(string)) {
+		fmt.Println(userID)
+		ctx.Status(http.StatusForbidden)
+		return
+	}
+	type request struct {
+		Lang string `json:"lang"`
+		Name string `json:"name"`
+		Code string `json:"code"`
+	}
+	var req request
+	if err := ctx.ShouldBind(&req); err != nil {
+		fmt.Println(err)
+		ctx.AbortWithStatus(http.StatusBadRequest)
+	}
+	color.Add(userID.(string), req.Lang, req.Name, req.Code)
+	ctx.Status(http.StatusCreated);
+}
+
+func (ColorController) GetNeighbors(ctx *gin.Context) {
+	code := ctx.Param("code")
+	if size, err := strconv.Atoi(ctx.Query("size")); err == nil {
+		neighbors := getNeighborColors(code, size)
+		ctx.JSON(200, neighbors)
 	} else {
-		c.AbortWithStatus(400)
+		ctx.AbortWithStatus(400)
 	}
 }
 
 // TODO: I think the sort order shouldn't be measured only by diff scale but should also consider about the ratio between each RGB.
 // For example of #808080, #707070 is farther than #806080, which would be opposite from how human feels.
 // So currently it shows very bad result for gray-ish colors.
-func generateCandidateList(code string, size int) []string {
+func getNeighborColors(code string, size int) []string {
 	r := fromHex(code[0:2])
 	g := fromHex(code[2:4])
 	b := fromHex(code[4:6])

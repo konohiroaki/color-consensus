@@ -10,43 +10,43 @@ import (
 
 type UserController struct{}
 
-func (UserController) GetUserIDFromCookie(c *gin.Context) {
-	session := sessions.Default(c)
+func (UserController) GetUserIDFromCookie(ctx *gin.Context) {
+	session := sessions.Default(ctx)
 	userID := session.Get("userID")
 	if userID == nil {
-		c.Status(http.StatusNotFound)
-	} else if _, found := user.Get(userID.(string)); found {
-		c.JSON(http.StatusOK, gin.H{"userID": userID})
+		ctx.Status(http.StatusNotFound)
+	} else if user.IsPresent(userID.(string)) {
+		ctx.JSON(http.StatusOK, gin.H{"userID": userID})
 	} else {
 		// this case shouldn't exist
-		c.Status(http.StatusPaymentRequired)
+		ctx.Status(http.StatusPaymentRequired)
 	}
 }
 
-func (UserController) SetCookieIfUserExist(c *gin.Context) {
+func (UserController) SetCookieIfUserExist(ctx *gin.Context) {
 	var u user.User
-	if err := c.BindJSON(&u); err != nil {
+	if err := ctx.BindJSON(&u); err != nil {
 		fmt.Println(err)
 	}
-	if _, found := user.Get(u.ID); found {
-		session := sessions.Default(c)
+	if user.IsPresent(u.ID) {
+		session := sessions.Default(ctx)
 		session.Set("userID", u.ID)
-		c.Status(http.StatusOK)
+		ctx.Status(http.StatusOK)
 	} else {
-		c.Status(http.StatusNotFound)
+		ctx.Status(http.StatusNotFound)
 	}
 }
 
-func (UserController) AddUserAndSetCookie(c *gin.Context) {
+func (UserController) AddUserAndSetCookie(ctx *gin.Context) {
 	var u user.User
-	if err := c.BindJSON(&u); err != nil {
+	if err := ctx.BindJSON(&u); err != nil {
 		fmt.Println(err)
 	}
 	u = user.Add(u)
-	session := sessions.Default(c)
+	session := sessions.Default(ctx)
 	session.Set("userID", u.ID)
 	if err := session.Save(); err != nil {
 		fmt.Println(err)
 	}
-	c.JSON(200, u);
+	ctx.JSON(200, u);
 }

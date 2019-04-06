@@ -23,6 +23,18 @@ func InitRepo(uri, db string) {
 	colorCollection = c
 }
 
+func Add(lang, name, code, user string) {
+	err := colorCollection.Insert(color{
+		Lang: lang,
+		Name: name,
+		Code: code,
+		User: user,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
 func GetAll(fields []string) []bson.M {
 	var result []bson.M
 	err := colorCollection.

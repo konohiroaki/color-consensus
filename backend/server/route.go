@@ -28,18 +28,16 @@ func NewRouter() *gin.Engine {
 		{
 			color := new(controllers.ColorController)
 			v1api.GET("/colors", color.GetAll)
+			v1api.POST("/colors", color.Add)
 			// TODO: change path to /colors/:code/neighbors
-			v1api.GET("/colors/candidates/:code", color.GetSimilarColors)
+			//v1api.GET("/colors/candidates/:code", color.GetNeighbors)
+			v1api.GET("/colors/:code/neighbors", color.GetNeighbors)
 
-			consensus := new(controllers.ConsensusController)
-			v1api.GET("/colors/keys", consensus.GetAllConsensusKey)
-			v1api.GET("/colors/detail", consensus.GetAllConsensus)
-			v1api.GET("/colors/detail/:lang/:color", consensus.GetConsensus)
-			v1api.POST("/colors", consensus.AddColor)
 
 			vote := new(controllers.VoteController)
 			v1api.POST("/votes", vote.Vote)
 			v1api.GET("/votes", vote.GetVotes)
+			v1api.GET("/votes-stats", vote.GetStats)
 			v1api.DELETE("/votes", vote.DeleteVotesForUser)
 
 			userController := new(controllers.UserController)

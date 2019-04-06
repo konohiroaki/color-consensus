@@ -2,7 +2,6 @@ package vote
 
 import (
 	"fmt"
-	"github.com/konohiroaki/color-consensus/backend/domains/consensus"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
@@ -89,36 +88,12 @@ func getProjector(fields []string) bson.M {
 	return projector
 }
 
-// TODO: do transaction management with mgo/txn?
-func Add(user, lang, name string, newColors []string) bool {
-	oldColors := getOldVoteColors(user, lang, name)
-
+func Add(user, lang, name string, newColors []string) {
 	vote := colorVote{Lang: lang, Name: name, User: user, Date: time.Now(), Colors: newColors}
 	_, _ = voteCollection.Upsert(bson.M{"lang": lang, "name": name, "user": user}, &vote)
-
-	// maybe we can remove consensus collection. it's just an aggregated result of votes.
-	consensus.Update(lang, name, newColors, oldColors)
-	return true
-}
-
-func getOldVoteColors(user, lang, name string) []string {
-	var old colorVote
-	err := voteCollection.Find(bson.M{"lang": lang, "name": name, "user": user}).
-		Select(bson.M{"colors": 1}).One(&old)
-
-	if err == nil {
-		return old.Colors
-	} else {
-		return []string{}
-	}
 }
 
 func RemoveForUser(userID string) {
-	var votes []colorVote
-	_ = voteCollection.Find(bson.M{"user": userID}).All(&votes)
-	for _, vote := range votes {
-		consensus.Update(vote.Lang, vote.Name, []string{}, vote.Colors)
-	}
 	_, _ = voteCollection.RemoveAll(bson.M{"user": userID})
 }
 

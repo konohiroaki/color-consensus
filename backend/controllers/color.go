@@ -14,10 +14,12 @@ import (
 type ColorController struct{}
 
 func (ColorController) GetAll(ctx *gin.Context) {
-	ctx.JSON(200, color.GetAll([]string{"lang", "name", "code"}))
+	repository := ctx.Keys["colorRepository"].(color.ColorRepository)
+	ctx.JSON(200, repository.GetAll([]string{"lang", "name", "code"}))
 }
 
 func (ColorController) Add(ctx *gin.Context) {
+	repository := ctx.Keys["colorRepository"].(color.ColorRepository)
 	session := sessions.Default(ctx)
 	userID := session.Get("userID")
 	if userID == nil || !user.IsPresent(userID.(string)) {
@@ -35,7 +37,7 @@ func (ColorController) Add(ctx *gin.Context) {
 		fmt.Println(err)
 		ctx.AbortWithStatus(http.StatusBadRequest)
 	}
-	color.Add(userID.(string), req.Lang, req.Name, req.Code)
+	repository.Add(userID.(string), req.Lang, req.Name, req.Code)
 	ctx.Status(http.StatusCreated);
 }
 

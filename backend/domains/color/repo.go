@@ -7,6 +7,28 @@ import (
 	"time"
 )
 
+type ColorRepository interface {
+	Add(lang, name, code, user string)
+	GetAll(fields []string) []bson.M
+}
+
+type colorRepository struct {
+	Collection *mgo.Collection
+}
+
+func NewColorRepository(uri, db, env string) ColorRepository {
+	session, _ := mgo.Dial(uri)
+	collection := session.DB(db).C("color")
+	repository := &colorRepository{collection}
+
+	if env == "development" {
+		fmt.Println("detected development mode. inserting sample data.")
+		repository.insertSampleData()
+	}
+
+	return repository
+}
+
 type color struct {
 	Lang string    `bson:"lang"`
 	Name string    `bson:"name"`
@@ -15,16 +37,8 @@ type color struct {
 	Date time.Time `bson:"date"`
 }
 
-var colorCollection *mgo.Collection
-
-func InitRepo(uri, db string) {
-	session, _ := mgo.Dial(uri)
-	c := session.DB(db).C("color")
-	colorCollection = c
-}
-
-func Add(lang, name, code, user string) {
-	err := colorCollection.Insert(color{
+func (r colorRepository) Add(lang, name, code, user string) {
+	err := r.Collection.Insert(color{
 		Lang: lang,
 		Name: name,
 		Code: code,
@@ -35,10 +49,10 @@ func Add(lang, name, code, user string) {
 	}
 }
 
-func GetAll(fields []string) []bson.M {
+func (r colorRepository) GetAll(fields []string) []bson.M {
 	var result []bson.M
-	err := colorCollection.
-		Pipe([]bson.M{{"$project": getProjector(fields)}}).
+	err := r.Collection.
+		Pipe([]bson.M{{"$project": r.getProjector(fields)}}).
 		All(&result)
 
 	if result == nil {
@@ -50,7 +64,7 @@ func GetAll(fields []string) []bson.M {
 	return result
 }
 
-func getProjector(fields []string) bson.M {
+func (r colorRepository) getProjector(fields []string) bson.M {
 	var projector = bson.M{}
 	for _, field := range fields {
 		projector[field] = 1;
@@ -59,7 +73,7 @@ func getProjector(fields []string) bson.M {
 	return projector
 }
 
-func InsertSampleData() {
+func (r colorRepository) insertSampleData() {
 	votes := []*color{
 		{Lang: "en", Name: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Code: "#ff0000", Date: time.Now()},
 		{Lang: "en", Name: "lime", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Code: "#00ff00", Date: time.Now()},
@@ -68,10 +82,10 @@ func InsertSampleData() {
 		{Lang: "en", Name: "gray", Code: "#808080", Date: time.Now()},
 	}
 
-	_, _ = colorCollection.RemoveAll(nil)
+	_, _ = r.Collection.RemoveAll(nil)
 	tmp := []interface{}{}
 	for _, v := range votes {
 		tmp = append(tmp, v)
 	}
-	_ = colorCollection.Insert(tmp...)
+	_ = r.Collection.Insert(tmp...)
 }

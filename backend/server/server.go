@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/config"
-	"github.com/konohiroaki/color-consensus/backend/domains/color"
 	"github.com/konohiroaki/color-consensus/backend/domains/user"
 	"github.com/konohiroaki/color-consensus/backend/domains/vote"
 	"os"
@@ -17,7 +16,7 @@ func Init(env string) {
 	}
 
 	initRepo(env)
-	initWeb()
+	initWeb(env)
 }
 
 func initRepo(env string) {
@@ -30,7 +29,6 @@ func initRepo(env string) {
 
 	user.InitRepo(uri, db)
 	vote.InitRepo(uri, db)
-	color.InitRepo(uri, db)
 
 	if env == "development" {
 		fmt.Println("detected development mode. inserting sample data.")
@@ -38,8 +36,8 @@ func initRepo(env string) {
 	}
 }
 
-func initWeb() {
-	router := NewRouter()
+func initWeb(env string) {
+	router := NewRouter(env)
 
 	port := os.Getenv("PORT") // provided by heroku's web dyno
 	if port == "" {
@@ -52,5 +50,4 @@ func initWeb() {
 func insertSampleData() {
 	user.InsertSampleData()
 	vote.InsertSampleData()
-	color.InsertSampleData()
 }

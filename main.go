@@ -10,6 +10,6 @@ func main() {
 	env := flag.String("env", "production", "specify environment")
 	flag.Parse()
 
-	config.Init()
+	config.Init("./backend/config")
 	server.Init(*env)
 }

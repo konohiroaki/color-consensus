@@ -7,12 +7,11 @@ import (
 
 var config *viper.Viper
 
-func Init() {
+func Init(path string) {
 	var err error
 	config = viper.New()
-	config.SetConfigType("yaml")
 	config.SetConfigName("common")
-	config.AddConfigPath("backend/config/")
+	config.AddConfigPath(path)
 	err = config.ReadInConfig()
 	if err != nil {
 		log.Fatal(err)

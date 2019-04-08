@@ -1,4 +1,4 @@
-package color
+package repositories
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 type ColorRepository interface {
 	Add(lang, name, code, user string)
-	GetAll(fields []string) []bson.M
+	GetAll(fields []string) []map[string]interface{}
 }
 
 type colorRepository struct {
@@ -22,7 +22,7 @@ func NewColorRepository(uri, db, env string) ColorRepository {
 	repository := &colorRepository{collection}
 
 	if env == "development" {
-		fmt.Println("detected development mode. inserting sample data.")
+		fmt.Println("detected development mode. inserting sample color data.")
 		repository.insertSampleData()
 	}
 
@@ -49,8 +49,8 @@ func (r colorRepository) Add(lang, name, code, user string) {
 	}
 }
 
-func (r colorRepository) GetAll(fields []string) []bson.M {
-	var result []bson.M
+func (r colorRepository) GetAll(fields []string) []map[string]interface{} {
+	var result []map[string]interface{}
 	err := r.Collection.
 		Pipe([]bson.M{{"$project": r.getProjector(fields)}}).
 		All(&result)
@@ -59,7 +59,7 @@ func (r colorRepository) GetAll(fields []string) []bson.M {
 		if err != nil {
 			fmt.Println(err)
 		}
-		return []bson.M{}
+		return []map[string]interface{}{}
 	}
 	return result
 }

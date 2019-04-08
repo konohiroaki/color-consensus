@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/domains/color"
-	"github.com/konohiroaki/color-consensus/backend/domains/user"
+	"github.com/konohiroaki/color-consensus/backend/repositories"
 	"net/http"
 	"sort"
 	"strconv"
@@ -14,12 +13,13 @@ import (
 type ColorController struct{}
 
 func (ColorController) GetAll(ctx *gin.Context) {
-	repository := ctx.Keys["colorRepository"].(color.ColorRepository)
+	repository := ctx.Keys["colorRepository"].(repositories.ColorRepository)
 	ctx.JSON(200, repository.GetAll([]string{"lang", "name", "code"}))
 }
 
 func (ColorController) Add(ctx *gin.Context) {
-	repository := ctx.Keys["colorRepository"].(color.ColorRepository)
+	repository := ctx.Keys["colorRepository"].(repositories.ColorRepository)
+	user := ctx.Keys["userRepository"].(repositories.UserRepository)
 	session := sessions.Default(ctx)
 	userID := session.Get("userID")
 	if userID == nil || !user.IsPresent(userID.(string)) {

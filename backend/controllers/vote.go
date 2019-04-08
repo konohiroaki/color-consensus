@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/domains/user"
-	"github.com/konohiroaki/color-consensus/backend/domains/vote"
+	"github.com/konohiroaki/color-consensus/backend/repositories"
 	"net/http"
 	"strings"
 )
@@ -14,6 +13,7 @@ type VoteController struct {
 }
 
 func (VoteController) Vote(ctx *gin.Context) {
+	repository := ctx.Keys["voteRepository"].(repositories.VoteRepository)
 	session := sessions.Default(ctx)
 	userID := session.Get("userID")
 	if userID == nil {
@@ -31,11 +31,12 @@ func (VoteController) Vote(ctx *gin.Context) {
 		fmt.Println(err)
 		ctx.AbortWithStatus(400)
 	}
-	vote.Add(userID.(string), req.Lang, req.Name, req.Colors)
+	repository.Add(userID.(string), req.Lang, req.Name, req.Colors)
 	ctx.Status(200)
 }
 
 func (VoteController) GetVotes(ctx *gin.Context) {
+	repository := ctx.Keys["voteRepository"].(repositories.VoteRepository)
 	type request struct {
 		Lang   string `form:"lang"`
 		Name   string `form:"name"`
@@ -48,11 +49,12 @@ func (VoteController) GetVotes(ctx *gin.Context) {
 		return
 	}
 	fields := strings.Split(req.Fields, ",")
-	votes := vote.GetVotes(req.Lang, req.Name, fields)
+	votes := repository.GetVotes(req.Lang, req.Name, fields)
 	ctx.JSON(200, votes)
 }
 
 func (VoteController) GetStats(ctx *gin.Context) {
+	repository := ctx.Keys["voteRepository"].(repositories.VoteRepository)
 	type request struct {
 		Lang string `form:"lang"`
 		Name string `form:"name"`
@@ -63,7 +65,7 @@ func (VoteController) GetStats(ctx *gin.Context) {
 		ctx.AbortWithStatus(400)
 		return
 	}
-	votes := vote.GetVotes(req.Lang, req.Name, []string{"colors"})
+	votes := repository.GetVotes(req.Lang, req.Name, []string{"colors"})
 	type response struct {
 		Count int            `json:"count"`
 		Codes map[string]int `json:"colors"`
@@ -85,9 +87,13 @@ func (VoteController) GetStats(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-func (VoteController) DeleteVotesForUser(c *gin.Context) {
-	var user user.User
-	_ = c.BindJSON(&user)
-	vote.RemoveForUser(user.ID)
-	c.Status(200)
+func (VoteController) DeleteVotesForUser(ctx *gin.Context) {
+	repository := ctx.Keys["voteRepository"].(repositories.VoteRepository)
+	type request struct {
+		ID string `json:"id"`
+	}
+	var req request
+	_ = ctx.BindJSON(&req)
+	repository.RemoveForUser(req.ID)
+	ctx.Status(200)
 }

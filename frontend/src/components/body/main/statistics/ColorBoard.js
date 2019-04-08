@@ -68,7 +68,7 @@ class ColorBoard extends Component {
         axios.get(url).then(({data}) => {
             // data => {vote:10, colors:{#ff0000:5, #ff1000:3, ...}
             this.baseColor = this.props.baseColor;
-            this.props.setVoteCount(data.vote);
+            this.props.setVoteCount(data.count);
             this.setRatio(data.vote, data.colors);
             this.updateBorderState();
         });

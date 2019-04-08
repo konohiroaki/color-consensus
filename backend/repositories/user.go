@@ -9,8 +9,8 @@ import (
 )
 
 type UserRepository interface {
-	IsPresent(id string) bool
 	Add(nationality, gender string, birth int) string
+	IsPresent(id string) bool
 }
 
 type userRepository struct {
@@ -39,11 +39,6 @@ type user struct {
 	Date        time.Time `json:"date" bson:"date"`
 }
 
-func (r userRepository) IsPresent(id string) bool {
-	count, _ := r.Collection.Find(bson.M{"id": id}).Count()
-	return count > 0
-}
-
 func (r userRepository) Add(nationality, gender string, birth int) string {
 	user := user{
 		ID:          uuid.NewV4().String(),
@@ -54,6 +49,11 @@ func (r userRepository) Add(nationality, gender string, birth int) string {
 	}
 	_ = r.Collection.Insert(&user)
 	return user.ID
+}
+
+func (r userRepository) IsPresent(id string) bool {
+	count, _ := r.Collection.Find(bson.M{"id": id}).Count()
+	return count > 0
 }
 
 func (r userRepository) insertSampleData() {

@@ -4,14 +4,13 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/expvar"
 	"github.com/gin-contrib/pprof"
-	"github.com/konohiroaki/color-consensus/backend/config"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"github.com/konohiroaki/color-consensus/backend/config"
 	"github.com/konohiroaki/color-consensus/backend/controllers"
-	"github.com/konohiroaki/color-consensus/backend/domains/color"
-	"github.com/konohiroaki/color-consensus/backend/domains/user"
+	"github.com/konohiroaki/color-consensus/backend/repositories"
 	"os"
 	"strings"
 )
@@ -34,11 +33,21 @@ func NewRouter(env string) *gin.Engine {
 
 func database(env string) []gin.HandlerFunc {
 	uri, db := getDatabaseURIAndName()
-	colorRepository := color.NewColorRepository(uri, db, env)
+	colorRepository := repositories.NewColorRepository(uri, db, env)
+	voteRepository := repositories.NewVoteRepository(uri, db, env)
+	userRepository := repositories.NewUserRepository(uri, db, env)
 
 	return []gin.HandlerFunc{
 		func(c *gin.Context) {
 			c.Set("colorRepository", colorRepository)
+			c.Next()
+		},
+		func(c *gin.Context) {
+			c.Set("voteRepository", voteRepository)
+			c.Next()
+		},
+		func(c *gin.Context) {
+			c.Set("userRepository", userRepository)
 			c.Next()
 		},
 	}
@@ -76,7 +85,6 @@ func setUpEndpoints(router *gin.Engine) {
 			v1api.GET("/users/presence", userController.GetUserIDFromCookie)
 			v1api.POST("/users/presence", userController.SetCookieIfUserExist)
 			v1api.POST("/users", userController.AddUserAndSetCookie)
-			v1api.GET("/admin/users", func(c *gin.Context) { c.JSON(200, user.GetList()) })
 		}
 	}
 }

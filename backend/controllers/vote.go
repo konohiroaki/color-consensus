@@ -9,8 +9,7 @@ import (
 	"strings"
 )
 
-type VoteController struct {
-}
+type VoteController struct{}
 
 func (VoteController) Vote(ctx *gin.Context) {
 	repository := ctx.Keys["voteRepository"].(repositories.VoteRepository)

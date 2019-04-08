@@ -8,8 +8,8 @@ import (
 )
 
 type VoteRepository interface {
-	GetVotes(lang, name string, fields []string) []map[string]interface{}
 	Add(user, lang, name string, newColors []string)
+	GetVotes(lang, name string, fields []string) []map[string]interface{}
 	RemoveForUser(userID string)
 }
 
@@ -39,24 +39,9 @@ type colorVote struct {
 	Colors []string `bson:"colors" validate:"dive,hexcolor"`
 }
 
-var userLookup = []bson.M{
-	{"$lookup": bson.M{
-		"from":         "user",
-		"localField":   "user",
-		"foreignField": "id",
-		"as":           "voter",
-	}},
-	{"$unwind": "$voter"},
-	{"$project": bson.M{
-		"_id":               0,
-		"voter.nationality": 1,
-		"voter.gender":      1,
-		"voter.birth":       1,
-		"lang":              1,
-		"name":              1,
-		"colors":            1,
-		"date":              1,
-	}},
+func (r voteRepository) Add(user, lang, name string, newColors []string) {
+	vote := colorVote{Lang: lang, Name: name, User: user, Date: time.Now(), Colors: newColors}
+	_, _ = r.Collection.Upsert(bson.M{"lang": lang, "name": name, "user": user}, &vote)
 }
 
 func (r voteRepository) GetVotes(lang, name string, fields []string) []map[string]interface{} {
@@ -74,12 +59,38 @@ func (r voteRepository) GetVotes(lang, name string, fields []string) []map[strin
 	return result
 }
 
+func (r voteRepository) RemoveForUser(userID string) {
+	_, _ = r.Collection.RemoveAll(bson.M{"user": userID})
+}
+
 func (r voteRepository) getAggregators(lang, name string, fields []string) []bson.M {
 	var aggregators = []bson.M{}
 	aggregators = append(aggregators, bson.M{"$match": r.getMatcher(lang, name)})
-	aggregators = append(aggregators, userLookup...)
+	aggregators = append(aggregators, r.getUserLookUpAggregators()...)
 	aggregators = append(aggregators, bson.M{"$project": r.getProjector(fields)})
 	return aggregators
+}
+
+func (r voteRepository) getUserLookUpAggregators() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         "user",
+			"localField":   "user",
+			"foreignField": "id",
+			"as":           "voter",
+		}},
+		{"$unwind": "$voter"},
+		{"$project": bson.M{
+			"_id":               0,
+			"voter.nationality": 1,
+			"voter.gender":      1,
+			"voter.birth":       1,
+			"lang":              1,
+			"name":              1,
+			"colors":            1,
+			"date":              1,
+		}},
+	}
 }
 
 func (r voteRepository) getMatcher(lang, name string) bson.M {
@@ -101,15 +112,6 @@ func (r voteRepository) getProjector(fields []string) bson.M {
 		projector[field] = 1;
 	}
 	return projector
-}
-
-func (r voteRepository) Add(user, lang, name string, newColors []string) {
-	vote := colorVote{Lang: lang, Name: name, User: user, Date: time.Now(), Colors: newColors}
-	_, _ = r.Collection.Upsert(bson.M{"lang": lang, "name": name, "user": user}, &vote)
-}
-
-func (r voteRepository) RemoveForUser(userID string) {
-	_, _ = r.Collection.RemoveAll(bson.M{"user": userID})
 }
 
 func (r voteRepository) insertSampleData() {

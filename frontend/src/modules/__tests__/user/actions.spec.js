@@ -33,7 +33,7 @@ describe("login(id)", function () {
     it("should dispatch when user is present", () => {
         const fakeId = {id: "foo"};
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, fakeId)
+        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/login`, fakeId)
             .reply(200);
 
         const dispatch = jest.fn();
@@ -47,7 +47,7 @@ describe("login(id)", function () {
     it("should not dispatch when user is absent", () => {
         const fakeId = {id: "foo"};
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, fakeId)
+        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/login`, fakeId)
             .reply(404);
 
         const dispatch = jest.fn();

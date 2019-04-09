@@ -52,7 +52,7 @@ func (r userRepository) Add(nationality, gender string, birth int) string {
 }
 
 func (r userRepository) IsPresent(id string) bool {
-	count, _ := r.Collection.Find(bson.M{"id": id}).Count()
+	count, _ := r.Collection.Find(bson.M{"id": id}).Limit(1).Count()
 	return count > 0
 }
 

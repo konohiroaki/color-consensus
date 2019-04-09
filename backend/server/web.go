@@ -69,10 +69,8 @@ func setUpEndpoints(router *gin.Engine) {
 		v1api := api.Group("/v1")
 		{
 			color := new(controllers.ColorController)
-			v1api.GET("/colors", color.GetAll)
 			v1api.POST("/colors", color.Add)
-			// TODO: change path to /colors/:code/neighbors
-			//v1api.GET("/colors/candidates/:code", color.GetNeighbors)
+			v1api.GET("/colors", color.GetAll)
 			v1api.GET("/colors/:code/neighbors", color.GetNeighbors)
 
 			vote := new(controllers.VoteController)
@@ -82,9 +80,9 @@ func setUpEndpoints(router *gin.Engine) {
 			v1api.DELETE("/votes", vote.DeleteVotesForUser)
 
 			userController := new(controllers.UserController)
-			v1api.GET("/users/presence", userController.GetUserIDFromCookie)
-			v1api.POST("/users/presence", userController.SetCookieIfUserExist)
 			v1api.POST("/users", userController.AddUserAndSetCookie)
+			v1api.POST("/login", userController.SetCookieIfUserExist)
+			v1api.GET("/users/presence", userController.GetUserIDFromCookie)
 		}
 	}
 }

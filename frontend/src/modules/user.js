@@ -32,7 +32,7 @@ export const actions = {
     },
     login(id) {
         return (dispatch) => {
-            return axios.post(`${process.env.WEBAPI_HOST}/api/v1/users/presence`, {id: id})
+            return axios.post(`${process.env.WEBAPI_HOST}/api/v1/login`, {id: id})
                 .then(() => dispatch({
                     type: types.SET_ID,
                     payload: id

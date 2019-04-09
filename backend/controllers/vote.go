@@ -92,7 +92,11 @@ func (VoteController) DeleteVotesForUser(ctx *gin.Context) {
 		ID string `json:"id"`
 	}
 	var req request
-	_ = ctx.BindJSON(&req)
+	if err := ctx.ShouldBind(&req); err != nil {
+		fmt.Println(err)
+		ctx.AbortWithStatus(400)
+		return
+	}
 	repository.RemoveForUser(req.ID)
 	ctx.Status(200)
 }

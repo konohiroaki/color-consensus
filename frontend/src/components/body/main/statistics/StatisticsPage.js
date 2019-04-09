@@ -17,7 +17,7 @@ class StatisticsPage extends Component {
             return null;
         }
         console.log("rendering [statistics page]",
-            "base:", this.props.baseColor.code,
+            "baseColor.code:", this.props.baseColor.code,
             "codeList[0]:", this.props.colorCodeList[0]);
 
         return <div>

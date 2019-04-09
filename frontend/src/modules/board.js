@@ -7,8 +7,8 @@ export const types = {
 };
 
 const DEFAULT_STATE = {
-    cellSize: "15px",
-    sideLength: 31,
+    cellSize: "25px",
+    sideLength: 19,
 
     baseColor: null,
     colorCodeList: [],

@@ -12,53 +12,56 @@ class StatisticsHeader extends Component {
 
     render() {
         console.log("rendering [statistics header]",
-            "", this.props.baseColor.name,
-            "", this.props.voteCount);
+            "baseColor.code:", this.props.baseColor.code,
+            "voteCount:", this.props.voteCount);
         return <div className="card bg-dark border border-secondary">
             <div className="card-body">
                 <div className="row ml-0 mr-0">
-                    <ColorCard baseColor={this.props.baseColor}/>
-                    <StatisticsFilter/>
-                    <VoteCounter voteCount={this.props.voteCount}/>
+                    <div className="col-10">
+                        <StatisticsFilter/>
+                        <StatisticsPercentile/>
+                    </div>
+                    <VoteCounter style="col-2" voteCount={this.props.voteCount}/>
                 </div>
             </div>
         </div>;
     }
 }
 
-const ColorCard = ({baseColor}) => (
-    <div className="col-3 card bg-dark border border-secondary p-2 text-center">
-        <div className="row">
-            <span className="col-4 border-right border-secondary p-3">{baseColor.lang}</span>
-            <span className="col-8 p-3">{baseColor.name}</span>
+// TODO: complete select box impl
+const StatisticsFilter = () => (
+    <div>
+        Filters
+        <div className="input-group">
+            <select className="custom-select" defaultValue="">
+                <option value="">Nationality</option>
+                <option value="3">Others</option>
+            </select>
+            <select className="custom-select" defaultValue="">
+                <option value="">Age Group</option>
+                <option value="3">Others</option>
+            </select>
+            <select className="custom-select" defaultValue="">
+                <option value="">Gender</option>
+                <option value="1">Male</option>
+                <option value="2">Female</option>
+                <option value="3">Others</option>
+            </select>
         </div>
     </div>
 );
 
-// TODO: complete select box impl
-const StatisticsFilter = () => (
-    <div className="col-7 input-group">
-        <select className="custom-select" defaultValue="">
-            <option value="">Nationality</option>
-            <option value="3">Others</option>
-        </select>
-        <select className="custom-select" defaultValue="">
-            <option value="">Age Group</option>
-            <option value="3">Others</option>
-        </select>
-        <select className="custom-select" defaultValue="">
-            <option value="">Gender</option>
-            <option value="1">Male</option>
-            <option value="2">Female</option>
-            <option value="3">Others</option>
-        </select>
+const StatisticsPercentile = () => (
+    <div>
+        Percentile
+        <input type="range" className="custom-range" min="0" max="100" step="10"/>
     </div>
 );
 
-const VoteCounter = (props) => (
-    <div className="col-2 card bg-dark border border-secondary p-2 text-center">
+const VoteCounter = ({style, voteCount}) => (
+    <div className={style + " card bg-dark border border-secondary p-2 text-center"}>
         Vote count
-        <div className="font-weight-bold">{props.voteCount}</div>
+        <div className="font-weight-bold">{voteCount}</div>
     </div>
 );
 

@@ -20,7 +20,7 @@ class VotingPage extends Component {
             return null;
         }
         console.log("rendering [voting page]",
-            "base:", this.props.baseColor.code,
+            "baseColor.code:", this.props.baseColor.code,
             "codeList[0]:", this.props.colorCodeList.length !== 0 ? this.props.colorCodeList[0] : null);
 
         return <div>

@@ -30,8 +30,10 @@ func (UserController) SetCookieIfUserExist(ctx *gin.Context) {
 		ID string `json:"id"`
 	}
 	var req request
-	if err := ctx.BindJSON(&req); err != nil {
+	if err := ctx.ShouldBind(&req); err != nil {
 		fmt.Println(err)
+		ctx.Status(http.StatusNotFound)
+		return
 	}
 	if repository.IsPresent(req.ID) {
 		session := sessions.Default(ctx)
@@ -50,8 +52,10 @@ func (UserController) AddUserAndSetCookie(ctx *gin.Context) {
 		Birth       int    `json:"birth"`
 	}
 	var req request
-	if err := ctx.BindJSON(&req); err != nil {
+	if err := ctx.ShouldBind(&req); err != nil {
 		fmt.Println(err)
+		ctx.AbortWithStatus(400)
+		return
 	}
 	id := repository.Add(req.Nationality, req.Gender, req.Birth)
 	session := sessions.Default(ctx)

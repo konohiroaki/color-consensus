@@ -35,8 +35,7 @@ type colorVote struct {
 	Name string    `bson:"name"`
 	User string    `bson:"user"`
 	Date time.Time `bson:"date"`
-	//FIXME: validate not working.
-	Colors []string `bson:"colors" validate:"dive,hexcolor"`
+	Colors []string `bson:"colors"`
 }
 
 func (r voteRepository) Add(user, lang, name string, newColors []string) {

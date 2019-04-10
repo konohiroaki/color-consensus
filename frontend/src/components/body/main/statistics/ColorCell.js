@@ -34,17 +34,7 @@ class ColorCell extends Component {
     }
 }
 
-const getBorderColor = category => {
-    if (category === 0) {
-        return "transparent";
-    } else if (category === 1) {
-        return "#999";
-    } else if (category === 2) {
-        return "#ccc";
-    } else {
-        return "#fff";
-    }
-};
+const getBorderColor = flag => flag ? "#fff" : "transparent";
 
 const mapStateToProps = state => ({
     cellSize: state.board.cellSize,

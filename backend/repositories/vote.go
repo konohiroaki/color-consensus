@@ -116,9 +116,9 @@ func (r voteRepository) getProjector(fields []string) bson.M {
 func (r voteRepository) insertSampleData() {
 	votes := []*colorVote{
 		{Lang: "en", Name: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Date: time.Now(), Colors: []string{"#ff0000"}},
+		{Lang: "en", Name: "red", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now(), Colors: []string{"#f00000"}},
 		{Lang: "en", Name: "green", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now(), Colors: []string{"#008000"}},
 		{Lang: "ja", Name: "赤", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#bf1e33"}},
-		{Lang: "en", Name: "red", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#f00000"}},
 	}
 
 	_, _ = r.Collection.RemoveAll(nil)

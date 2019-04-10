@@ -2,15 +2,9 @@ import React, {Component} from "react";
 import StatisticsHeader from "./StatisticsHeader";
 import ColorBoard from "./ColorBoard";
 import {connect} from "react-redux";
+import {actions as statistics} from "../../../../modules/statistics";
 
 class StatisticsPage extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            voteCount: 0,
-        };
-    }
 
     render() {
         if (this.props.baseColor === null) {
@@ -21,14 +15,23 @@ class StatisticsPage extends Component {
             "codeList[0]:", this.props.colorCodeList[0]);
 
         return <div>
-            <StatisticsHeader baseColor={this.props.baseColor} voteCount={this.state.voteCount}
-                              history={this.props.history}/>
+            <StatisticsHeader baseColor={this.props.baseColor}/>
             <StatisticsPageButtons history={this.props.history}/>
             {this.props.baseColor.code === this.props.colorCodeList[0] &&
-             <ColorBoard baseColor={this.props.baseColor} colorCodeList={this.props.colorCodeList}
-                         setVoteCount={(count) => this.setState({voteCount: count})}/>
-            }
+             <ColorBoard baseColor={this.props.baseColor} colorCodeList={this.props.colorCodeList}/>}
         </div>;
+    }
+
+    componentDidMount() {
+        if (this.props.baseColor !== null) {
+            this.props.setVotes(this.props.baseColor);
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.baseColor !== null) {
+            this.props.setVotes(this.props.baseColor);
+        }
     }
 }
 
@@ -46,4 +49,8 @@ const mapStateToProps = state => ({
     colorCodeList: state.board.colorCodeList,
 });
 
-export default connect(mapStateToProps)(StatisticsPage);
+const mapDispatchToProps = dispatch => ({
+    setVotes: color => dispatch(statistics.setVotes(color)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(StatisticsPage);

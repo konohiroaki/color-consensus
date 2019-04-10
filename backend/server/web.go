@@ -76,7 +76,6 @@ func setUpEndpoints(router *gin.Engine) {
 			vote := new(controllers.VoteController)
 			v1api.POST("/votes", vote.Vote)
 			v1api.GET("/votes", vote.GetVotes)
-			v1api.GET("/votes-stats", vote.GetStats)
 			v1api.DELETE("/votes", vote.DeleteVotesForUser)
 
 			userController := new(controllers.UserController)

@@ -63,7 +63,7 @@ const StatisticsPercentile = () => (
 );
 
 const VoteCounter = ({style, voteCount}) => (
-    <div className={style + " card bg-dark border border-secondary p-2 text-center"}>
+    <div className={style + " card bg-dark border border-secondary p-2 text-center my-auto"}>
         Vote count
         <div className="font-weight-bold">{voteCount}</div>
     </div>

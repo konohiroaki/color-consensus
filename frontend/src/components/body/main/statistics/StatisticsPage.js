@@ -23,15 +23,13 @@ class StatisticsPage extends Component {
     }
 
     componentDidMount() {
-        if (this.props.baseColor !== null) {
+        if (this.props.baseColor !== null && this.props.baseColor.code === this.props.colorCodeList[0]) {
             this.props.setVotes(this.props.baseColor);
         }
     }
 
     componentDidUpdate() {
-        if (this.props.baseColor !== null) {
-            this.props.setVotes(this.props.baseColor);
-        }
+        this.componentDidMount();
     }
 }
 

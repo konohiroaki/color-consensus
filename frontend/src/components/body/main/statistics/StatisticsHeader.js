@@ -12,9 +12,9 @@ class StatisticsHeader extends Component {
             <div className="card-body">
                 <div className="row ml-0 mr-0">
                     <div className="col-10">
-                        <StatisticsFilter votes={this.props.votes} nationalityFilter={this.props.nationalityFilter}
+                        <StatisticsFilter votes={this.props.votes}
                                           setNationalityFilter={this.props.setNationalityFilter}/>
-                        <StatisticsPercentile/>
+                        <StatisticsPercentile setPercentile={this.props.setPercentile}/>
                     </div>
                     <VoteCounter style="col-2" voteCount={this.props.votes.length}/>
                 </div>
@@ -33,7 +33,7 @@ const StatisticsFilter = (props) => {
     return <div>
         Filters
         <div className="input-group">
-            <select className="custom-select" value={props.nationalityFilter}
+            <select className="custom-select"
                     onChange={e => props.setNationalityFilter(e.target.value)}>
                 <option value="">Nationality</option>
                 {nationalities}
@@ -55,10 +55,12 @@ const StatisticsFilter = (props) => {
 // https://stackoverflow.com/a/14438954
 const distinct = (value, index, self) => self.indexOf(value) === index;
 
-const StatisticsPercentile = () => (
+// TODO: show the number of percentile
+const StatisticsPercentile = (props) => (
     <div>
         Percentile
-        <input type="range" className="custom-range" min="0" max="100" step="10"/>
+        <input type="range" className="custom-range" min="0" max="100" step="10"
+               onChange={e => props.setPercentile(e.target.value)}/>
     </div>
 );
 
@@ -71,11 +73,12 @@ const VoteCounter = ({style, voteCount}) => (
 
 const mapStateToProps = state => ({
     votes: state.statistics.votes,
-    nationalityFilter: state.statistics.nationalityFilter,
+    percentile: state.statistics.percentile,
 });
 
 const mapDispatchToProps = dispatch => ({
     setNationalityFilter: nationality => dispatch(statistics.setNationalityFilter(nationality)),
+    setPercentile: percentile => dispatch(statistics.setPercentile(percentile))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StatisticsHeader);

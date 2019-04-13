@@ -1,7 +1,5 @@
 import React, {Component} from "react";
 import ColorCell from "./ColorCell";
-import axios from "axios";
-import {isSameColor} from "../../../common/Utility";
 import {connect} from "react-redux";
 
 class ColorBoard extends Component {
@@ -29,7 +27,7 @@ class ColorBoard extends Component {
         return this.props.colorCodeList.map((v, k) => {
             const ii = Math.floor(k / this.props.boardSideLength) + 1;
             const jj = k % this.props.boardSideLength + 1;
-            return <ColorCell key={k} colorCode={this.props.colorCodeList[k]} coord={{ii: ii, jj: jj}}
+            return <ColorCell key={k} colorCode={this.props.colorCodeList[k]}
                               border={this.props.cellBorder[ii][jj]}/>;
         });
     }

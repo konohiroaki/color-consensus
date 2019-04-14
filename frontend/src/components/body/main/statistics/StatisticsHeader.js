@@ -19,7 +19,7 @@ class StatisticsHeader extends Component {
                                           setAgeGroupFilter={this.props.setAgeGroupFilter}
                                           genderFilter={this.props.genderFilter}
                                           setGenderFilter={this.props.setGenderFilter}/>
-                        <StatisticsPercentile setPercentile={this.props.setPercentile}/>
+                        <StatisticsPercentile percentile={this.props.percentile} setPercentile={this.props.setPercentile}/>
                     </div>
                     <VoteCounter style="col-2" voteCount={this.props.votes.length}/>
                 </div>
@@ -46,7 +46,7 @@ const StatisticsFilter = (props) => {
         .map(n => <option key={n} value={n}>{n}</option>);
 
     return <div>
-        Filters
+        Filters:
         <div className="input-group">
             <select className="custom-select" value={props.nationalityFilter}
                     onChange={e => props.setNationalityFilter(e.target.value)}>
@@ -70,14 +70,23 @@ const StatisticsFilter = (props) => {
 // https://stackoverflow.com/a/14438954
 const distinct = (value, index, self) => self.indexOf(value) === index;
 
-// TODO: show the number of percentile
-const StatisticsPercentile = (props) => (
-    <div>
-        Percentile
+const StatisticsPercentile = (props) => {
+    let percentile = parseInt(props.percentile);
+    if (percentile === 0) {
+        percentile = "At least one person voted";
+    } else if (percentile === 100) {
+        percentile = "Everyone voted";
+    } else {
+        percentile += "%~ voted";
+    }
+    return <div>
+        Percentile: [{percentile}]
         <input type="range" className="custom-range" min="0" max="100" step="10"
-               onChange={e => props.setPercentile(e.target.value)}/>
-    </div>
-);
+               onChange={e => {
+                   props.setPercentile(e.target.value);
+               }}/>
+    </div>;
+};
 
 const VoteCounter = ({style, voteCount}) => (
     <div className={style + " card bg-dark border border-secondary p-2 text-center my-auto"}>
@@ -91,6 +100,7 @@ const mapStateToProps = state => ({
     nationalityFilter: state.statistics.nationalityFilter,
     ageGroupFilter: state.statistics.ageGroupFilter,
     genderFilter: state.statistics.genderFilter,
+    percentile: state.statistics.percentile,
 });
 
 const mapDispatchToProps = dispatch => ({

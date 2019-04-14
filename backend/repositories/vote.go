@@ -31,11 +31,11 @@ func NewVoteRepository(uri, db, env string) VoteRepository {
 }
 
 type colorVote struct {
-	Lang string    `bson:"lang"`
-	Name string    `bson:"name"`
-	User string    `bson:"user"`
-	Date time.Time `bson:"date"`
-	Colors []string `bson:"colors"`
+	Lang   string    `bson:"lang"`
+	Name   string    `bson:"name"`
+	User   string    `bson:"user"`
+	Date   time.Time `bson:"date"`
+	Colors []string  `bson:"colors"`
 }
 
 func (r voteRepository) Add(user, lang, name string, newColors []string) {
@@ -71,6 +71,14 @@ func (r voteRepository) getAggregators(lang, name string, fields []string) []bso
 }
 
 func (r voteRepository) getUserLookUpAggregators() []bson.M {
+	// ageGroup maybe wrong since user input is only for year.
+	// ageGroup = Math.floor((currentYear - birthYear) / 10) * 10
+	ageGroupAggregator :=
+		bson.M{"$multiply": []interface{}{
+			bson.M{"$floor":
+			bson.M{"$divide": []interface{}{
+				bson.M{"$subtract": []interface{}{bson.M{"$year": time.Now()}, "$voter.birth"}},
+				10}}}, 10}};
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         "user",
@@ -82,8 +90,8 @@ func (r voteRepository) getUserLookUpAggregators() []bson.M {
 		{"$project": bson.M{
 			"_id":               0,
 			"voter.nationality": 1,
+			"voter.ageGroup":    ageGroupAggregator,
 			"voter.gender":      1,
-			"voter.birth":       1,
 			"lang":              1,
 			"name":              1,
 			"colors":            1,

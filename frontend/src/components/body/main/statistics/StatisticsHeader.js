@@ -32,15 +32,17 @@ const StatisticsFilter = (props) => {
     const nationalities = props.votes
         .map(v => v.voter.nationality)
         .filter(distinct)
+        .sort()
         .map(n => <option key={n} value={n}>{n}</option>);
-    // TODO: get ageGroups rather than actual birth.
     const ageGroups = props.votes
-        .map(v => v.voter.birth)
+        .map(v => v.voter.ageGroup)
         .filter(distinct)
-        .map(n => <option key={n} value={n}>{n}</option>);
+        .sort()
+        .map(n => <option key={n} value={n}>{n + " ~ " + (n + 9)}</option>);
     const genders = props.votes
         .map(v => v.voter.gender)
         .filter(distinct)
+        .sort()
         .map(n => <option key={n} value={n}>{n}</option>);
 
     return <div>

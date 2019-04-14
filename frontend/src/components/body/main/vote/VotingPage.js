@@ -3,7 +3,7 @@ import {DeselectAll, SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import ColorBoard from "./ColorBoard";
 import {connect} from "react-redux";
-import {actions as board} from "../../../../modules/board";
+import {actions as vote} from "../../../../modules/vote";
 
 class VotingPage extends Component {
 
@@ -91,12 +91,12 @@ const mapStateToProps = state => ({
     boardSideLength: state.board.sideLength,
     baseColor: state.board.baseColor,
     colorCodeList: state.board.colorCodeList,
-    selectedColorCodeList: state.board.selectedColorCodeList,
+    selectedColorCodeList: state.vote.selectedColorCodeList,
     userId: state.user.id,
 });
 
 const mapDispatchToProps = dispatch => ({
-    setSelectedColorCodeList: colorCodeList => dispatch(board.setSelectedColorCodeList(colorCodeList)),
+    setSelectedColorCodeList: colorCodeList => dispatch(vote.setSelectedColorCodeList(colorCodeList)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(VotingPage);

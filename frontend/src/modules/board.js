@@ -3,7 +3,6 @@ import axios from "axios";
 export const types = {
     SET_BASE_COLOR: "SET_BASE_COLOR",
     SET_COLOR_CODE_LIST: "SET_COLOR_CODE_LIST",
-    SET_SELECTED_COLOR_CODE_LIST: "SET_SELECTED_COLOR_CODE_LIST",
 };
 
 const DEFAULT_STATE = {
@@ -12,7 +11,6 @@ const DEFAULT_STATE = {
 
     baseColor: null,
     colorCodeList: [],
-    selectedColorCodeList: [],
 };
 
 export const reducer = (state = DEFAULT_STATE, action) => {
@@ -26,11 +24,6 @@ export const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 colorCodeList: action.payload
-            };
-        case types.SET_SELECTED_COLOR_CODE_LIST:
-            return {
-                ...state,
-                selectedColorCodeList: action.payload
             };
         default:
             return state;
@@ -51,18 +44,6 @@ export const actions = {
             }
         };
     },
-    setSelectedColorCodeList: (colorList) => {
-        return {
-            type: types.SET_SELECTED_COLOR_CODE_LIST,
-            payload: colorList,
-        };
-    },
-    resetSelectedColorCodeList: () => {
-        return {
-            type: types.SET_SELECTED_COLOR_CODE_LIST,
-            payload: [],
-        };
-    }
 };
 
 const getBaseColor = (colors, color) => color !== undefined && colors.includes(color) ? color : colors[0];

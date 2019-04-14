@@ -3,6 +3,8 @@ import axios from "axios";
 export const types = {
     SET_VOTES: "SET_VOTES",
     SET_NATIONALITY_FILTER: "SET_NATIONALITY_FILTER",
+    SET_AGE_GROUP_FILTER: "SET_AGE_GROUP_FILTER",
+    SET_GENDER_FILTER: "SET_GENDER_FILTER",
     SET_PERCENTILE: "SET_PERCENTILE",
     CALCULATE_BORDER: "CALCULATE_BORDER",
     RESET_FILTERS: "RESET_FILTERS",
@@ -11,8 +13,8 @@ export const types = {
 const DEFAULT_STATE = {
     votes: [],
     nationalityFilter: "",
-    genderFilter: "",
     ageGroupFilter: "",
+    genderFilter: "",
     percentile: 50,
 
     cellBorder: [],
@@ -35,10 +37,15 @@ export const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 nationalityFilter: action.payload
             };
-        case types.SET_PERCENTILE:
+        case types.SET_AGE_GROUP_FILTER:
             return {
                 ...state,
-                percentile: action.payload
+                ageGroupFilter: action.payload
+            };
+        case types.SET_GENDER_FILTER:
+            return {
+                ...state,
+                genderFilter: action.payload
             };
         case types.RESET_FILTERS:
             return {
@@ -46,6 +53,11 @@ export const reducer = (state = DEFAULT_STATE, action) => {
                 nationalityFilter: "",
                 genderFilter: "",
                 ageGroupFilter: "",
+            };
+        case types.SET_PERCENTILE:
+            return {
+                ...state,
+                percentile: action.payload
             };
         default:
             return state;
@@ -58,6 +70,8 @@ export const actions = {
             return axios.get(getStatisticsUrl(color))
                 .then(({data}) => {
                     dispatch({type: types.SET_VOTES, payload: data});
+                    // resetting filters because specific filter might not exist for other vote set.
+                    dispatch(this.resetFilters());
                     dispatch(this.calculateBorder());
                 })
                 .catch(err => {});
@@ -76,12 +90,29 @@ export const actions = {
             dispatch(this.calculateBorder());
         };
     },
+    setAgeGroupFilter(ageGroup) {
+        return (dispatch) => {
+            dispatch({type: types.SET_AGE_GROUP_FILTER, payload: ageGroup});
+            dispatch(this.calculateBorder());
+        };
+    },
+    setGenderFilter(gender) {
+        return (dispatch) => {
+            dispatch({type: types.SET_GENDER_FILTER, payload: gender});
+            dispatch(this.calculateBorder());
+        };
+    },
     setPercentile(percentile) {
         return (dispatch) => {
             dispatch({type: types.SET_PERCENTILE, payload: percentile});
             dispatch(this.calculateBorder());
         };
-    }
+    },
+    resetFilters() {
+        return (dispatch) => {
+            dispatch({type: types.RESET_FILTERS});
+        };
+    },
 };
 
 const getStatisticsUrl = ({lang, name}) => {

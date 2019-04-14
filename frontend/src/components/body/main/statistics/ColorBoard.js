@@ -16,20 +16,20 @@ class ColorBoard extends Component {
         console.log("rendering [statistics color board]");
 
         return <div className="text-center" style={{lineHeight: "0", padding: "10px"}}>
-            {
-                this.getCellList().split(this.props.boardSideLength)
-                    .map((v, k) => <div key={k}>{v}</div>)
-            }
+            {this.getCellList()}
         </div>;
     }
 
     getCellList() {
-        return this.props.colorCodeList.map((v, k) => {
-            const ii = Math.floor(k / this.props.boardSideLength) + 1;
-            const jj = k % this.props.boardSideLength + 1;
-            return <ColorCell key={k} colorCode={this.props.colorCodeList[k]}
-                              border={this.props.cellBorder[ii][jj]}/>;
-        });
+        return this.props.colorCodeList
+            .map((v, k) => {
+                const ii = Math.floor(k / this.props.boardSideLength) + 1;
+                const jj = k % this.props.boardSideLength + 1;
+                return <ColorCell key={k} colorCode={this.props.colorCodeList[k]}
+                                  border={this.props.cellBorder[ii][jj]}/>;
+            })
+            .split(this.props.boardSideLength)
+            .map((v, k) => <div key={k}>{v}</div>);
     }
 }
 

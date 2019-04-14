@@ -13,7 +13,12 @@ class StatisticsHeader extends Component {
                 <div className="row ml-0 mr-0">
                     <div className="col-10">
                         <StatisticsFilter votes={this.props.votes}
-                                          setNationalityFilter={this.props.setNationalityFilter}/>
+                                          nationalityFilter={this.props.nationalityFilter}
+                                          setNationalityFilter={this.props.setNationalityFilter}
+                                          ageGroupFilter={this.props.ageGroupFilter}
+                                          setAgeGroupFilter={this.props.setAgeGroupFilter}
+                                          genderFilter={this.props.genderFilter}
+                                          setGenderFilter={this.props.setGenderFilter}/>
                         <StatisticsPercentile setPercentile={this.props.setPercentile}/>
                     </div>
                     <VoteCounter style="col-2" voteCount={this.props.votes.length}/>
@@ -23,30 +28,38 @@ class StatisticsHeader extends Component {
     }
 }
 
-// TODO: complete select box impl
 const StatisticsFilter = (props) => {
     const nationalities = props.votes
         .map(v => v.voter.nationality)
+        .filter(distinct)
+        .map(n => <option key={n} value={n}>{n}</option>);
+    // TODO: get ageGroups rather than actual birth.
+    const ageGroups = props.votes
+        .map(v => v.voter.birth)
+        .filter(distinct)
+        .map(n => <option key={n} value={n}>{n}</option>);
+    const genders = props.votes
+        .map(v => v.voter.gender)
         .filter(distinct)
         .map(n => <option key={n} value={n}>{n}</option>);
 
     return <div>
         Filters
         <div className="input-group">
-            <select className="custom-select"
+            <select className="custom-select" value={props.nationalityFilter}
                     onChange={e => props.setNationalityFilter(e.target.value)}>
                 <option value="">Nationality</option>
                 {nationalities}
             </select>
-            <select className="custom-select" defaultValue="">
+            <select className="custom-select" value={props.ageGroupFilter}
+                    onChange={e => props.setAgeGroupFilter(e.target.value)}>
                 <option value="">Age Group</option>
-                <option value="3">Others</option>
+                {ageGroups}
             </select>
-            <select className="custom-select" defaultValue="">
+            <select className="custom-select" value={props.genderFilter}
+                    onChange={e => props.setGenderFilter(e.target.value)}>
                 <option value="">Gender</option>
-                <option value="1">Male</option>
-                <option value="2">Female</option>
-                <option value="3">Others</option>
+                {genders}
             </select>
         </div>
     </div>;
@@ -73,11 +86,15 @@ const VoteCounter = ({style, voteCount}) => (
 
 const mapStateToProps = state => ({
     votes: state.statistics.votes,
-    percentile: state.statistics.percentile,
+    nationalityFilter: state.statistics.nationalityFilter,
+    ageGroupFilter: state.statistics.ageGroupFilter,
+    genderFilter: state.statistics.genderFilter,
 });
 
 const mapDispatchToProps = dispatch => ({
     setNationalityFilter: nationality => dispatch(statistics.setNationalityFilter(nationality)),
+    setAgeGroupFilter: ageGroup => dispatch(statistics.setAgeGroupFilter(ageGroup)),
+    setGenderFilter: gender => dispatch(statistics.setGenderFilter(gender)),
     setPercentile: percentile => dispatch(statistics.setPercentile(percentile))
 });
 

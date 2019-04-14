@@ -116,7 +116,7 @@ export const actions = {
 };
 
 const getStatisticsUrl = ({lang, name}) => {
-    const fields = ["colors", "voter.nationality", "voter.gender", "voter.birth"];
+    const fields = ["colors", "voter.nationality", "voter.ageGroup", "voter.gender"];
     return `${process.env.WEBAPI_HOST}/api/v1/votes?lang=${lang}&name=${name}&fields=${fields}`;
 };
 

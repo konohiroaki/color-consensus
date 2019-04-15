@@ -92,7 +92,7 @@ export const actions = {
     },
     setAgeGroupFilter(ageGroup) {
         return (dispatch) => {
-            dispatch({type: types.SET_AGE_GROUP_FILTER, payload: ageGroup});
+            dispatch({type: types.SET_AGE_GROUP_FILTER, payload: parseInt(ageGroup)});
             dispatch(this.calculateBorder());
         };
     },
@@ -122,16 +122,14 @@ const getStatisticsUrl = ({lang, name}) => {
 
 const getCellRatio = (getState) => {
     const colorCodeList = getState().board.colorCodeList;
-    const votes = getState().statistics.votes;
-    const nationalityFilter = getState().statistics.nationalityFilter;
     const boardSize = getState().board.sideLength;
     const arraySize = boardSize + 2;
 
     let ratio = Array(arraySize).fill(0).map(() => Array(arraySize).fill(0));
 
-    const filteredVotes = votes
-        .filter(vote => nationalityFilter === "" || nationalityFilter === vote.voter.nationality);
-    filteredVotes.flatMap(vote => vote.colors)
+    const filteredVotes = getFilteredVotes(getState().statistics);
+    filteredVotes
+        .reduce((acc, vote) => acc.concat(vote.colors), [])
         .forEach(color => {
             const idx = colorCodeList.indexOf(color);
             const ii = Math.floor(idx / boardSize) + 1, jj = idx % boardSize + 1;
@@ -140,29 +138,35 @@ const getCellRatio = (getState) => {
     return ratio;
 };
 
+const getFilteredVotes = ({votes, nationalityFilter, ageGroupFilter, genderFilter}) => {
+    return votes
+        .filter(vote => nationalityFilter === "" || nationalityFilter === vote.voter.nationality)
+        .filter(vote => ageGroupFilter === "" || ageGroupFilter === vote.voter.ageGroup)
+        .filter(vote => genderFilter === "" || genderFilter === vote.voter.gender);
+};
+
 const getCellBorder = (getState, cellRatio) => {
+    const percentile = getState().statistics.percentile / 100;
     const arraySize = getState().board.sideLength + 2;
+
     let border = Array(arraySize).fill(0)
         .map(() => Array(arraySize).fill({top: false, right: false, bottom: false, left: false}));
-    const percentile = getState().statistics.percentile / 100;
 
     for (let ii = 1; ii < border.length - 1; ii++) {
         for (let jj = 1; jj < border.length - 1; jj++) {
             border[ii][jj] = {
-                top: percentile !== 0
-                     ? cellRatio[ii][jj] >= percentile && cellRatio[ii - 1][jj] < percentile
-                     : cellRatio[ii][jj] !== 0 && cellRatio[ii - 1][jj] === 0,
-                right: percentile !== 0
-                       ? cellRatio[ii][jj] >= percentile && cellRatio[ii][jj + 1] < percentile
-                       : cellRatio[ii][jj] !== 0 && cellRatio[ii][jj + 1] === 0,
-                bottom: percentile !== 0
-                        ? cellRatio[ii][jj] >= percentile && cellRatio[ii + 1][jj] < percentile
-                        : cellRatio[ii][jj] !== 0 && cellRatio[ii + 1][jj] === 0,
-                left: percentile !== 0
-                      ? cellRatio[ii][jj] >= percentile && cellRatio[ii][jj - 1] < percentile
-                      : cellRatio[ii][jj] !== 0 && cellRatio[ii][jj - 1] === 0,
+                top: getBorderState(percentile, cellRatio[ii][jj], cellRatio[ii - 1][jj]),
+                right: getBorderState(percentile, cellRatio[ii][jj], cellRatio[ii][jj + 1]),
+                bottom: getBorderState(percentile, cellRatio[ii][jj], cellRatio[ii + 1][jj]),
+                left: getBorderState(percentile, cellRatio[ii][jj], cellRatio[ii][jj - 1]),
             };
         }
     }
     return border;
+};
+
+const getBorderState = (percentile, current, neighbor) => {
+    return percentile !== 0
+           ? current >= percentile && percentile > neighbor
+           : current !== 0 && neighbor === 0;
 };

@@ -47,9 +47,9 @@ export const actions = {
                 gender: gender,
                 birth: Number(birth)
             })
-                .then(({data}) => dispatch({
+                .then(({id}) => dispatch({
                     type: types.SET_ID,
-                    payload: data.id
+                    payload: id
                 }))
                 .catch((err) => {});
         };

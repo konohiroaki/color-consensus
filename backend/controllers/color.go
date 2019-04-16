@@ -37,7 +37,7 @@ func (ColorController) Add(ctx *gin.Context) {
 		fmt.Println(err)
 		ctx.AbortWithStatus(http.StatusBadRequest)
 	}
-	repository.Add(userID.(string), req.Lang, req.Name, req.Code)
+	repository.Add(req.Lang, req.Name, req.Code, userID.(string))
 	ctx.Status(http.StatusCreated);
 }
 

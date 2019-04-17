@@ -4,7 +4,6 @@ export const types = {
     FETCH_COLORS_SUCCESS: "FETCH_COLORS_SUCCESS",
 };
 
-// TODO: improve naming.
 const DEFAULT_STATE = {
     colors: [],
 };

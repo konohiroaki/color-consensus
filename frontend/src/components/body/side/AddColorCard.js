@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {actions as colors} from "../../../modules/colors";
+import {actions as searchBar} from "../../../modules/searchBar";
 import {connect} from "react-redux";
 
 class AddColorCard extends Component {
@@ -106,7 +106,7 @@ const ModalFooter = ({handleClick}) => (
 );
 
 const mapDispatchToProps = dispatch => ({
-    fetchColors: () => dispatch(colors.fetchColors()),
+    fetchColors: () => dispatch(searchBar.fetchColors()),
 });
 
 export default connect(null, mapDispatchToProps)(AddColorCard);

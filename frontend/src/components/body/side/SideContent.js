@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import AddColorCard from "./AddColorCard";
 import {isSameColor} from "../../common/Utility";
-import {actions as colors} from "../../../modules/colors";
+import {actions as searchBar} from "../../../modules/searchBar";
 import {actions as board} from "../../../modules/board";
 import {connect} from "react-redux";
 
@@ -122,12 +122,12 @@ const isNameMatchingFilter = (name, filter) => filter === "" || name.includes(fi
 const colorComparator = (c1, c2) => c1.lang !== c2.lang ? (c1.lang > c2.lang ? 1 : -1) : (c1.name > c2.name ? 1 : -1);
 
 const mapStateToProps = state => ({
-    colorList: state.colors.colors,
+    colorList: state.searchBar.colors,
     baseColor: state.board.baseColor,
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchColors: () => dispatch(colors.fetchColors()),
+    fetchColors: () => dispatch(searchBar.fetchColors()),
     setBaseColor: color => dispatch(board.setBaseColor(color)),
 });
 

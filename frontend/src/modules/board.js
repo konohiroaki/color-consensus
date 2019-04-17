@@ -33,7 +33,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 export const actions = {
     setBaseColor(color) {
         return (dispatch, getState) => {
-            const colors = getState().colors.colors;
+            const colors = getState().searchBar.colors;
             if (colors.length !== 0) {
                 const baseColor = getBaseColor(colors, color);
                 dispatch({type: types.SET_BASE_COLOR, payload: baseColor});

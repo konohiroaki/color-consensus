@@ -1,4 +1,4 @@
-import {reducer, types} from "../../colors";
+import {reducer, types} from "../../searchBar";
 
 it("should set colors", () => {
     const fakeData = [{foo: "bar"}];

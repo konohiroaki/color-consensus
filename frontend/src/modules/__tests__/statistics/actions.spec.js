@@ -143,8 +143,19 @@ describe("setNationalityFilter(nationality)", function () {
 });
 
 describe("setAgeGroupFilter(ageGroup)", function () {
-    it("should dispatch", () => {
-        const fakeData = 20;
+    it("should dispatch as int 20", () => {
+        const fakeData = "20";
+        const dispatch = jest.fn();
+
+        actions.setAgeGroupFilter(fakeData)(dispatch);
+
+        expect(dispatch.mock.calls[0][0]).toEqual({
+            type: types.SET_AGE_GROUP_FILTER,
+            payload: 20
+        });
+    });
+    it("should dispatch as \"\"", () => {
+        const fakeData = "";
         const dispatch = jest.fn();
 
         actions.setAgeGroupFilter(fakeData)(dispatch);

@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {actions as searchBar} from "../../../modules/searchBar";
 import {connect} from "react-redux";
+import $ from "jquery";
 
 class AddColorCard extends Component {
 
@@ -31,7 +32,9 @@ class AddColorCard extends Component {
 
     handleClick() {
         axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, this.state)
-            .then(() => this.props.fetchColors());
+            .then(() => this.props.fetchColors())
+            .then(() => $("#color-add-modal").modal("toggle"))
+            .catch(() => {});
         this.setState({lang: "", name: "", code: ""});
     }
 }
@@ -98,8 +101,7 @@ const ColorCodeInput = props => (
 const ModalFooter = ({handleClick}) => (
     <div className="modal-footer">
         <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        {/* TODO: dismiss the modal only when submit is success */}
-        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleClick}>
+        <button type="button" className="btn btn-primary" onClick={handleClick}>
             Add Color
         </button>
     </div>

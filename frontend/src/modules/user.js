@@ -36,8 +36,7 @@ export const actions = {
                 .then(() => dispatch({
                     type: types.SET_ID,
                     payload: id
-                }))
-                .catch((err) => {});
+                }));
         };
     },
     signUp(nationality, gender, birth) {
@@ -50,8 +49,7 @@ export const actions = {
                 .then(({id}) => dispatch({
                     type: types.SET_ID,
                     payload: id
-                }))
-                .catch((err) => {});
+                }));
         };
     }
 };

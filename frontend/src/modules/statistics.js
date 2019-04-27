@@ -92,7 +92,8 @@ export const actions = {
     },
     setAgeGroupFilter(ageGroup) {
         return (dispatch) => {
-            dispatch({type: types.SET_AGE_GROUP_FILTER, payload: parseInt(ageGroup)});
+            ageGroup = ageGroup !== "" ? parseInt(ageGroup) : ageGroup;
+            dispatch({type: types.SET_AGE_GROUP_FILTER, payload: ageGroup});
             dispatch(this.calculateBorder());
         };
     },

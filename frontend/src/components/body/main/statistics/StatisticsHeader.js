@@ -8,7 +8,7 @@ class StatisticsHeader extends Component {
         console.log("rendering [statistics header]",
             "baseColor.code:", this.props.baseColor.code,
             "votes.length:", this.props.votes.length);
-        return <div className="card bg-dark border border-secondary">
+        return <div className="card bg-dark border border-secondary mt-3">
             <div className="card-body">
                 <div className="row ml-0 mr-0">
                     <div className="col-10">

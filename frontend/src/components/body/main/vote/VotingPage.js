@@ -1,9 +1,11 @@
 import React, {Component} from "react";
-import {DeselectAll, SelectableGroup} from "react-selectable-fast";
+import {SelectableGroup} from "react-selectable-fast";
 import axios from "axios";
 import ColorBoard from "./ColorBoard";
 import {connect} from "react-redux";
 import {actions as vote} from "../../../../modules/vote";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
 
 class VotingPage extends Component {
 
@@ -24,11 +26,10 @@ class VotingPage extends Component {
             "codeList[0]:", this.props.colorCodeList.length !== 0 ? this.props.colorCodeList[0] : null);
 
         return <div>
-            <VotingHeader baseColor={this.props.baseColor}/>
-            <VotingPageButtons history={this.props.history} handleSubmitClick={this.handleSubmitClick}/>
+            <VotingPageButtons className="border-bottom border-secondary pb-3"
+                               history={this.props.history} handleSubmitClick={this.handleSubmitClick}/>
             <SelectableGroup enableDeselect allowClickWithoutSelected
                              onSelectionFinish={this.handleSelectionFinish}>
-                <DeselectAllButton/>
                 <ColorBoard colorCodeList={this.props.colorCodeList}/>
             </SelectableGroup>
         </div>;
@@ -55,35 +56,14 @@ class VotingPage extends Component {
     }
 }
 
-const VotingHeader = ({baseColor}) => (
-    <div className="card bg-dark border border-secondary">
-        <div className="card-body">
-            <div className="row ml-0 mr-0">
-                <div className="col-3 card bg-dark border border-secondary p-2 text-center">
-                    <div className="row">
-                        <span className="col-4 border-right border-secondary p-3">{baseColor.lang}</span>
-                        <span className="col-8 p-3">{baseColor.name}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-);
-
-const VotingPageButtons = ({history, handleSubmitClick}) => (
-    <div className="row">
+const VotingPageButtons = ({className, history, handleSubmitClick}) => (
+    <div className={className + " row"}>
         <button className="ml-auto btn btn-secondary m-3" onClick={() => history.push("/statistics")}>
-            Skip to statistics
+            <span>Go to statistics <FontAwesomeIcon icon={faArrowRight}/></span>
         </button>
         <button className="btn btn-primary m-3" onClick={handleSubmitClick}>
-            Submit
+            <span>Submit <FontAwesomeIcon icon={faArrowRight}/></span>
         </button>
-    </div>
-);
-
-const DeselectAllButton = () => (
-    <div className="row">
-        <DeselectAll className="ml-auto btn btn-secondary m-3">Clear</DeselectAll>
     </div>
 );
 

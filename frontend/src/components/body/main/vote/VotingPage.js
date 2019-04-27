@@ -26,7 +26,7 @@ class VotingPage extends Component {
             "codeList[0]:", this.props.colorCodeList.length !== 0 ? this.props.colorCodeList[0] : null);
 
         return <div>
-            <VotingPageButtons className="border-bottom border-secondary pb-3"
+            <VotingPageButtons className="border-bottom border-secondary p-3 mb-3"
                                history={this.props.history} handleSubmitClick={this.handleSubmitClick}/>
             <SelectableGroup enableDeselect allowClickWithoutSelected
                              onSelectionFinish={this.handleSelectionFinish}>

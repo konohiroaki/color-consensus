@@ -17,7 +17,7 @@ class StatisticsPage extends Component {
             "codeList[0]:", this.props.colorCodeList[0]);
 
         return <div>
-            <StatisticsPageButtons className="border-bottom border-secondary pb-3"
+            <StatisticsPageButtons className="border-bottom border-secondary p-3"
                                    history={this.props.history}/>
             <StatisticsHeader baseColor={this.props.baseColor}/>
             {this.props.baseColor.code === this.props.colorCodeList[0] &&

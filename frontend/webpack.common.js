@@ -1,6 +1,7 @@
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const WebappWebpackPlugin = require('webapp-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -26,7 +27,8 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(["dist"]),
-        new HtmlWebpackPlugin({template: "src/template/template.html"})
+        new HtmlWebpackPlugin({template: "src/template/template.html"}),
+        new WebappWebpackPlugin("./src/cc.png")
     ],
     output: {
         path: path.resolve(__dirname, "dist"),

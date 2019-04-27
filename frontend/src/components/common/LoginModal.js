@@ -42,12 +42,16 @@ class LoginModal extends Component {
 
     handleSignUpClick() {
         this.props.signUp(this.state.nationality, this.state.gender, this.state.birth)
-            .then(() => this.runAndResetCallback());
+            .then(() => $("#signup-login-modal").modal("toggle"))
+            .then(() => this.runAndResetCallback())
+            .catch(() => {});
     }
 
     handleLoginClick() {
         this.props.login(this.state.userIdInput)
-            .then(() => this.runAndResetCallback());
+            .then(() => $("#signup-login-modal").modal("toggle"))
+            .then(() => this.runAndResetCallback())
+            .catch(() => {});
     }
 
     runAndResetCallback() {
@@ -98,7 +102,7 @@ const SingUpTabPanel = props => (
 const SignUpNationalityInput = ({setNationalityInput}) => (
     <div>
         <label className="mb-0">Nationality:</label>
-        <input type="text" className="form-control" placeholder="ex) Japan"
+        <input type="text" className="form-control" placeholder="Japan"
                onChange={e => setNationalityInput(e.target.value)}/>
     </div>
 );
@@ -106,22 +110,24 @@ const SignUpNationalityInput = ({setNationalityInput}) => (
 const SignUpGenderInput = ({setGenderInput}) => (
     <div>
         <label className="mb-0">Gender:</label>
-        <input type="text" className="form-control" placeholder="ex) Male"
+        <input type="text" className="form-control" placeholder="Male"
                onChange={e => setGenderInput(e.target.value)}/>
     </div>
 );
 
 const SignUpBirthInput = ({setBirthInput}) => (
-    <div>
-        <label className="mb-0">Birth:</label>
-        <input type="text" className="form-control" placeholder="ex) 1990"
+    <div className="form-group">
+        <label className="mb-0">Birth Year:</label>
+        <input type="number" min="1900" max={new Date().getFullYear()} required
+               className="form-control" placeholder="1990"
                onChange={e => setBirthInput(e.target.value)}/>
+
     </div>
 );
 
 const SignUpButton = ({handleSignUpClick}) => (
     <div className="col-3 ml-auto pt-3">
-        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleSignUpClick}>
+        <button type="button" className="btn btn-primary" onClick={handleSignUpClick}>
             Submit
         </button>
     </div>
@@ -144,7 +150,7 @@ const LoginIdInput = ({setUserIdInput}) => (
 
 const LoginButton = ({handleLoginClick}) => (
     <div className="col-3 ml-auto pt-3">
-        <button type="button" className="btn btn-primary" data-dismiss="modal" onClick={handleLoginClick}>
+        <button type="button" className="btn btn-primary" onClick={handleLoginClick}>
             Submit
         </button>
     </div>

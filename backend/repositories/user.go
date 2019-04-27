@@ -1,10 +1,10 @@
 package repositories
 
 import (
-	"fmt"
 	"github.com/twinj/uuid"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 	"time"
 )
 
@@ -23,7 +23,7 @@ func NewUserRepository(uri, db, env string) UserRepository {
 	repository := &userRepository{collection}
 
 	if env == "development" {
-		fmt.Println("detected development mode. inserting sample user data.")
+		log.Println("detected development mode. inserting sample user data.")
 		repository.insertSampleData()
 	}
 

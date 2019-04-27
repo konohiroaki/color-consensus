@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 	"time"
 )
 
@@ -23,7 +23,7 @@ func NewVoteRepository(uri, db, env string) VoteRepository {
 	repository := &voteRepository{collection}
 
 	if env == "development" {
-		fmt.Println("detected development mode. inserting sample vote data.")
+		log.Println("detected development mode. inserting sample vote data.")
 		repository.insertSampleData()
 	}
 
@@ -51,7 +51,7 @@ func (r voteRepository) GetVotes(lang, name string, fields []string) []map[strin
 
 	if result == nil {
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		return []map[string]interface{}{}
 	}

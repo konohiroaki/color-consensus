@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"log"
 	"time"
 )
 
@@ -22,7 +22,7 @@ func NewColorRepository(uri, db, env string) ColorRepository {
 	repository := &colorRepository{collection}
 
 	if env == "development" {
-		fmt.Println("detected development mode. inserting sample color data.")
+		log.Println("detected development mode. inserting sample color data.")
 		repository.insertSampleData()
 	}
 
@@ -45,7 +45,7 @@ func (r colorRepository) Add(lang, name, code, user string) {
 		User: user,
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 
@@ -57,7 +57,7 @@ func (r colorRepository) GetAll(fields []string) []map[string]interface{} {
 
 	if result == nil {
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		return []map[string]interface{}{}
 	}

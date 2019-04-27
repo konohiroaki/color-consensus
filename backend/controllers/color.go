@@ -58,17 +58,17 @@ func getNeighborColors(code string, size int) []string {
 	r := fromHex(code[0:2])
 	g := fromHex(code[2:4])
 	b := fromHex(code[4:6])
-	type Candidate struct {
+	type NeighborColor struct {
 		Code string
 		Diff int
 	}
-	list := []Candidate{{"#" + code, 0}}
+	candidates := []NeighborColor{{"#" + code, 0}}
 	for i := 0; i < 256; i += 16 {
 		for j := 0; j < 256; j += 16 {
 			for k := 0; k < 256; k += 16 {
 				diff := abs(r-i) + abs(g-j) + abs(b-k)
 				if diff != 0 {
-					list = append(list, Candidate{
+					candidates = append(candidates, NeighborColor{
 						"#" + toHex(i) + toHex(j) + toHex(k),
 						abs(r-i) + abs(g-j) + abs(b-k),
 					})
@@ -76,9 +76,9 @@ func getNeighborColors(code string, size int) []string {
 			}
 		}
 	}
-	sort.Slice(list, func(i, j int) bool { return list[i].Diff < list[j].Diff })
+	sort.Slice(candidates, func(i, j int) bool { return candidates[i].Diff < candidates[j].Diff })
 	result := []string{}
-	for _, candidate := range list {
+	for _, candidate := range candidates {
 		result = append(result, candidate.Code)
 		if (len(result) == size) {
 			break;

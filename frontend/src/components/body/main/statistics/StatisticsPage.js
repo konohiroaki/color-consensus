@@ -3,6 +3,8 @@ import StatisticsHeader from "./StatisticsHeader";
 import ColorBoard from "./ColorBoard";
 import {connect} from "react-redux";
 import {actions as statistics} from "../../../../modules/statistics";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 
 class StatisticsPage extends Component {
 
@@ -15,8 +17,9 @@ class StatisticsPage extends Component {
             "codeList[0]:", this.props.colorCodeList[0]);
 
         return <div>
+            <StatisticsPageButtons className="border-bottom border-secondary pb-3"
+                                   history={this.props.history}/>
             <StatisticsHeader baseColor={this.props.baseColor}/>
-            <StatisticsPageButtons history={this.props.history}/>
             {this.props.baseColor.code === this.props.colorCodeList[0] &&
              <ColorBoard baseColor={this.props.baseColor} colorCodeList={this.props.colorCodeList}/>}
         </div>;
@@ -33,10 +36,10 @@ class StatisticsPage extends Component {
     }
 }
 
-const StatisticsPageButtons = props => (
-    <div className="row">
-        <button className="ml-auto btn btn-secondary m-3" onClick={() => props.history.push("/")}>
-            Back to voting
+const StatisticsPageButtons = ({className, history}) => (
+    <div className={className + " row"}>
+        <button className="mr-auto btn btn-secondary m-3" onClick={() => history.push("/")}>
+            <span><FontAwesomeIcon icon={faArrowLeft}/> Go to voting</span>
         </button>
     </div>
 );

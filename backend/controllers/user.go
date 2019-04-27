@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
+	"log"
 	"net/http"
 )
 
@@ -20,48 +20,60 @@ func (UserController) GetUserIDFromCookie(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"userID": userID})
 	} else {
 		// this case shouldn't exist
-		ctx.Status(http.StatusPaymentRequired)
+		ctx.Status(http.StatusInternalServerError)
 	}
 }
 
-func (UserController) SetCookieIfUserExist(ctx *gin.Context) {
+func (uc UserController) SetCookieIfUserExist(ctx *gin.Context) {
 	repository := ctx.Keys["userRepository"].(repositories.UserRepository)
 	type request struct {
-		ID string `json:"id"`
+		ID string `json:"id" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		fmt.Println(err)
-		ctx.Status(http.StatusNotFound)
+		log.Println(err)
+		ctx.Status(http.StatusBadRequest)
 		return
 	}
 	if repository.IsPresent(req.ID) {
-		session := sessions.Default(ctx)
-		session.Set("userID", req.ID)
-		ctx.Status(http.StatusOK)
+		if err := uc.setUserIDCookie(ctx, req.ID); err != nil {
+			ctx.Status(http.StatusInternalServerError)
+			return
+		}
+		ctx.Status(http.StatusOK);
 	} else {
-		ctx.Status(http.StatusNotFound)
+		log.Println("userID not found in repository")
+		ctx.Status(http.StatusUnauthorized)
 	}
 }
 
-func (UserController) AddUserAndSetCookie(ctx *gin.Context) {
+func (uc UserController) AddUserAndSetCookie(ctx *gin.Context) {
 	repository := ctx.Keys["userRepository"].(repositories.UserRepository)
 	type request struct {
-		Nationality string `json:"nationality"`
-		Gender      string `json:"gender"`
-		Birth       int    `json:"birth"`
+		Nationality string `json:"nationality" binding:"required"`
+		Gender      string `json:"gender" binding:"required"`
+		Birth       int    `json:"birth" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		fmt.Println(err)
-		ctx.AbortWithStatus(400)
+		log.Println(err)
+		ctx.Status(http.StatusBadRequest)
 		return
 	}
 	id := repository.Add(req.Nationality, req.Gender, req.Birth)
+	if err := uc.setUserIDCookie(ctx, id); err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	ctx.JSON(http.StatusOK, id);
+}
+
+func (UserController) setUserIDCookie(ctx *gin.Context, id string) error {
 	session := sessions.Default(ctx)
 	session.Set("userID", id)
 	if err := session.Save(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
+		return err
 	}
-	ctx.JSON(200, id);
+	return nil
 }

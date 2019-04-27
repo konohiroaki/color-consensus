@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
+	"log"
+	"net/http"
 	"strings"
 )
 
@@ -15,7 +16,8 @@ func (VoteController) Vote(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	userID := session.Get("userID")
 	if userID == nil {
-		//ctx.AbortWithStatus(http.StatusForbidden) // temporary skipping auth
+		//ctx.Status(http.StatusForbidden) // TODO: temporary skipping auth. remove this.
+		//return
 		userID = "testuser"
 	}
 
@@ -26,11 +28,12 @@ func (VoteController) Vote(ctx *gin.Context) {
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		fmt.Println(err)
-		ctx.AbortWithStatus(400)
+		log.Println(err)
+		ctx.Status(http.StatusBadRequest)
+		return
 	}
 	repository.Add(userID.(string), req.Lang, req.Name, req.Colors)
-	ctx.Status(200)
+	ctx.Status(http.StatusOK)
 }
 
 func (VoteController) GetVotes(ctx *gin.Context) {
@@ -38,17 +41,17 @@ func (VoteController) GetVotes(ctx *gin.Context) {
 	type request struct {
 		Lang   string `form:"lang"`
 		Name   string `form:"name"`
-		Fields string `form:"fields"`
+		Fields string `form:"fields" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		fmt.Println(err)
-		ctx.AbortWithStatus(400)
+		log.Println(err)
+		ctx.Status(http.StatusBadRequest)
 		return
 	}
 	fields := strings.Split(req.Fields, ",")
 	votes := repository.GetVotes(req.Lang, req.Name, fields)
-	ctx.JSON(200, votes)
+	ctx.JSON(http.StatusOK, votes)
 }
 
 func (VoteController) DeleteVotesForUser(ctx *gin.Context) {
@@ -58,10 +61,10 @@ func (VoteController) DeleteVotesForUser(ctx *gin.Context) {
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		fmt.Println(err)
-		ctx.AbortWithStatus(400)
+		log.Println(err)
+		ctx.Status(http.StatusBadRequest)
 		return
 	}
 	repository.RemoveForUser(req.ID)
-	ctx.Status(200)
+	ctx.Status(http.StatusOK)
 }

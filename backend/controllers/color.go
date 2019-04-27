@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
+	"log"
 	"net/http"
 	"sort"
 	"strconv"
@@ -14,7 +15,7 @@ type ColorController struct{}
 
 func (ColorController) GetAll(ctx *gin.Context) {
 	repository := ctx.Keys["colorRepository"].(repositories.ColorRepository)
-	ctx.JSON(200, repository.GetAll([]string{"lang", "name", "code"}))
+	ctx.JSON(http.StatusOK, repository.GetAll([]string{"lang", "name", "code"}))
 }
 
 func (ColorController) Add(ctx *gin.Context) {
@@ -23,19 +24,20 @@ func (ColorController) Add(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	userID := session.Get("userID")
 	if userID == nil || !user.IsPresent(userID.(string)) {
-		fmt.Println(userID)
+		log.Println(userID)
 		ctx.Status(http.StatusForbidden)
 		return
 	}
 	type request struct {
-		Lang string `json:"lang"`
-		Name string `json:"name"`
-		Code string `json:"code"`
+		Lang string `json:"lang" binding:"required"`
+		Name string `json:"name" binding:"required"`
+		Code string `json:"code" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		fmt.Println(err)
-		ctx.AbortWithStatus(http.StatusBadRequest)
+		log.Println(err)
+		ctx.Status(http.StatusBadRequest)
+		return
 	}
 	repository.Add(req.Lang, req.Name, req.Code, userID.(string))
 	ctx.Status(http.StatusCreated);
@@ -45,9 +47,9 @@ func (ColorController) GetNeighbors(ctx *gin.Context) {
 	code := ctx.Param("code")
 	if size, err := strconv.Atoi(ctx.Query("size")); err == nil {
 		neighbors := getNeighborColors(code, size)
-		ctx.JSON(200, neighbors)
+		ctx.JSON(http.StatusOK, neighbors)
 	} else {
-		ctx.AbortWithStatus(400)
+		ctx.Status(http.StatusBadRequest)
 	}
 }
 

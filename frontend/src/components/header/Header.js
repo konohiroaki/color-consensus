@@ -31,9 +31,8 @@ const HeaderLeftPart = () => (
 );
 
 const GithubLink = () => (
-    // FIXME: placement of icon is not good. place it a bit lower.
     <a href="https://github.com/konohiroaki/color-consensus" className="text-light">
-        <FontAwesomeIcon icon={faGithub} size="2x"/>
+        <FontAwesomeIcon icon={faGithub} size="lg"/>
     </a>
 );
 

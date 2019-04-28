@@ -4,6 +4,7 @@ import Header from "./header/Header";
 import Body from "./body/Body";
 import LoginModal from "./common/LoginModal";
 import {actions as user} from "../modules/user";
+import {actions as language} from "../modules/language";
 
 class App extends Component {
 
@@ -23,11 +24,13 @@ class App extends Component {
 
     componentDidMount() {
         this.props.verifyLoginState();
+        this.props.setLanguages();
     }
 }
 
 const mapDispatchToProps = dispatch => ({
     verifyLoginState: () => dispatch(user.verifyLoginState()),
+    setLanguages: () => dispatch(language.setLanguages()),
 });
 
 export default connect(null, mapDispatchToProps)(App);

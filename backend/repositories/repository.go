@@ -8,9 +8,10 @@ import (
 )
 
 const (
-	colorKey = "github.com/konohiroaki/color-consensus/backend/repositories/color"
-	voteKey  = "github.com/konohiroaki/color-consensus/backend/repositories/vote"
-	userKey  = "github.com/konohiroaki/color-consensus/backend/repositories/user"
+	colorKey    = "github.com/konohiroaki/color-consensus/backend/repositories/color"
+	voteKey     = "github.com/konohiroaki/color-consensus/backend/repositories/vote"
+	userKey     = "github.com/konohiroaki/color-consensus/backend/repositories/user"
+	languageKey = "github.com/konohiroaki/color-consensus/backend/repositories/language"
 )
 
 func Color(ctx *gin.Context) ColorRepository {
@@ -25,12 +26,17 @@ func User(ctx *gin.Context) UserRepository {
 	return ctx.MustGet(userKey).(UserRepository)
 }
 
+func Language(ctx *gin.Context) LanguageRepository {
+	return ctx.MustGet(languageKey).(LanguageRepository)
+}
+
 func Repositories(env string) []gin.HandlerFunc {
 	uri, db := getDatabaseURIAndName()
 
 	colorRepo := NewColorRepository(uri, db, env)
 	voteRepo := NewVoteRepository(uri, db, env)
 	userRepo := NewUserRepository(uri, db, env)
+	languageRepo := NewLanguageRepository()
 
 	return []gin.HandlerFunc{
 		func(ctx *gin.Context) {
@@ -43,6 +49,10 @@ func Repositories(env string) []gin.HandlerFunc {
 		},
 		func(ctx *gin.Context) {
 			ctx.Set(userKey, userRepo)
+			ctx.Next()
+		},
+		func(ctx *gin.Context) {
+			ctx.Set(languageKey, languageRepo)
 			ctx.Next()
 		},
 	}

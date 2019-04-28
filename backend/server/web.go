@@ -49,6 +49,9 @@ func setUpEndpoints(router *gin.Engine) {
 			v1api.POST("/users", userController.AddUserAndSetCookie)
 			v1api.POST("/login", userController.SetCookieIfUserExist)
 			v1api.GET("/users/presence", userController.GetUserIDFromCookie)
+
+			langController := new(controllers.LanguageController)
+			v1api.GET("/languages", langController.GetAll)
 		}
 	}
 }

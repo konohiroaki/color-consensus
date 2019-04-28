@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/repositories"
+	"github.com/konohiroaki/color-consensus/backend/client"
+	repo "github.com/konohiroaki/color-consensus/backend/repositories"
 	"log"
 	"net/http"
 	"sort"
@@ -14,17 +14,16 @@ import (
 type ColorController struct{}
 
 func (ColorController) GetAll(ctx *gin.Context) {
-	repository := ctx.Keys["colorRepository"].(repositories.ColorRepository)
-	ctx.JSON(http.StatusOK, repository.GetAll([]string{"lang", "name", "code"}))
+	colorRepo := repo.Color(ctx)
+	ctx.JSON(http.StatusOK, colorRepo.GetAll([]string{"lang", "name", "code"}))
 }
 
 func (ColorController) Add(ctx *gin.Context) {
-	repository := ctx.Keys["colorRepository"].(repositories.ColorRepository)
-	user := ctx.Keys["userRepository"].(repositories.UserRepository)
-	session := sessions.Default(ctx)
-	userID := session.Get("userID")
-	if userID == nil || !user.IsPresent(userID.(string)) {
-		log.Println(userID)
+	colorRepo := repo.Color(ctx)
+	userRepo := repo.User(ctx)
+	userID, err := client.GetUserID(ctx)
+	if err != nil || !userRepo.IsPresent(userID) {
+		log.Println(err, userID)
 		ctx.Status(http.StatusForbidden)
 		return
 	}
@@ -39,7 +38,7 @@ func (ColorController) Add(ctx *gin.Context) {
 		ctx.Status(http.StatusBadRequest)
 		return
 	}
-	repository.Add(req.Lang, req.Name, req.Code, userID.(string))
+	colorRepo.Add(req.Lang, req.Name, req.Code, userID)
 	ctx.Status(http.StatusCreated);
 }
 

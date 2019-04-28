@@ -69,14 +69,14 @@ const ModalHeader = () => (
     </div>
 );
 
+const SingUpTabLink = () => <div className="nav-link active" href="#signup-tab" data-toggle="tab" role="tab">Sign Up</div>;
+const LoginTabLink = () => <div className="nav-link" href="#login-tab" data-toggle="tab" role="tab">Login</div>;
+
 const ModalBody = props => (
     <div className="modal-body">
         <TabContents props={props}/>
     </div>
 );
-
-const SingUpTabLink = () => <div className="nav-link active" href="#signup-tab" data-toggle="tab" role="tab">Sign Up</div>;
-const LoginTabLink = () => <div className="nav-link" href="#login-tab" data-toggle="tab" role="tab">Login</div>;
 
 const TabContents = ({props}) => (
     <div className="tab-content">
@@ -121,7 +121,6 @@ const SignUpBirthInput = ({setBirthInput}) => (
         <input type="number" min="1900" max={new Date().getFullYear()} required
                className="form-control" placeholder="1990"
                onChange={e => setBirthInput(e.target.value)}/>
-
     </div>
 );
 

@@ -6,6 +6,7 @@ import {connect} from "react-redux";
 import {actions as vote} from "../../../../modules/vote";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 
 class VotingPage extends Component {
 
@@ -28,6 +29,7 @@ class VotingPage extends Component {
         return <div>
             <VotingPageButtons className="border-bottom border-secondary p-3 mb-3"
                                history={this.props.history} handleSubmitClick={this.handleSubmitClick}/>
+            <UserGuide/>
             <SelectableGroup enableDeselect allowClickWithoutSelected
                              onSelectionFinish={this.handleSelectionFinish}>
                 <ColorBoard colorCodeList={this.props.colorCodeList}/>
@@ -64,6 +66,14 @@ const VotingPageButtons = ({className, history, handleSubmitClick}) => (
         <button className="btn btn-primary m-3" onClick={handleSubmitClick}>
             <span>Submit <FontAwesomeIcon icon={faArrowRight}/></span>
         </button>
+    </div>
+);
+
+const UserGuide = () => (
+    <div className="col-8 m-auto card" style={{backgroundColor: "#444a50"}}>
+        <div className="card-body">
+            <span className="badge badge-info"><FontAwesomeIcon icon={faInfoCircle}/> Usage</span> Drag and select colors below which you think that matches the color name chosen in the right side bar. Then press the <span className="badge badge-primary">Submit <FontAwesomeIcon icon={faArrowRight}/></span> button to submit the data and also see the statistics.
+        </div>
     </div>
 );
 

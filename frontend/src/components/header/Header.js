@@ -31,7 +31,7 @@ const HeaderLeftPart = () => (
 );
 
 const GithubLink = () => (
-    <a href="https://github.com/konohiroaki/color-consensus" className="text-light">
+    <a href="https://github.com/konohiroaki/color-consensus" target="_blank" className="text-light">
         <FontAwesomeIcon icon={faGithub} size="lg"/>
     </a>
 );

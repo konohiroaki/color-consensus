@@ -23,7 +23,7 @@ class AddColorCard extends Component {
         console.log("rendering [add color card]");
         return <div>
             <Card/>
-            <AddColorModal lang={this.state.lang} langSetter={input => this.setState({lang: input})}
+            <AddColorModal lang={this.state.lang} langSetter={input => this.setState({lang: input})} languages={this.props.languages}
                            name={this.state.name} nameSetter={input => this.setState({name: input})}
                            code={this.state.code} codeSetter={input => this.setState({code: input})}
                            handleClick={this.handleClick}/>
@@ -32,10 +32,12 @@ class AddColorCard extends Component {
 
     handleClick() {
         axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, this.state)
-            .then(() => this.props.fetchColors())
-            .then(() => $("#color-add-modal").modal("toggle"))
+            .then(() => {
+                this.props.fetchColors();
+                $("#color-add-modal").modal("toggle");
+                this.setState({lang: "", name: "", code: ""});
+            })
             .catch(() => {});
-        this.setState({lang: "", name: "", code: ""});
     }
 }
 
@@ -51,37 +53,38 @@ const AddColorModal = (props) => (
     <div className="modal fade" tabIndex="-1" id="color-add-modal">
         <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content bg-dark">
-                <ModalHeader/>
-                <ModalBody props={props}/>
-                <ModalFooter handleClick={props.handleClick}/>
+                <div className="modal-header">
+                    <span className="modal-title">Add Color</span>
+                </div>
+                <div className="modal-body">
+                    <LanguageInput lang={props.lang} langSetter={props.langSetter} languages={props.languages}/>
+                    <ColorNameInput name={props.name} nameSetter={props.nameSetter}/>
+                    <ColorCodeInput code={props.code} codeSetter={props.codeSetter}/>
+                </div>
+                <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" className="btn btn-primary" onClick={props.handleClick}>
+                        Add Color
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 );
 
-const ModalHeader = () => (
-    <div className="modal-header">
-        <span className="modal-title">Add Color</span>
-    </div>
-);
+const LanguageInput = props => {
+    const languages = Object.keys(props.languages)
+        .sort((a, b) => props.languages[a] > props.languages[b] ? 1 : -1)
+        .map(l => <option key={l} value={l}>{props.languages[l]}</option>);
 
-const ModalBody = ({props}) => (
-    <div className="modal-body">
-        {/* TODO: should be drop down */}
-        <LanguageInput lang={props.lang} langSetter={props.langSetter}/>
-        <ColorNameInput name={props.name} nameSetter={props.nameSetter}/>
-        <ColorCodeInput code={props.code} codeSetter={props.codeSetter}/>
-    </div>
-);
-
-const LanguageInput = props => (
-    <div>
+    return <div>
         <label className="mb-0">Language:</label>
-        <input type="text" className="form-control" placeholder="en"
-               value={props.lang} onChange={e => props.langSetter(e.target.value)}/>
-    </div>
-);
-
+        <select className="custom-select" value={props.lang}
+                onChange={e => props.langSetter(e.target.value)}>
+            {languages}
+        </select>
+    </div>;
+};
 const ColorNameInput = props => (
     <div>
         <label className="mb-0">Color Name:</label>
@@ -98,17 +101,12 @@ const ColorCodeInput = props => (
     </div>
 );
 
-const ModalFooter = ({handleClick}) => (
-    <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="button" className="btn btn-primary" onClick={handleClick}>
-            Add Color
-        </button>
-    </div>
-);
+const mapStateToProps = state => ({
+    languages: state.language.languages,
+});
 
 const mapDispatchToProps = dispatch => ({
     fetchColors: () => dispatch(searchBar.fetchColors()),
 });
 
-export default connect(null, mapDispatchToProps)(AddColorCard);
+export default connect(mapStateToProps, mapDispatchToProps)(AddColorCard);

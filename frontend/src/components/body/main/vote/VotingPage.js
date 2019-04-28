@@ -72,7 +72,11 @@ const VotingPageButtons = ({className, history, handleSubmitClick}) => (
 const UserGuide = () => (
     <div className="col-8 m-auto card" style={{backgroundColor: "#444a50"}}>
         <div className="card-body">
-            <span className="badge badge-info"><FontAwesomeIcon icon={faInfoCircle}/> Usage</span> Drag and select colors below which you think that matches the color name chosen in the right side bar. Then press the <span className="badge badge-primary">Submit <FontAwesomeIcon icon={faArrowRight}/></span> button to submit the data and also see the statistics.
+            <h5>
+                <span className="badge badge-info"><FontAwesomeIcon icon={faInfoCircle}/> Usage</span>
+            </h5>
+            <p>Drag and select colors below which you think that matches the color name chosen in the right side bar. Then press the <span className="badge badge-primary">Submit <FontAwesomeIcon icon={faArrowRight}/></span> button to submit the data and also see the
+                statistics.</p>
         </div>
     </div>
 );

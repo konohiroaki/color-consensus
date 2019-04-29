@@ -5,6 +5,7 @@ import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {actions as searchBar} from "../../../modules/searchBar";
 import {connect} from "react-redux";
 import $ from "jquery";
+import {toast} from "react-toastify";
 
 class AddColorCard extends Component {
 
@@ -39,7 +40,7 @@ class AddColorCard extends Component {
             })
             .catch(({response}) => {
                 console.log(response.data.error.message);
-                // TODO: show error message to user.
+                toast.warn(response.data.error.message);
             });
     }
 }

@@ -21,14 +21,14 @@ func (VoteController) Vote(ctx *gin.Context) {
 	}
 
 	type request struct {
-		Lang   string   `json:"lang"`
-		Name   string   `json:"name"`
-		Colors []string `json:"colors"`
+		Lang   string   `json:"lang" binding:"required"`
+		Name   string   `json:"name" binding:"required"`
+		Colors []string `json:"colors" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, errorResponse("all lang, name, colors should be in the request"))
 		return
 	}
 	voteRepo.Add(userID, req.Lang, req.Name, req.Colors)
@@ -45,7 +45,7 @@ func (VoteController) GetVotes(ctx *gin.Context) {
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, errorResponse("fields should be in the request"))
 		return
 	}
 	fields := strings.Split(req.Fields, ",")
@@ -56,12 +56,12 @@ func (VoteController) GetVotes(ctx *gin.Context) {
 func (VoteController) DeleteVotesForUser(ctx *gin.Context) {
 	voteRepo := repo.Vote(ctx)
 	type request struct {
-		ID string `json:"id"`
+		ID string `json:"id" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, errorResponse("user ID should be in the request"))
 		return
 	}
 	voteRepo.RemoveForUser(req.ID)

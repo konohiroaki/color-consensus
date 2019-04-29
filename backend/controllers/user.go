@@ -15,12 +15,12 @@ func (UserController) GetUserIDFromCookie(ctx *gin.Context) {
 	userID, err := client.GetUserID(ctx)
 
 	if err != nil {
-		ctx.Status(http.StatusNotFound)
+		ctx.JSON(http.StatusNotFound, errorResponse("user is not logged in"))
 	} else if userRepo.IsPresent(userID) {
 		ctx.JSON(http.StatusOK, gin.H{"userID": userID})
 	} else {
 		// this case shouldn't exist
-		ctx.Status(http.StatusInternalServerError)
+		ctx.JSON(http.StatusBadRequest, errorResponse("user have wrong cookie value"))
 	}
 }
 
@@ -32,7 +32,7 @@ func (UserController) SetCookieIfUserExist(ctx *gin.Context) {
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest,errorResponse("user ID should be in the request"))
 		return
 	}
 	if userRepo.IsPresent(req.ID) {
@@ -43,7 +43,7 @@ func (UserController) SetCookieIfUserExist(ctx *gin.Context) {
 		ctx.Status(http.StatusOK);
 	} else {
 		log.Println("userID not found in repository")
-		ctx.Status(http.StatusUnauthorized)
+		ctx.JSON(http.StatusUnauthorized,errorResponse("userID not found in repository"))
 	}
 }
 
@@ -57,12 +57,13 @@ func (UserController) AddUserAndSetCookie(ctx *gin.Context) {
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest,errorResponse("all nationality, gender, birth should be in the request"))
 		return
 	}
 	id := userRepo.Add(req.Nationality, req.Gender, req.Birth)
 	if err := client.SetUserID(ctx, id); err != nil {
-		ctx.Status(http.StatusInternalServerError)
+		log.Println(err)
+		ctx.JSON(http.StatusInternalServerError, "set-cookie failed")
 		return
 	}
 	ctx.JSON(http.StatusOK, id);

@@ -24,7 +24,7 @@ func (ColorController) Add(ctx *gin.Context) {
 	userID, err := client.GetUserID(ctx)
 	if err != nil || !userRepo.IsPresent(userID) {
 		log.Println(err, userID)
-		ctx.Status(http.StatusForbidden)
+		ctx.JSON(http.StatusForbidden, errorResponse("user need to be logged in to add a color"))
 		return
 	}
 	type request struct {
@@ -35,7 +35,7 @@ func (ColorController) Add(ctx *gin.Context) {
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.Status(http.StatusBadRequest)
+		ctx.JSON(http.StatusBadRequest, errorResponse("all language, name, code are necessary"))
 		return
 	}
 	colorRepo.Add(req.Lang, req.Name, req.Code, userID)
@@ -100,4 +100,12 @@ func abs(num int) int {
 		return -num;
 	}
 	return num;
+}
+
+func errorResponse(message string) gin.H {
+	return gin.H{
+		"error": gin.H{
+			"message": message,
+		},
+	}
 }

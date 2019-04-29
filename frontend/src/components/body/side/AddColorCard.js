@@ -37,7 +37,10 @@ class AddColorCard extends Component {
                 $("#color-add-modal").modal("toggle");
                 this.setState({lang: "", name: "", code: ""});
             })
-            .catch(() => {});
+            .catch(({response}) => {
+                console.log(response.data.error.message);
+                // TODO: show error message to user.
+            });
     }
 }
 

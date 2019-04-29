@@ -53,6 +53,7 @@
     "react-redux": "^6.0.1",
     "react-router-dom": "^4.3.1",
     "react-selectable-fast": "^2.2.1",
+    "react-toastify": "^5.1.0",
     "redux": "^4.0.1",
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",

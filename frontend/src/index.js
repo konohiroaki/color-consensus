@@ -7,6 +7,7 @@ import "core-js/fn/set";
 import React from "react";
 import ReactDom from "react-dom";
 
+import "react-toastify/dist/ReactToastify.min.css";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap";
 import "./base.css";

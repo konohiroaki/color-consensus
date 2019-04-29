@@ -3,7 +3,7 @@ import {Route, Switch} from "react-router-dom";
 import VotingPage from "./vote/VotingPage";
 import StatisticsPage from "./statistics/StatisticsPage";
 import {Slide, ToastContainer} from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
+import {css} from "glamor";
 
 class MainContent extends Component {
 
@@ -14,13 +14,16 @@ class MainContent extends Component {
                     style={Object.assign({overflowY: "auto", height: "100%"}, this.props.style)}>
             <ToastContainer
                 position="top-center"
-                autoClose={5000000}
+                autoClose={8000}
                 hideProgressBar={false}
                 newestOnTop
                 closeOnClick
                 pauseOnVisibilityChange
                 pauseOnHover
                 transition={Slide}
+                className={css({width: "500px", marginLeft: "-250px"})}
+                toastClassName={css({borderRadius: "5px 5px"}) + " alert-warning"}
+                progressClassName={"bg-warning"}
             />
             <Switch>
                 <Route exact path={"/"} render={({history}) => (

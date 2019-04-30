@@ -1,4 +1,5 @@
 import axios from "axios";
+import {toast} from "react-toastify";
 
 export const types = {
     SET_BASE_COLOR: "SET_BASE_COLOR",
@@ -40,7 +41,7 @@ export const actions = {
 
                 return axios.get(getColorListUrl(baseColor, getState().board.sideLength))
                     .then(({data}) => dispatch({type: types.SET_COLOR_CODE_LIST, payload: data}))
-                    .catch(err => {});
+                    .catch(({response}) => toast.warn(response.data.error.message));
             }
         };
     },

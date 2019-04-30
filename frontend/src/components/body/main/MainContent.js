@@ -12,19 +12,7 @@ class MainContent extends Component {
 
         return <div className="container-fluid"
                     style={Object.assign({overflowY: "auto", height: "100%"}, this.props.style)}>
-            <ToastContainer
-                position="top-center"
-                autoClose={8000}
-                hideProgressBar={false}
-                newestOnTop
-                closeOnClick
-                pauseOnVisibilityChange
-                pauseOnHover
-                transition={Slide}
-                className={css({width: "500px", marginLeft: "-250px"})}
-                toastClassName={css({borderRadius: "5px 5px"}) + " alert-warning"}
-                progressClassName={"bg-warning"}
-            />
+            <ToastContainerWrapper/>
             <Switch>
                 <Route exact path={"/"} render={({history}) => (
                     <VotingPage history={history} loginModalRef={this.props.loginModalRef}/>
@@ -36,5 +24,21 @@ class MainContent extends Component {
         </div>;
     }
 }
+
+const ToastContainerWrapper = () => (
+    <ToastContainer
+        position="top-center"
+        autoClose={8000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnVisibilityChange
+        pauseOnHover
+        transition={Slide}
+        className={css({width: "500px", marginLeft: "-250px"})}
+        toastClassName={css({borderRadius: "5px 5px"}) + " alert-warning"}
+        progressClassName={"bg-warning"}
+    />
+);
 
 export default MainContent;

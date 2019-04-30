@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import $ from "jquery";
 import {connect} from "react-redux";
 import {actions as user} from "../../modules/user";
+import {toast} from "react-toastify";
 
 class LoginModal extends Component {
 
@@ -44,14 +45,14 @@ class LoginModal extends Component {
         this.props.signUp(this.state.nationality, this.state.gender, this.state.birth)
             .then(() => $("#signup-login-modal").modal("toggle"))
             .then(() => this.runAndResetCallback())
-            .catch(() => {});
+            .catch(({response}) => toast.warn(response.data.error.message));
     }
 
     handleLoginClick() {
         this.props.login(this.state.userIdInput)
             .then(() => $("#signup-login-modal").modal("toggle"))
             .then(() => this.runAndResetCallback())
-            .catch(() => {});
+            .catch(({response}) => toast.warn(response.data.error.message));
     }
 
     runAndResetCallback() {

@@ -1,4 +1,5 @@
 import axios from "axios";
+import {toast} from "react-toastify";
 
 export const types = {
     SET_VOTES: "SET_VOTES",
@@ -74,7 +75,7 @@ export const actions = {
                     dispatch(this.resetFilters());
                     dispatch(this.calculateBorder());
                 })
-                .catch(err => {});
+                .catch(({response}) => toast.warn(response.data.error.message));
         };
     },
     calculateBorder() {

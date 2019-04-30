@@ -1,4 +1,5 @@
 import axios from "axios";
+import {toast} from "react-toastify";
 
 export const types = {
     FETCH_COLORS_SUCCESS: "FETCH_COLORS_SUCCESS",
@@ -25,7 +26,7 @@ export const actions = {
         return (dispatch) => {
             return axios.get(`${process.env.WEBAPI_HOST}/api/v1/colors`)
                 .then(({data}) => dispatch({type: types.FETCH_COLORS_SUCCESS, payload: data}))
-                .catch(err => {});
+                .catch(({response}) => toast.warn(response.data.error.message));
         };
     },
 };

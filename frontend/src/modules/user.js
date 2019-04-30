@@ -1,4 +1,5 @@
 import axios from "axios";
+import {toast} from "react-toastify";
 
 export const types = {
     SET_ID: "SET_ID",
@@ -27,7 +28,11 @@ export const actions = {
                     type: types.SET_ID,
                     payload: data.userID
                 }))
-                .catch((err) => {});
+                .catch(({response}) => {
+                    if (response.status !== 404) {
+                        toast.warn(response.data.error.message);
+                    }
+                });
         };
     },
     login(id) {

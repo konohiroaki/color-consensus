@@ -1,4 +1,5 @@
 import axios from "axios";
+import {toast} from "react-toastify";
 
 export const types = {
     SET_LANGUAGES: "SET_LANGUAGES",
@@ -25,7 +26,7 @@ export const actions = {
         return (dispatch) => {
             return axios.get(`${process.env.WEBAPI_HOST}/api/v1/languages`)
                 .then(({data}) => dispatch({type: types.SET_LANGUAGES, payload: data}))
-                .catch(err => {});
+                .catch(({response}) => toast.warn(response.data.error.message));
         };
     },
 };

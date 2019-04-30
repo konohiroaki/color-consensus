@@ -11,6 +11,7 @@ import (
 	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/controllers"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
+	"github.com/konohiroaki/color-consensus/backend/services"
 )
 
 func NewRouter(env string) *gin.Engine {
@@ -23,6 +24,8 @@ func NewRouter(env string) *gin.Engine {
 	router.NoRoute(func(c *gin.Context) { c.File("frontend/dist/index.html") })
 	router.Use(sessions.Sessions("session", cookie.NewStore([]byte("secret"))))
 	router.Use(client.UserIDHandlers()...)
+	router.Use(controllers.Controllers()...)
+	router.Use(services.Services()...)
 	router.Use(repositories.Repositories(env)...)
 
 	setUpEndpoints(router)

@@ -37,7 +37,7 @@ func (UserController) SetCookieIfUserExist(ctx *gin.Context) {
 	}
 	if userRepo.IsPresent(req.ID) {
 		if err := client.SetUserID(ctx, req.ID); err != nil {
-			ctx.Status(http.StatusInternalServerError)
+			ctx.JSON(http.StatusInternalServerError, errorResponse("error at applying cookie"))
 			return
 		}
 		ctx.Status(http.StatusOK);

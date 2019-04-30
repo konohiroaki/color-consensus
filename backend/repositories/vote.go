@@ -9,8 +9,8 @@ import (
 
 type VoteRepository interface {
 	Add(user, lang, name string, newColors []string)
-	GetVotes(lang, name string, fields []string) []map[string]interface{}
-	RemoveForUser(userID string)
+	Get(lang, name string, fields []string) []map[string]interface{}
+	RemoveByUser(userID string)
 }
 
 type voteRepository struct {
@@ -43,7 +43,7 @@ func (r voteRepository) Add(user, lang, name string, newColors []string) {
 	_, _ = r.Collection.Upsert(bson.M{"lang": lang, "name": name, "user": user}, &vote)
 }
 
-func (r voteRepository) GetVotes(lang, name string, fields []string) []map[string]interface{} {
+func (r voteRepository) Get(lang, name string, fields []string) []map[string]interface{} {
 	var result []map[string]interface{}
 	err := r.Collection.
 		Pipe(r.getAggregators(lang, name, fields)).
@@ -58,7 +58,7 @@ func (r voteRepository) GetVotes(lang, name string, fields []string) []map[strin
 	return result
 }
 
-func (r voteRepository) RemoveForUser(userID string) {
+func (r voteRepository) RemoveByUser(userID string) {
 	_, _ = r.Collection.RemoveAll(bson.M{"user": userID})
 }
 
@@ -71,7 +71,7 @@ func (r voteRepository) getAggregators(lang, name string, fields []string) []bso
 }
 
 func (r voteRepository) getUserLookUpAggregators() []bson.M {
-	// ageGroup maybe wrong since user input is only for year.
+	// ageGroup could be wrong since user input is only for year, but it's small problem. :D
 	// ageGroup = Math.floor((currentYear - birthYear) / 10) * 10
 	ageGroupAggregator :=
 		bson.M{"$multiply": []interface{}{

@@ -11,8 +11,7 @@ import (
 	"strings"
 )
 
-type ColorService struct {
-}
+type ColorService struct{}
 
 func NewColorService() ColorService {
 	return ColorService{}

@@ -74,9 +74,10 @@ const AddColorModal = (props) => (
 );
 
 const LanguageInput = props => {
-    const languages = Object.keys(props.languages)
+    var languages = Object.keys(props.languages)
         .sort((a, b) => props.languages[a] > props.languages[b] ? 1 : -1)
         .map(l => <option key={l} value={l}>{props.languages[l]}</option>);
+    languages.unshift(<option key="0" value="">Choose from dropdown</option>);
 
     return <div>
         <label className="mb-0">Language:</label>
@@ -89,7 +90,7 @@ const LanguageInput = props => {
 const ColorNameInput = props => (
     <div>
         <label className="mb-0">Color Name:</label>
-        <input type="text" className="form-control" placeholder="red"
+        <input type="text" className="form-control" placeholder="eg. red"
                value={props.name} onChange={e => props.nameSetter(e.target.value)}/>
     </div>
 );
@@ -97,7 +98,7 @@ const ColorNameInput = props => (
 const ColorCodeInput = props => (
     <div>
         <label className="mb-0">Base Color Code:</label>
-        <input type="text" className="form-control" placeholder="#ff0000"
+        <input type="text" className="form-control" placeholder="eg. #ff0000"
                value={props.code} onChange={e => props.codeSetter(e.target.value)}/>
     </div>
 );

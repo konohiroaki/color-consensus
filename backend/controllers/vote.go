@@ -2,8 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/client"
-	repo "github.com/konohiroaki/color-consensus/backend/repositories"
+	"github.com/konohiroaki/color-consensus/backend/services"
 	"log"
 	"net/http"
 	"strings"
@@ -11,13 +10,14 @@ import (
 
 type VoteController struct{}
 
+func NewVoteController() VoteController {
+	return VoteController{}
+}
+
 func (VoteController) Vote(ctx *gin.Context) {
-	voteRepo := repo.Vote(ctx)
-	userID, err := client.GetUserID(ctx)
-	if err != nil {
-		//ctx.Status(http.StatusForbidden) // TODO: temporary skipping auth. remove this.
-		//return
-		userID = "testuser"
+	if !services.User(ctx).IsLoggedIn(ctx) {
+		ctx.Status(http.StatusForbidden)
+		return
 	}
 
 	type request struct {
@@ -31,12 +31,12 @@ func (VoteController) Vote(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse("all lang, name, colors should be in the request"))
 		return
 	}
-	voteRepo.Add(userID, req.Lang, req.Name, req.Colors)
+
+	services.Vote(ctx).Vote(ctx, req.Lang, req.Name, req.Colors)
 	ctx.Status(http.StatusOK)
 }
 
-func (VoteController) GetVotes(ctx *gin.Context) {
-	voteRepo := repo.Vote(ctx)
+func (VoteController) Get(ctx *gin.Context) {
 	type request struct {
 		Lang   string `form:"lang"`
 		Name   string `form:"name"`
@@ -49,12 +49,12 @@ func (VoteController) GetVotes(ctx *gin.Context) {
 		return
 	}
 	fields := strings.Split(req.Fields, ",")
-	votes := voteRepo.GetVotes(req.Lang, req.Name, fields)
+
+	votes := services.Vote(ctx).Get(ctx, req.Lang, req.Name, fields)
 	ctx.JSON(http.StatusOK, votes)
 }
 
-func (VoteController) DeleteVotesForUser(ctx *gin.Context) {
-	voteRepo := repo.Vote(ctx)
+func (VoteController) RemoveByUser(ctx *gin.Context) {
 	type request struct {
 		ID string `json:"id" binding:"required"`
 	}
@@ -64,6 +64,7 @@ func (VoteController) DeleteVotesForUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse("user ID should be in the request"))
 		return
 	}
-	voteRepo.RemoveForUser(req.ID)
+
+	services.Vote(ctx).RemoveByUser(ctx, req.ID)
 	ctx.Status(http.StatusOK)
 }

@@ -34,7 +34,7 @@ func getUserIDHandler(ctx *gin.Context) {
 		if userID != nil {
 			return userID.(string), nil
 		}
-		return "", fmt.Errorf("user not logged in")
+		return "", fmt.Errorf("user is not logged in")
 	})
 	ctx.Next()
 }

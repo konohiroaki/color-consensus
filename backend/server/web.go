@@ -24,7 +24,6 @@ func NewRouter(env string) *gin.Engine {
 	router.NoRoute(func(c *gin.Context) { c.File("frontend/dist/index.html") })
 	router.Use(sessions.Sessions("session", cookie.NewStore([]byte("secret"))))
 	router.Use(client.UserIDHandlers()...)
-	router.Use(controllers.Controllers()...)
 	router.Use(services.Services()...)
 	router.Use(repositories.Repositories(env)...)
 
@@ -38,22 +37,21 @@ func setUpEndpoints(router *gin.Engine) {
 	{
 		v1api := api.Group("/v1")
 		{
-			color := new(controllers.ColorController)
+			color := controllers.NewColorController()
 			v1api.POST("/colors", color.Add)
 			v1api.GET("/colors", color.GetAll)
 			v1api.GET("/colors/:code/neighbors", color.GetNeighbors)
 
-			vote := new(controllers.VoteController)
+			vote := controllers.NewVoteController()
 			v1api.POST("/votes", vote.Vote)
-			v1api.GET("/votes", vote.GetVotes)
-			v1api.DELETE("/votes", vote.DeleteVotesForUser)
+			v1api.GET("/votes", vote.Get)
 
-			userController := new(controllers.UserController)
-			v1api.POST("/users", userController.AddUserAndSetCookie)
-			v1api.POST("/login", userController.SetCookieIfUserExist)
-			v1api.GET("/users/presence", userController.GetUserIDFromCookie)
+			userController := controllers.NewUserController()
+			v1api.POST("/users", userController.SingUpAndLogin)
+			v1api.POST("/login", userController.Login)
+			v1api.GET("/users/presence", userController.GetIDIfLoggedIn)
 
-			langController := new(controllers.LanguageController)
+			langController := controllers.NewLanguageController()
 			v1api.GET("/languages", langController.GetAll)
 		}
 	}

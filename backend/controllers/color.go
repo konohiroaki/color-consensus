@@ -7,8 +7,10 @@ import (
 	repo "github.com/konohiroaki/color-consensus/backend/repositories"
 	"log"
 	"net/http"
+	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 type ColorController struct{}
@@ -36,6 +38,13 @@ func (ColorController) Add(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, errorResponse("all language, name, code are necessary"))
+		return
+	}
+	regex := regexp.MustCompile(`#[0-9a-fA-F]{6}`)
+	if regex.MatchString(req.Code) {
+		req.Code = strings.ToLower(req.Code)
+	} else {
+		ctx.JSON(http.StatusBadRequest, errorResponse("input color code should match regex: " + regex.String()))
 		return
 	}
 	colorRepo.Add(req.Lang, req.Name, req.Code, userID)

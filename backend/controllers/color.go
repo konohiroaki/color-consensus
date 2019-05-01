@@ -39,7 +39,7 @@ func (ColorController) Add(ctx *gin.Context) {
 		return
 	}
 
-	if ok, regex := services.Color(ctx).IsValidCodeFromat(req.Code); !ok {
+	if ok, regex := services.Color(ctx).IsValidCodeFormat(req.Code); !ok {
 		ctx.JSON(http.StatusBadRequest, errorResponse("color code should match regex: "+regex))
 		return
 	}

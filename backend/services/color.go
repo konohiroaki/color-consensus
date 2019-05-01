@@ -35,7 +35,7 @@ func (cs ColorService) GetNeighbors(code string, size int) ([]string, error) {
 	return []string{}, fmt.Errorf("size should be between 1 and 4096")
 }
 
-func (ColorService) IsValidCodeFromat(input string) (bool, string) {
+func (ColorService) IsValidCodeFormat(input string) (bool, string) {
 	regex := regexp.MustCompile(`#[0-9a-fA-F]{6}`)
 	return regex.MatchString(input), regex.String()
 }

@@ -24,7 +24,7 @@ func NewRouter(env string) *gin.Engine {
 	router.NoRoute(func(c *gin.Context) { c.File("frontend/dist/index.html") })
 	router.Use(sessions.Sessions("session", cookie.NewStore([]byte("secret"))))
 	router.Use(client.UserIDHandlers()...)
-	router.Use(services.Services()...)
+	router.Use(services.Services(env)...)
 	router.Use(repositories.Repositories(env)...)
 
 	setUpEndpoints(router)
@@ -55,4 +55,11 @@ func setUpEndpoints(router *gin.Engine) {
 			v1api.GET("/languages", langController.GetAll)
 		}
 	}
+}
+
+func getControllers() {
+	color := controllers.NewColorController()
+	vote := controllers.NewVoteController()
+	user := controllers.NewUserController()
+	language := controllers.NewLanguageController()
 }

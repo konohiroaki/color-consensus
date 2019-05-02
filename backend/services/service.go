@@ -1,6 +1,9 @@
 package services
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/konohiroaki/color-consensus/backend/repositories"
+)
 
 const (
 	colorKey    = "github.com/konohiroaki/color-consensus/backend/services/color"
@@ -25,8 +28,10 @@ func Language(ctx *gin.Context) LanguageService {
 	return ctx.MustGet(languageKey).(LanguageService)
 }
 
-func Services() []gin.HandlerFunc {
-	colorService := NewColorService()
+func Services(env string) []gin.HandlerFunc {
+	colorRepo := repositories.NewColorRepository(env)
+
+	colorService := NewColorService(colorRepo)
 	voteService := NewVoteService()
 	userService := NewUserService()
 	languageService := NewLanguageService()

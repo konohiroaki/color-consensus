@@ -5,7 +5,9 @@ import (
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 )
 
-type LanguageService struct{}
+type LanguageService struct{
+
+}
 
 func NewLanguageService() LanguageService {
 	return LanguageService{}

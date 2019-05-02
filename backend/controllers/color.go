@@ -48,8 +48,7 @@ func (cc ColorController) Add(ctx *gin.Context) {
 		return
 	}
 
-	userID, _ := client.GetUserIDFunc(ctx)()
-	cc.colorService.Add(req.Lang, req.Name, req.Code, userID)
+	cc.colorService.Add(req.Lang, req.Name, req.Code, client.GetUserIDFunc(ctx))
 	ctx.Status(http.StatusCreated);
 }
 

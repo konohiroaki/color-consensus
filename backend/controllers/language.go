@@ -15,6 +15,6 @@ func NewLanguageController(langService services.LanguageService) LanguageControl
 }
 
 func (lc LanguageController) GetAll(ctx *gin.Context) {
-	languages := lc.langService.GetAll(ctx)
+	languages := lc.langService.GetAll()
 	ctx.JSON(http.StatusOK, languages)
 }

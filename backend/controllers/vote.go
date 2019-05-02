@@ -2,20 +2,24 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/services"
 	"log"
 	"net/http"
 	"strings"
 )
 
-type VoteController struct{}
-
-func NewVoteController() VoteController {
-	return VoteController{}
+type VoteController struct {
+	voteService services.VoteService
+	userService services.UserService
 }
 
-func (VoteController) Vote(ctx *gin.Context) {
-	if !services.User(ctx).IsLoggedIn(ctx) {
+func NewVoteController(voteService services.VoteService, userService services.UserService) VoteController {
+	return VoteController{voteService, userService}
+}
+
+func (vc VoteController) Vote(ctx *gin.Context) {
+	if !vc.userService.IsLoggedIn(client.GetUserIDFunc(ctx)) {
 		ctx.Status(http.StatusForbidden)
 		return
 	}
@@ -32,11 +36,11 @@ func (VoteController) Vote(ctx *gin.Context) {
 		return
 	}
 
-	services.Vote(ctx).Vote(ctx, req.Lang, req.Name, req.Colors)
+	vc.voteService.Vote(req.Lang, req.Name, req.Colors, client.GetUserIDFunc(ctx))
 	ctx.Status(http.StatusOK)
 }
 
-func (VoteController) Get(ctx *gin.Context) {
+func (vc VoteController) Get(ctx *gin.Context) {
 	type request struct {
 		Lang   string `form:"lang"`
 		Name   string `form:"name"`
@@ -50,11 +54,11 @@ func (VoteController) Get(ctx *gin.Context) {
 	}
 	fields := strings.Split(req.Fields, ",")
 
-	votes := services.Vote(ctx).Get(ctx, req.Lang, req.Name, fields)
+	votes := vc.voteService.Get(req.Lang, req.Name, fields)
 	ctx.JSON(http.StatusOK, votes)
 }
 
-func (VoteController) RemoveByUser(ctx *gin.Context) {
+func (vc VoteController) RemoveByUser(ctx *gin.Context) {
 	type request struct {
 		ID string `json:"id" binding:"required"`
 	}
@@ -65,6 +69,6 @@ func (VoteController) RemoveByUser(ctx *gin.Context) {
 		return
 	}
 
-	services.Vote(ctx).RemoveByUser(ctx, req.ID)
+	vc.voteService.RemoveByUser(req.ID)
 	ctx.Status(http.StatusOK)
 }

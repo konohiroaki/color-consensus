@@ -2,19 +2,22 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/services"
 	"log"
 	"net/http"
 )
 
-type UserController struct{}
-
-func NewUserController() UserController {
-	return UserController{}
+type UserController struct {
+	userService services.UserService
 }
 
-func (UserController) GetIDIfLoggedIn(ctx *gin.Context) {
-	userID, err := services.User(ctx).GetID(ctx);
+func NewUserController(userService services.UserService) UserController {
+	return UserController{userService}
+}
+
+func (uc UserController) GetIDIfLoggedIn(ctx *gin.Context) {
+	userID, err := uc.userService.GetID(client.GetUserIDFunc(ctx));
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, errorResponse("user is not logged in"))
 		return
@@ -22,7 +25,7 @@ func (UserController) GetIDIfLoggedIn(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"userID": userID})
 }
 
-func (UserController) Login(ctx *gin.Context) {
+func (uc UserController) Login(ctx *gin.Context) {
 	type request struct {
 		ID string `json:"id" binding:"required"`
 	}
@@ -33,7 +36,7 @@ func (UserController) Login(ctx *gin.Context) {
 		return
 	}
 
-	success := services.User(ctx).TryLogin(ctx, req.ID)
+	success := uc.userService.TryLogin(req.ID, client.SetUserIDFunc(ctx))
 	if !success {
 		ctx.JSON(http.StatusUnauthorized, errorResponse("userID not found in repository"))
 		return
@@ -41,7 +44,7 @@ func (UserController) Login(ctx *gin.Context) {
 	ctx.Status(http.StatusOK);
 }
 
-func (UserController) SingUpAndLogin(ctx *gin.Context) {
+func (uc UserController) SingUpAndLogin(ctx *gin.Context) {
 	type request struct {
 		Nationality string `json:"nationality" binding:"required"`
 		Gender      string `json:"gender" binding:"required"`
@@ -54,7 +57,7 @@ func (UserController) SingUpAndLogin(ctx *gin.Context) {
 		return
 	}
 
-	id, success := services.User(ctx).SingUpAndLogin(ctx, req.Nationality, req.Gender, req.Birth)
+	id, success := uc.userService.SingUpAndLogin(req.Nationality, req.Gender, req.Birth, client.SetUserIDFunc(ctx))
 	if !success {
 		ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
 		return

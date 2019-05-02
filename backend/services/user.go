@@ -2,49 +2,49 @@ package services
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 )
 
-type UserService struct{}
-
-func NewUserService() UserService {
-	return UserService{}
+type UserService struct {
+	userRepo repositories.UserRepository
 }
 
-func (UserService) IsLoggedIn(ctx *gin.Context) bool {
-	userID, err := client.GetUserID(ctx)
-
-	return err == nil && repositories.User(ctx).IsPresent(userID)
+func NewUserService(userRepo repositories.UserRepository) UserService {
+	return UserService{userRepo}
 }
 
-func (UserService) GetID(ctx *gin.Context) (string, error) {
-	userID, err := client.GetUserID(ctx)
+func (us UserService) IsLoggedIn(getUserID func() (string, error)) bool {
+	userID, err := getUserID()
 
-	if err != nil || !repositories.User(ctx).IsPresent(userID) {
+	return err == nil && us.userRepo.IsPresent(userID)
+}
+
+func (us UserService) GetID(getUserID func() (string, error)) (string, error) {
+	userID, err := getUserID()
+
+	if err != nil || !us.userRepo.IsPresent(userID) {
 		return "", fmt.Errorf("user is not logged in")
 	}
 
 	return userID, nil
 }
 
-func (UserService) SingUpAndLogin(ctx *gin.Context, nationality, gender string, birth int) (string, bool) {
-	id := repositories.User(ctx).Add(nationality, gender, birth)
+func (us UserService) SingUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool) {
+	id := us.userRepo.Add(nationality, gender, birth)
 
-	cookieErr := client.SetUserID(ctx, id)
+	cookieErr := setUserID(id)
 	if cookieErr != nil {
 		// ignore remove error because rare and it doesn't harm.
-		_ = repositories.User(ctx).Remove(id)
+		_ = us.userRepo.Remove(id)
 		return "", false
 	}
 
 	return id, true
 }
 
-func (UserService) TryLogin(ctx *gin.Context, userID string) bool {
-	if repositories.User(ctx).IsPresent(userID) {
-		err := client.SetUserID(ctx, userID)
+func (us UserService) TryLogin(userID string, setUserID func(string) error) bool {
+	if us.userRepo.IsPresent(userID) {
+		err := setUserID(userID)
 		return err == nil
 	}
 	return false

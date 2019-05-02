@@ -5,14 +5,14 @@ import (
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 )
 
-type LanguageService struct{
-
+type LanguageService struct {
+	langRepo repositories.LanguageRepository
 }
 
-func NewLanguageService() LanguageService {
-	return LanguageService{}
+func NewLanguageService(langRepo repositories.LanguageRepository) LanguageService {
+	return LanguageService{langRepo}
 }
 
-func (LanguageService) GetAll(ctx *gin.Context) map[string]string {
-	return repositories.Language(ctx).GetAll()
+func (ls LanguageService) GetAll(ctx *gin.Context) map[string]string {
+	return ls.langRepo.GetAll()
 }

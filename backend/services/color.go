@@ -14,7 +14,7 @@ type ColorService struct {
 }
 
 func NewColorService(colorRepo repositories.ColorRepository) ColorService {
-	return ColorService{colorRepo: colorRepo}
+	return ColorService{colorRepo}
 }
 
 func (cs ColorService) GetAll() []map[string]interface{} {

@@ -1,26 +1,26 @@
 package services
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 )
 
-type VoteService struct{}
-
-func NewVoteService() VoteService {
-	return VoteService{}
+type VoteService struct {
+	voteRepo repositories.VoteRepository
 }
 
-func (VoteService) Get(ctx *gin.Context, lang, name string, fields []string) []map[string]interface{} {
-	return repositories.Vote(ctx).Get(lang, name, fields)
+func NewVoteService(voteRepo repositories.VoteRepository) VoteService {
+	return VoteService{voteRepo}
 }
 
-func (VoteService) Vote(ctx *gin.Context, lang, name string, newColors []string) {
-	userID, _ := client.GetUserID(ctx)
-	repositories.Vote(ctx).Add(userID, lang, name, newColors)
+func (vs VoteService) Get(lang, name string, fields []string) []map[string]interface{} {
+	return vs.voteRepo.Get(lang, name, fields)
 }
 
-func (VoteService) RemoveByUser(ctx *gin.Context, userID string) {
-	repositories.Vote(ctx).RemoveByUser(userID)
+func (vs VoteService) Vote(lang, name string, newColors []string, getUserID func() (string, error)) {
+	userID, _ := getUserID()
+	vs.voteRepo.Add(userID, lang, name, newColors)
+}
+
+func (vs VoteService) RemoveByUser(userID string) {
+	vs.voteRepo.RemoveByUser(userID)
 }

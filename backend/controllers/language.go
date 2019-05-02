@@ -6,13 +6,15 @@ import (
 	"net/http"
 )
 
-type LanguageController struct{}
-
-func NewLanguageController() LanguageController {
-	return LanguageController{}
+type LanguageController struct {
+	langService services.LanguageService
 }
 
-func (LanguageController) GetAll(ctx *gin.Context) {
-	languages := services.Language(ctx).GetAll(ctx)
+func NewLanguageController(langService services.LanguageService) LanguageController {
+	return LanguageController{langService}
+}
+
+func (lc LanguageController) GetAll(ctx *gin.Context) {
+	languages := lc.langService.GetAll(ctx)
 	ctx.JSON(http.StatusOK, languages)
 }

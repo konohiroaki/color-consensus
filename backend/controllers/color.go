@@ -9,21 +9,24 @@ import (
 	"strconv"
 )
 
-type ColorController struct{}
-
-func NewColorController() ColorController {
-	return ColorController{}
+type ColorController struct {
+	colorService services.ColorService
+	userService  services.UserService
 }
 
-func (ColorController) GetAll(ctx *gin.Context) {
-	colors := services.Color(ctx).GetAll()
+func NewColorController(colorService services.ColorService, userService services.UserService) ColorController {
+	return ColorController{colorService, userService}
+}
+
+func (cc ColorController) GetAll(ctx *gin.Context) {
+	colors := cc.colorService.GetAll()
 
 	ctx.JSON(http.StatusOK, colors)
 	return
 }
 
-func (ColorController) Add(ctx *gin.Context) {
-	if !services.User(ctx).IsLoggedIn(ctx) {
+func (cc ColorController) Add(ctx *gin.Context) {
+	if !cc.userService.IsLoggedIn(client.GetUserIDFunc(ctx)) {
 		ctx.JSON(http.StatusForbidden, errorResponse("user need to be logged in to add a color"))
 		return
 	}
@@ -40,17 +43,17 @@ func (ColorController) Add(ctx *gin.Context) {
 		return
 	}
 
-	if ok, regex := services.Color(ctx).IsValidCodeFormat(req.Code); !ok {
+	if ok, regex := cc.colorService.IsValidCodeFormat(req.Code); !ok {
 		ctx.JSON(http.StatusBadRequest, errorResponse("color code should match regex: "+regex))
 		return
 	}
 
-	userID, _ := client.GetUserID(ctx)
-	services.Color(ctx).Add(req.Lang, req.Name, req.Code, userID)
+	userID, _ := client.GetUserIDFunc(ctx)()
+	cc.colorService.Add(req.Lang, req.Name, req.Code, userID)
 	ctx.Status(http.StatusCreated);
 }
 
-func (ColorController) GetNeighbors(ctx *gin.Context) {
+func (cc ColorController) GetNeighbors(ctx *gin.Context) {
 	code := ctx.Param("code")
 	size, sizeErr := strconv.Atoi(ctx.Query("size"));
 	if sizeErr != nil {
@@ -58,7 +61,7 @@ func (ColorController) GetNeighbors(ctx *gin.Context) {
 		return
 	}
 
-	neighbors, serviceErr := services.Color(ctx).GetNeighbors(code, size)
+	neighbors, serviceErr := cc.colorService.GetNeighbors(code, size)
 	if serviceErr != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(serviceErr.Error()))
 		return

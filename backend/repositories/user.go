@@ -18,7 +18,8 @@ type userRepository struct {
 	Collection *mgo.Collection
 }
 
-func NewUserRepository(uri, db, env string) UserRepository {
+func NewUserRepository(env string) UserRepository {
+	uri, db := getDatabaseURIAndName()
 	session, _ := mgo.Dial(uri)
 	collection := session.DB(db).C("user")
 	repository := &userRepository{collection}

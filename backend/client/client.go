@@ -12,12 +12,12 @@ const (
 	setUserID = "github.com/konohiroaki/color-consensus/backend/client/setUserID"
 )
 
-func GetUserID(ctx *gin.Context) (string, error) {
-	return ctx.MustGet(getUserID).(func() (string, error))()
+func GetUserIDFunc(ctx *gin.Context) (func() (string, error)) {
+	return ctx.MustGet(getUserID).(func() (string, error))
 }
 
-func SetUserID(ctx *gin.Context, id string) error {
-	return ctx.MustGet(setUserID).(func(string) error)(id)
+func SetUserIDFunc(ctx *gin.Context) (func(string) error) {
+	return ctx.MustGet(setUserID).(func(string) error)
 }
 
 func UserIDHandlers() []gin.HandlerFunc {

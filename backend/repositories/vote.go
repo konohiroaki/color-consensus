@@ -17,7 +17,8 @@ type voteRepository struct {
 	Collection *mgo.Collection
 }
 
-func NewVoteRepository(uri, db, env string) VoteRepository {
+func NewVoteRepository(env string) VoteRepository {
+	uri, db := getDatabaseURIAndName()
 	session, _ := mgo.Dial(uri)
 	collection := session.DB(db).C("vote")
 	repository := &voteRepository{collection}

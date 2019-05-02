@@ -21,7 +21,8 @@ func (cs ColorService) GetAll() []map[string]interface{} {
 	return cs.colorRepo.GetAll([]string{"lang", "name", "code"})
 }
 
-func (cs ColorService) Add(lang, name, code, userID string) {
+func (cs ColorService) Add(lang, name, code string, getUserID func() (string, error)) {
+	userID, _ := getUserID()
 	code = strings.ToLower(code)
 
 	cs.colorRepo.Add(lang, name, code, userID)

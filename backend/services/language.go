@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 )
 
@@ -13,6 +12,6 @@ func NewLanguageService(langRepo repositories.LanguageRepository) LanguageServic
 	return LanguageService{langRepo}
 }
 
-func (ls LanguageService) GetAll(ctx *gin.Context) map[string]string {
+func (ls LanguageService) GetAll() map[string]string {
 	return ls.langRepo.GetAll()
 }

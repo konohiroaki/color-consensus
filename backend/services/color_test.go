@@ -32,8 +32,9 @@ func TestGetAll(t *testing.T) {
 func TestAdd(t *testing.T) {
 	repoMock := &colorRepositoryMock{}
 	service := NewColorService(repoMock)
+	getUserID := func() (s string, e error) { return "User", nil }
 
-	service.Add("Lang", "Name", "#FF00ff", "User")
+	service.Add("Lang", "Name", "#FF00ff", getUserID)
 
 	assert.Equal(t, repoMock.addArguments, []string{"Lang", "Name", "#ff00ff", "User"})
 }

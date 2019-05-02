@@ -2,34 +2,33 @@ package services
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/client"
-	repo "github.com/konohiroaki/color-consensus/backend/repositories"
+	"github.com/konohiroaki/color-consensus/backend/repositories"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 )
 
-type ColorService struct{}
-
-func NewColorService() ColorService {
-	return ColorService{}
+type ColorService struct {
+	colorRepo repositories.ColorRepository
 }
 
-func (ColorService) GetAll(ctx *gin.Context) []map[string]interface{} {
-	return repo.Color(ctx).GetAll([]string{"lang", "name", "code"})
+func NewColorService(colorRepo repositories.ColorRepository) ColorService {
+	return ColorService{colorRepo: colorRepo}
 }
 
-func (ColorService) Add(ctx *gin.Context, lang, name, code string) {
-	userID, _ := client.GetUserID(ctx)
+func (cs ColorService) GetAll() []map[string]interface{} {
+	return cs.colorRepo.GetAll([]string{"lang", "name", "code"})
+}
+
+func (cs ColorService) Add(lang, name, code, userID string) {
 	code = strings.ToLower(code)
 
-	repo.Color(ctx).Add(lang, name, code, userID)
+	cs.colorRepo.Add(lang, name, code, userID)
 }
 
 func (cs ColorService) GetNeighbors(code string, size int) ([]string, error) {
-	if 1 <= size || size <= 4096 {
+	if 1 <= size && size <= 4096 {
 		return cs.getNeighborColors(code, size), nil
 	}
 	return []string{}, fmt.Errorf("size should be between 1 and 4096")

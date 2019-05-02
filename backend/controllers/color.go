@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/services"
 	"log"
 	"net/http"
@@ -15,7 +16,7 @@ func NewColorController() ColorController {
 }
 
 func (ColorController) GetAll(ctx *gin.Context) {
-	colors := services.Color(ctx).GetAll(ctx)
+	colors := services.Color(ctx).GetAll()
 
 	ctx.JSON(http.StatusOK, colors)
 	return
@@ -44,7 +45,8 @@ func (ColorController) Add(ctx *gin.Context) {
 		return
 	}
 
-	services.Color(ctx).Add(ctx, req.Lang, req.Name, req.Code)
+	userID, _ := client.GetUserID(ctx)
+	services.Color(ctx).Add(req.Lang, req.Name, req.Code, userID)
 	ctx.Status(http.StatusCreated);
 }
 

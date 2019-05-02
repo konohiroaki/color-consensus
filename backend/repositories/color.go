@@ -16,13 +16,13 @@ type colorRepository struct {
 	Collection *mgo.Collection
 }
 
-func NewColorRepository(uri, db, env string) ColorRepository {
+func NewColorRepository(env string) ColorRepository {
+	uri, db := getDatabaseURIAndName()
 	session, _ := mgo.Dial(uri)
 	collection := session.DB(db).C("color")
 	repository := &colorRepository{collection}
 
 	if env == "development" {
-		log.Println("detected development mode. inserting sample color data.")
 		repository.insertSampleData()
 	}
 

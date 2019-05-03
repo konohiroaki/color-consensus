@@ -54,7 +54,7 @@ func TestColorController_Add_FailAuthorization(t *testing.T) {
 		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","name":"red","code":"#ff0000"}`)))
 
 	assert.Equal(t, http.StatusForbidden, response.Code)
-	assert.Equal(t, `{"error":{"message":"user need to be logged in to add a color"}}`, response.Body.String())
+	assertErrorMessageEqual(t, "user need to be logged in to add a color", response.Body)
 }
 
 func TestColorController_Add_FailBind(t *testing.T) {
@@ -68,7 +68,7 @@ func TestColorController_Add_FailBind(t *testing.T) {
 		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","code":"#ff0000"}`))) // "name" not sent
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assert.Equal(t, `{"error":{"message":"all language, name, code are necessary"}}`, response.Body.String())
+	assertErrorMessageEqual(t, "all language, name, code are necessary", response.Body)
 }
 
 func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
@@ -83,7 +83,7 @@ func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
 		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","name":"red","code":"ff0000"}`)))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assert.Equal(t, fmt.Sprintf(`{"error":{"message":"color code should match regex: %s"}}`, msg), response.Body.String())
+	assertErrorMessageEqual(t, fmt.Sprintf("color code should match regex: %s", msg), response.Body)
 }
 
 func TestColorController_GetNeighbors_Success(t *testing.T) {
@@ -102,9 +102,6 @@ func TestColorController_GetNeighbors_Success(t *testing.T) {
 }
 
 func TestColorController_GetNeighbors_FailSizeAtoiConversion(t *testing.T) {
-	ctrl, _, _, _, _, _ := getMocks(t)
-	defer ctrl.Finish()
-
 	code, size := "ff0000", "a"
 	controller := NewColorController(nil, nil, nil)
 
@@ -112,7 +109,7 @@ func TestColorController_GetNeighbors_FailSizeAtoiConversion(t *testing.T) {
 		http.MethodPost, fmt.Sprintf("/%s?size=%s", code, size), nil)
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assert.Equal(t, `{"error":{"message":"size should be a number"}}`, response.Body.String())
+	assertErrorMessageEqual(t, "size should be a number", response.Body)
 }
 
 func TestColorController_GetNeighbors_FailServiceError(t *testing.T) {
@@ -127,7 +124,7 @@ func TestColorController_GetNeighbors_FailServiceError(t *testing.T) {
 		http.MethodPost, fmt.Sprintf("/%s?size=%d", code, size), nil)
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assert.Equal(t, fmt.Sprintf(`{"error":{"message":"%s"}}`, serviceError), response.Body.String())
+	assertErrorMessageEqual(t, serviceError, response.Body)
 }
 
 func authorizationSuccess(user *mock_services.MockUserService, client *mock_client.MockClient) (

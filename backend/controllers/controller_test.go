@@ -1,16 +1,32 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/konohiroaki/color-consensus/backend/client/mock_client"
 	"github.com/konohiroaki/color-consensus/backend/services/mock_services"
+	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
+
+func TestController_ErrorResponse(t *testing.T) {
+	actual := errorResponse("message")
+
+	byteArr, _ := json.Marshal(actual)
+	jsonStr := string(byteArr)
+
+	assert.Equal(t, `{"error":{"message":"message"}}`, jsonStr)
+}
+
+func assertErrorMessageEqual(t *testing.T, expected string, actual *bytes.Buffer) {
+	assert.Equal(t, fmt.Sprintf(`{"error":{"message":"%s"}}`, expected), actual.String())
+}
 
 func getResponseRecorder(pathParam string, handlerFunc gin.HandlerFunc, method, query string, body io.Reader) *httptest.ResponseRecorder {
 	gin.SetMode(gin.TestMode)

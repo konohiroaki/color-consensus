@@ -1,14 +1,12 @@
 package services
 
 import (
-	"github.com/golang/mock/gomock"
-	"github.com/konohiroaki/color-consensus/backend/repositories/mock_repositories"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestGetAll_Success(t *testing.T) {
-	ctrl, mockColoRepo := getColorMock(t)
+func TestColorService_GetAll_Success(t *testing.T) {
+	ctrl, mockColoRepo, _, _, _ := getRepoMocks(t)
 	defer ctrl.Finish()
 
 	fields := []string{"lang", "name", "code"}
@@ -20,8 +18,8 @@ func TestGetAll_Success(t *testing.T) {
 	assert.Equal(t, []map[string]interface{}{}, actual)
 }
 
-func TestAdd_Success(t *testing.T) {
-	ctrl, mockColoRepo := getColorMock(t)
+func TestColorService_Add_Success(t *testing.T) {
+	ctrl, mockColoRepo, _, _, _ := getRepoMocks(t)
 	defer ctrl.Finish()
 
 	mockColoRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User")
@@ -30,7 +28,7 @@ func TestAdd_Success(t *testing.T) {
 	service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 }
 
-func TestGetNeighbors_Cases(t *testing.T) {
+func TestColorService_GetNeighbors_Cases(t *testing.T) {
 	service := NewColorService(nil)
 
 	testCases := []struct {
@@ -53,7 +51,7 @@ func TestGetNeighbors_Cases(t *testing.T) {
 	}
 }
 
-func TestIsValidCodeFormat_Cases(t *testing.T) {
+func TestColorService_IsValidCodeFormat_Cases(t *testing.T) {
 	service := NewColorService(nil)
 
 	testCases := []struct {
@@ -68,10 +66,4 @@ func TestIsValidCodeFormat_Cases(t *testing.T) {
 		actual, _ := service.IsValidCodeFormat(testCase.argument)
 		assert.Equal(t, testCase.expected, actual)
 	}
-}
-
-func getColorMock(t *testing.T) (*gomock.Controller, *mock_repositories.MockColorRepository) {
-	ctrl := gomock.NewController(t)
-	mockColorRepo := mock_repositories.NewMockColorRepository(ctrl)
-	return ctrl, mockColorRepo
 }

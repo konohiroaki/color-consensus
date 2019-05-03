@@ -50,7 +50,7 @@ func TestUserController_Login_Success(t *testing.T) {
 	controller := NewUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Login,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"id":"%s"}`, id))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, id))))
 
 	assert.Equal(t, http.StatusOK, response.Code)
 }
@@ -76,7 +76,7 @@ func TestUserController_Login_FailService(t *testing.T) {
 	controller := NewUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Login,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"id":"%s"}`, id))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, id))))
 
 	assert.Equal(t, http.StatusUnauthorized, response.Code)
 	assertErrorMessageEqual(t, "userID not found in repository", response.Body)

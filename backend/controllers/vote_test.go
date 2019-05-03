@@ -95,7 +95,7 @@ func TestVoteController_RemoveByUser_Success(t *testing.T) {
 	controller := NewVoteController(mockVoteService, nil, nil)
 
 	response := getResponseRecorder("", controller.RemoveByUser,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"id":"%s"}`, id))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, id))))
 
 	assert.Equal(t, http.StatusOK, response.Code)
 }

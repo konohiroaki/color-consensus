@@ -4,11 +4,11 @@ import axios from "axios";
 
 describe("setBaseColor(color)", function () {
     const colorNonEmptyState = () => ({
-        colors: {colors: [{code: "foo"}]},
+        searchBar: {colors: [{code: "foo"}]},
         board: {sideLength: 3}
     });
     const colorEmptyState = () => ({
-        colors: {colors: []},
+        searchBar: {colors: []},
         board: {sizeLength: 3}
     });
 

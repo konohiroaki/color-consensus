@@ -28,8 +28,7 @@ func (uc UserController) GetIDIfLoggedIn(ctx *gin.Context) {
 
 func (uc UserController) Login(ctx *gin.Context) {
 	type request struct {
-		// TODO: unify to "userID"
-		ID string `json:"id" binding:"required"`
+		ID string `json:"userID" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
@@ -59,11 +58,10 @@ func (uc UserController) SingUpAndLogin(ctx *gin.Context) {
 		return
 	}
 
-	id, success := uc.userService.SingUpAndLogin(req.Nationality, req.Gender, req.Birth, uc.client.SetUserIDFunc(ctx))
+	userID, success := uc.userService.SingUpAndLogin(req.Nationality, req.Gender, req.Birth, uc.client.SetUserIDFunc(ctx))
 	if !success {
 		ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
 		return
 	}
-	// TODO: return value same way as GetIDIfLoggedIn -> gin.H{"userID": userID}
-	ctx.JSON(http.StatusOK, id);
+	ctx.JSON(http.StatusOK, gin.H{"userID": userID});
 }

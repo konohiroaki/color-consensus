@@ -31,21 +31,21 @@ describe("verifyLoginState()", function () {
 
 describe("login(id)", function () {
     it("should dispatch when user is present", () => {
-        const fakeId = {id: "foo"};
+        const fakeId = {userID: "foo"};
         const mockAxios = new MockAdapter(axios);
         mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/login`, fakeId)
             .reply(200);
 
         const dispatch = jest.fn();
-        actions.login(fakeId.id)(dispatch).then(() => {
+        actions.login(fakeId.userID)(dispatch).then(() => {
             expect(dispatch.mock.calls[0][0]).toEqual({
                 type: types.SET_ID,
-                payload: fakeId.id,
+                payload: fakeId.userID,
             });
         });
     });
     it("should not dispatch when user is absent", () => {
-        const fakeId = {id: "foo"};
+        const fakeId = {userID: "foo"};
         const mockAxios = new MockAdapter(axios);
         mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/login`, fakeId)
             .reply(404);
@@ -65,11 +65,7 @@ describe("signUp(nationality, gender, birth)", function () {
             birth: 1990
         };
         const fakeResponse = {
-            nationality: "Japan",
-            gender: "Male",
-            birth: 1990,
-            date: "3000-01-01T00:00:00.0000000+09:00",
-            id: "foo"
+            userID: "foo"
         };
         const mockAxios = new MockAdapter(axios);
         mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users`, fakeUser)
@@ -79,7 +75,7 @@ describe("signUp(nationality, gender, birth)", function () {
         actions.signUp(fakeUser.nationality, fakeUser.gender, fakeUser.birth)(dispatch).then(() => {
             expect(dispatch.mock.calls[0][0]).toEqual({
                 type: types.SET_ID,
-                payload: fakeResponse.id
+                payload: fakeResponse.userID
             });
         });
     });

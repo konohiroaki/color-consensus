@@ -21,7 +21,7 @@ func NewVoteController(voteService services.VoteService, userService services.Us
 
 func (vc VoteController) Vote(ctx *gin.Context) {
 	if !vc.userService.IsLoggedIn(vc.client.GetUserIDFunc(ctx)) {
-		ctx.Status(http.StatusForbidden)
+		ctx.JSON(http.StatusForbidden, errorResponse("user need to be logged in to vote"))
 		return
 	}
 
@@ -61,12 +61,13 @@ func (vc VoteController) Get(ctx *gin.Context) {
 
 func (vc VoteController) RemoveByUser(ctx *gin.Context) {
 	type request struct {
+		// TODO: unify to "userID"
 		ID string `json:"id" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("user ID should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse("userID should be in the request"))
 		return
 	}
 

@@ -20,7 +20,7 @@ func NewUserController(userService services.UserService, client client.Client) U
 func (uc UserController) GetIDIfLoggedIn(ctx *gin.Context) {
 	userID, err := uc.userService.GetID(uc.client.GetUserIDFunc(ctx));
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, errorResponse("user is not logged in"))
+		ctx.JSON(http.StatusNotFound, errorResponse(err.Error()))
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"userID": userID})
@@ -28,12 +28,13 @@ func (uc UserController) GetIDIfLoggedIn(ctx *gin.Context) {
 
 func (uc UserController) Login(ctx *gin.Context) {
 	type request struct {
+		// TODO: unify to "userID"
 		ID string `json:"id" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("user ID should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse("userID should be in the request"))
 		return
 	}
 
@@ -63,5 +64,6 @@ func (uc UserController) SingUpAndLogin(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
 		return
 	}
+	// TODO: return value same way as GetIDIfLoggedIn -> gin.H{"userID": userID}
 	ctx.JSON(http.StatusOK, id);
 }

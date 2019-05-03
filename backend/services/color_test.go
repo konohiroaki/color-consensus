@@ -1,45 +1,36 @@
 package services
 
 import (
+	"github.com/golang/mock/gomock"
+	"github.com/konohiroaki/color-consensus/backend/repositories/mock_repositories"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-type colorRepositoryMock struct {
-	getArguments []string
-	addArguments []string
+func TestGetAll_Success(t *testing.T) {
+	ctrl, mockColoRepo := getColorMock(t)
+	defer ctrl.Finish()
+
+	fields := []string{"lang", "name", "code"}
+	mockColoRepo.EXPECT().GetAll(fields).Return([]map[string]interface{}{})
+	service := NewColorService(mockColoRepo)
+
+	actual := service.GetAll()
+
+	assert.Equal(t, []map[string]interface{}{}, actual)
 }
 
-func (mock *colorRepositoryMock) GetAll(fields []string) []map[string]interface{} {
-	mock.getArguments = append(mock.getArguments, fields...)
+func TestAdd_Success(t *testing.T) {
+	ctrl, mockColoRepo := getColorMock(t)
+	defer ctrl.Finish()
 
-	return []map[string]interface{}{}
+	mockColoRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User")
+	service := NewColorService(mockColoRepo)
+
+	service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 }
 
-func (mock *colorRepositoryMock) Add(lang, name, code, user string) {
-	mock.addArguments = append(mock.addArguments, lang, name, code, user)
-}
-
-func TestGetAll(t *testing.T) {
-	repoMock := &colorRepositoryMock{}
-	service := NewColorService(repoMock)
-
-	service.GetAll()
-
-	assert.Equal(t, repoMock.getArguments, []string{"lang", "name", "code"})
-}
-
-func TestAdd(t *testing.T) {
-	repoMock := &colorRepositoryMock{}
-	service := NewColorService(repoMock)
-	getUserID := func() (s string, e error) { return "User", nil }
-
-	service.Add("Lang", "Name", "#FF00ff", getUserID)
-
-	assert.Equal(t, repoMock.addArguments, []string{"Lang", "Name", "#ff00ff", "User"})
-}
-
-func TestGetNeighbors(t *testing.T) {
+func TestGetNeighbors_Cases(t *testing.T) {
 	service := NewColorService(nil)
 
 	testCases := []struct {
@@ -62,7 +53,7 @@ func TestGetNeighbors(t *testing.T) {
 	}
 }
 
-func TestIsValidCodeFormat(t *testing.T) {
+func TestIsValidCodeFormat_Cases(t *testing.T) {
 	service := NewColorService(nil)
 
 	testCases := []struct {
@@ -77,4 +68,10 @@ func TestIsValidCodeFormat(t *testing.T) {
 		actual, _ := service.IsValidCodeFormat(testCase.argument)
 		assert.Equal(t, testCase.expected, actual)
 	}
+}
+
+func getColorMock(t *testing.T) (*gomock.Controller, *mock_repositories.MockColorRepository) {
+	ctrl := gomock.NewController(t)
+	mockColorRepo := mock_repositories.NewMockColorRepository(ctrl)
+	return ctrl, mockColorRepo
 }

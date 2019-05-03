@@ -1,28 +1,26 @@
 package services
 
 import (
+	"github.com/golang/mock/gomock"
+	"github.com/konohiroaki/color-consensus/backend/repositories/mock_repositories"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-type languageRepositoryMock struct {
-	getAllCalled bool
-}
-
-func (mock *languageRepositoryMock) GetAll() map[string]string {
-	mock.getAllCalled = true
-	return map[string]string{}
-}
-
-func (mock *languageRepositoryMock) Get(key string) (string, error) {
-	return "", nil
-}
-
 func TestGetAll_Lang(t *testing.T) {
-	repoMock := &languageRepositoryMock{}
-	service := NewLanguageService(repoMock)
+	ctrl, mockLangRepo := getLanguageMock(t)
+	ctrl.Finish()
 
-	service.GetAll()
+	mockLangRepo.EXPECT().GetAll().Return(map[string]string{})
+	service := NewLanguageService(mockLangRepo)
 
-	assert.True(t, repoMock.getAllCalled)
+	actual := service.GetAll()
+
+	assert.Equal(t, map[string]string{}, actual)
+}
+
+func getLanguageMock(t *testing.T) (*gomock.Controller, *mock_repositories.MockLanguageRepository) {
+	ctrl := gomock.NewController(t)
+	mockLangRepo := mock_repositories.NewMockLanguageRepository(ctrl)
+	return ctrl, mockLangRepo
 }

@@ -37,7 +37,7 @@ export const actions = {
     },
     login(id) {
         return (dispatch) => {
-            return axios.post(`${process.env.WEBAPI_HOST}/api/v1/login`, {id: id})
+            return axios.post(`${process.env.WEBAPI_HOST}/api/v1/login`, {userID: id})
                 .then(() => dispatch({
                     type: types.SET_ID,
                     payload: id
@@ -51,9 +51,9 @@ export const actions = {
                 gender: gender,
                 birth: Number(birth)
             })
-                .then(({id}) => dispatch({
+                .then(({data}) => dispatch({
                     type: types.SET_ID,
-                    payload: id
+                    payload: data.userID
                 }));
         };
     }

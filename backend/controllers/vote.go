@@ -61,8 +61,7 @@ func (vc VoteController) Get(ctx *gin.Context) {
 
 func (vc VoteController) RemoveByUser(ctx *gin.Context) {
 	type request struct {
-		// TODO: unify to "userID"
-		ID string `json:"id" binding:"required"`
+		ID string `json:"userID" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {

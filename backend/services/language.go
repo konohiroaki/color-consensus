@@ -4,14 +4,18 @@ import (
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 )
 
-type LanguageService struct {
+type LanguageService interface {
+	GetAll() map[string]string
+}
+
+type languageService struct {
 	langRepo repositories.LanguageRepository
 }
 
 func NewLanguageService(langRepo repositories.LanguageRepository) LanguageService {
-	return LanguageService{langRepo}
+	return languageService{langRepo}
 }
 
-func (ls LanguageService) GetAll() map[string]string {
+func (ls languageService) GetAll() map[string]string {
 	return ls.langRepo.GetAll()
 }

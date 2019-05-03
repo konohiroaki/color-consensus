@@ -75,11 +75,3 @@ func (cc colorController) GetNeighbors(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, neighbors)
 }
-
-func errorResponse(message string) gin.H {
-	return gin.H{
-		"error": gin.H{
-			"message": message,
-		},
-	}
-}

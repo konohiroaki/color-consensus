@@ -10,14 +10,15 @@ import (
 
 type UserController struct {
 	userService services.UserService
+	client      client.Client
 }
 
-func NewUserController(userService services.UserService) UserController {
-	return UserController{userService}
+func NewUserController(userService services.UserService, client client.Client) UserController {
+	return UserController{userService, client}
 }
 
 func (uc UserController) GetIDIfLoggedIn(ctx *gin.Context) {
-	userID, err := uc.userService.GetID(client.GetUserIDFunc(ctx));
+	userID, err := uc.userService.GetID(uc.client.GetUserIDFunc(ctx));
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, errorResponse("user is not logged in"))
 		return
@@ -36,7 +37,7 @@ func (uc UserController) Login(ctx *gin.Context) {
 		return
 	}
 
-	success := uc.userService.TryLogin(req.ID, client.SetUserIDFunc(ctx))
+	success := uc.userService.TryLogin(req.ID, uc.client.SetUserIDFunc(ctx))
 	if !success {
 		ctx.JSON(http.StatusUnauthorized, errorResponse("userID not found in repository"))
 		return
@@ -57,7 +58,7 @@ func (uc UserController) SingUpAndLogin(ctx *gin.Context) {
 		return
 	}
 
-	id, success := uc.userService.SingUpAndLogin(req.Nationality, req.Gender, req.Birth, client.SetUserIDFunc(ctx))
+	id, success := uc.userService.SingUpAndLogin(req.Nationality, req.Gender, req.Birth, uc.client.SetUserIDFunc(ctx))
 	if !success {
 		ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
 		return

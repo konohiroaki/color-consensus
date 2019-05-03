@@ -9,33 +9,40 @@ import (
 	"strings"
 )
 
-type ColorService struct {
+type ColorService interface {
+	GetAll() []map[string]interface{}
+	Add(lang, name, code string, getUserID func() (string, error))
+	GetNeighbors(code string, size int) ([]string, error)
+	IsValidCodeFormat(input string) (bool, string)
+}
+
+type colorService struct {
 	colorRepo repositories.ColorRepository
 }
 
 func NewColorService(colorRepo repositories.ColorRepository) ColorService {
-	return ColorService{colorRepo}
+	return colorService{colorRepo}
 }
 
-func (cs ColorService) GetAll() []map[string]interface{} {
+func (cs colorService) GetAll() []map[string]interface{} {
 	return cs.colorRepo.GetAll([]string{"lang", "name", "code"})
 }
 
-func (cs ColorService) Add(lang, name, code string, getUserID func() (string, error)) {
+func (cs colorService) Add(lang, name, code string, getUserID func() (string, error)) {
 	userID, _ := getUserID()
 	code = strings.ToLower(code)
 
 	cs.colorRepo.Add(lang, name, code, userID)
 }
 
-func (cs ColorService) GetNeighbors(code string, size int) ([]string, error) {
+func (cs colorService) GetNeighbors(code string, size int) ([]string, error) {
 	if 1 <= size && size <= 4096 {
 		return cs.getNeighborColors(code, size), nil
 	}
 	return []string{}, fmt.Errorf("size should be between 1 and 4096")
 }
 
-func (ColorService) IsValidCodeFormat(input string) (bool, string) {
+func (colorService) IsValidCodeFormat(input string) (bool, string) {
 	regex := regexp.MustCompile(`#[0-9a-fA-F]{6}`)
 	return regex.MatchString(input), regex.String()
 }
@@ -43,7 +50,7 @@ func (ColorService) IsValidCodeFormat(input string) (bool, string) {
 // TODO: I think the sort order shouldn't be measured only by diff scale but should also consider about the ratio between each RGB.
 // For example of #808080, #707070 is farther than #806080, which would be opposite from how human feels.
 // So currently it shows very bad result for gray-ish colors.
-func (cs ColorService) getNeighborColors(code string, size int) []string {
+func (cs colorService) getNeighborColors(code string, size int) []string {
 	r := cs.fromHex(code[0:2])
 	g := cs.fromHex(code[2:4])
 	b := cs.fromHex(code[4:6])
@@ -76,14 +83,14 @@ func (cs ColorService) getNeighborColors(code string, size int) []string {
 	return result
 }
 
-func (ColorService) fromHex(hex string) int {
+func (colorService) fromHex(hex string) int {
 	num, _ := strconv.ParseInt(hex, 16, 64)
 	return int(num)
 }
-func (ColorService) toHex(num int) string {
+func (colorService) toHex(num int) string {
 	return fmt.Sprintf("%02x", num)
 }
-func (ColorService) abs(num int) int {
+func (colorService) abs(num int) int {
 	if (num < 0) {
 		return -num;
 	}

@@ -5,21 +5,28 @@ import (
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 )
 
-type UserService struct {
+type UserService interface {
+	IsLoggedIn(getUserID func() (string, error)) bool
+	GetID(getUserID func() (string, error)) (string, error)
+	SingUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool)
+	TryLogin(userID string, setUserID func(string) error) bool
+}
+
+type userService struct {
 	userRepo repositories.UserRepository
 }
 
 func NewUserService(userRepo repositories.UserRepository) UserService {
-	return UserService{userRepo}
+	return userService{userRepo}
 }
 
-func (us UserService) IsLoggedIn(getUserID func() (string, error)) bool {
+func (us userService) IsLoggedIn(getUserID func() (string, error)) bool {
 	userID, err := getUserID()
 
 	return err == nil && us.userRepo.IsPresent(userID)
 }
 
-func (us UserService) GetID(getUserID func() (string, error)) (string, error) {
+func (us userService) GetID(getUserID func() (string, error)) (string, error) {
 	userID, err := getUserID()
 
 	if err != nil || !us.userRepo.IsPresent(userID) {
@@ -29,7 +36,7 @@ func (us UserService) GetID(getUserID func() (string, error)) (string, error) {
 	return userID, nil
 }
 
-func (us UserService) SingUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool) {
+func (us userService) SingUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool) {
 	id := us.userRepo.Add(nationality, gender, birth)
 
 	cookieErr := setUserID(id)
@@ -42,7 +49,7 @@ func (us UserService) SingUpAndLogin(nationality, gender string, birth int, setU
 	return id, true
 }
 
-func (us UserService) TryLogin(userID string, setUserID func(string) error) bool {
+func (us userService) TryLogin(userID string, setUserID func(string) error) bool {
 	if us.userRepo.IsPresent(userID) {
 		err := setUserID(userID)
 		return err == nil

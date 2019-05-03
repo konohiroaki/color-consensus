@@ -23,7 +23,6 @@ func NewRouter(env string) *gin.Engine {
 	router.Use(static.Serve("/", static.LocalFile("frontend/dist", false)))
 	router.NoRoute(func(c *gin.Context) { c.File("frontend/dist/index.html") })
 	router.Use(sessions.Sessions("session", cookie.NewStore([]byte("secret"))))
-	router.Use(client.UserIDHandlers()...)
 
 	setUpEndpoints(router, env)
 
@@ -53,20 +52,23 @@ func setUpEndpoints(router *gin.Engine, env string) {
 	}
 }
 
-func getControllers(env string) (color controllers.ColorController, vote controllers.VoteController, user controllers.UserController, language controllers.LanguageController) {
+func getControllers(env string) (
+		color controllers.ColorController, vote controllers.VoteController,
+		user controllers.UserController, language controllers.LanguageController) {
 	colorRepo := repositories.NewColorRepository(env)
 	voteRepo := repositories.NewVoteRepository(env)
 	userRepo := repositories.NewUserRepository(env)
 	langRepo := repositories.NewLanguageRepository()
 
+	clientHandler := client.NewClient()
 	colorService := services.NewColorService(colorRepo)
 	voteService := services.NewVoteService(voteRepo)
 	userService := services.NewUserService(userRepo)
 	langService := services.NewLanguageService(langRepo)
 
-	color = controllers.NewColorController(colorService, userService)
-	vote = controllers.NewVoteController(voteService, userService)
-	user = controllers.NewUserController(userService)
+	color = controllers.NewColorController(colorService, userService, clientHandler)
+	vote = controllers.NewVoteController(voteService, userService, clientHandler)
+	user = controllers.NewUserController(userService, clientHandler)
 	language = controllers.NewLanguageController(langService)
 
 	return

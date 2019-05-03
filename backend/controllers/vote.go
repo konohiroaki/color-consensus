@@ -12,14 +12,15 @@ import (
 type VoteController struct {
 	voteService services.VoteService
 	userService services.UserService
+	client      client.Client
 }
 
-func NewVoteController(voteService services.VoteService, userService services.UserService) VoteController {
-	return VoteController{voteService, userService}
+func NewVoteController(voteService services.VoteService, userService services.UserService, client client.Client) VoteController {
+	return VoteController{voteService, userService, client}
 }
 
 func (vc VoteController) Vote(ctx *gin.Context) {
-	if !vc.userService.IsLoggedIn(client.GetUserIDFunc(ctx)) {
+	if !vc.userService.IsLoggedIn(vc.client.GetUserIDFunc(ctx)) {
 		ctx.Status(http.StatusForbidden)
 		return
 	}
@@ -36,7 +37,7 @@ func (vc VoteController) Vote(ctx *gin.Context) {
 		return
 	}
 
-	vc.voteService.Vote(req.Lang, req.Name, req.Colors, client.GetUserIDFunc(ctx))
+	vc.voteService.Vote(req.Lang, req.Name, req.Colors, vc.client.GetUserIDFunc(ctx))
 	ctx.Status(http.StatusOK)
 }
 

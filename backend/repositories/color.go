@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
 	"log"
 	"time"
 )
@@ -17,9 +17,9 @@ type colorRepository struct {
 }
 
 func NewColorRepository(env string) ColorRepository {
-	uri, db := getDatabaseURIAndName()
+	uri, name := getDatabaseURIAndName()
 	session, _ := mgo.Dial(uri)
-	collection := session.DB(db).C("color")
+	collection := session.DB(name).C("color")
 	repository := &colorRepository{collection}
 
 	if env == "development" {

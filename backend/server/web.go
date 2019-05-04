@@ -43,9 +43,9 @@ func setUpEndpoints(router *gin.Engine, env string) {
 			v1api.POST("/votes", vote.Vote)
 			v1api.GET("/votes", vote.Get)
 
-			v1api.POST("/users", user.SignUpAndLogin)
-			v1api.POST("/login", user.Login)
-			v1api.GET("/users/presence", user.GetIDIfLoggedIn)
+			v1api.POST("/users/signup", user.SignUpAndLogin)
+			v1api.POST("/users/login", user.Login)
+			v1api.GET("/users", user.GetIDIfLoggedIn)
 
 			v1api.GET("/languages", language.GetAll)
 		}

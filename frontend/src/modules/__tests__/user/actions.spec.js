@@ -6,7 +6,7 @@ describe("verifyLoginState()", function () {
     it("should dispatch when user is present", () => {
         const fakeResponse = {userID: "foo"};
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
+        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/users`)
             .reply(200, fakeResponse);
 
         const dispatch = jest.fn();
@@ -19,7 +19,7 @@ describe("verifyLoginState()", function () {
     });
     it("should not dispatch when user is absent", () => {
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/users/presence`)
+        mockAxios.onGet(`${process.env.WEBAPI_HOST}/api/v1/users`)
             .reply(404);
 
         const dispatch = jest.fn();
@@ -33,7 +33,7 @@ describe("login(id)", function () {
     it("should dispatch when user is present", () => {
         const fakeId = {userID: "foo"};
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/login`, fakeId)
+        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/login`, fakeId)
             .reply(200);
 
         const dispatch = jest.fn();
@@ -47,7 +47,7 @@ describe("login(id)", function () {
     it("should not dispatch when user is absent", () => {
         const fakeId = {userID: "foo"};
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/login`, fakeId)
+        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/login`, fakeId)
             .reply(404);
 
         const dispatch = jest.fn();
@@ -68,7 +68,7 @@ describe("signUp(nationality, gender, birth)", function () {
             userID: "foo"
         };
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users`, fakeUser)
+        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/signup`, fakeUser)
             .reply(200, fakeResponse);
 
         const dispatch = jest.fn();
@@ -86,7 +86,7 @@ describe("signUp(nationality, gender, birth)", function () {
             birth: 1990
         };
         const mockAxios = new MockAdapter(axios);
-        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users`, fakeUser)
+        mockAxios.onPost(`${process.env.WEBAPI_HOST}/api/v1/users/signup`, fakeUser)
             .reply(400);
 
         const dispatch = jest.fn();

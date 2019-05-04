@@ -90,22 +90,22 @@ func TestVoteController_RemoveByUser_Success(t *testing.T) {
 	ctrl, _, mockVoteService, _, _, _ := getMocks(t)
 	defer ctrl.Finish()
 
-	id := "id"
-	mockVoteService.EXPECT().RemoveByUser(id)
+	userID := "id"
+	mockVoteService.EXPECT().RemoveByUser(userID)
 	controller := NewVoteController(mockVoteService, nil, nil)
 
 	response := getResponseRecorder("", controller.RemoveByUser,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, id))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, userID))))
 
 	assert.Equal(t, http.StatusOK, response.Code)
 }
 
 func TestVoteController_RemoveByUser_FailBind(t *testing.T) {
-	id := "id"
+	userID := "id"
 	controller := NewVoteController(nil, nil, nil)
 
 	response := getResponseRecorder("", controller.RemoveByUser,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"user":"%s"}`, id))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"user":"%s"}`, userID))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
 	assertErrorMessageEqual(t, "userID should be in the request", response.Body)

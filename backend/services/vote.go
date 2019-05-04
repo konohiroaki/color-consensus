@@ -23,7 +23,7 @@ func (vs voteService) Get(lang, name string, fields []string) []map[string]inter
 }
 
 func (vs voteService) Vote(lang, name string, newColors []string, getUserID func() (string, error)) {
-	userID, _ := getUserID()
+	userID, _ := getUserID() // ensured there is no error
 	vs.voteRepo.Add(userID, lang, name, newColors)
 }
 

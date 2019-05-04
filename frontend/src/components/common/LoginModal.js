@@ -64,13 +64,13 @@ class LoginModal extends Component {
 const ModalHeader = () => (
     <div className="modal-header pb-0">
         <ul className="nav nav-tabs border-bottom-0" role="tablist">
-            <li className="nav-item text-light"><SingUpTabLink/></li>
+            <li className="nav-item text-light"><SignUpTabLink/></li>
             <li className="nav-item text-light"><LoginTabLink/></li>
         </ul>
     </div>
 );
 
-const SingUpTabLink = () => <div className="nav-link active" href="#signup-tab" data-toggle="tab" role="tab">Sign Up</div>;
+const SignUpTabLink = () => <div className="nav-link active" href="#signup-tab" data-toggle="tab" role="tab">Sign Up</div>;
 const LoginTabLink = () => <div className="nav-link" href="#login-tab" data-toggle="tab" role="tab">Login</div>;
 
 const ModalBody = props => (
@@ -81,13 +81,13 @@ const ModalBody = props => (
 
 const TabContents = ({props}) => (
     <div className="tab-content">
-        <SingUpTabPanel setNationalityInput={props.setNationalityInput} setGenderInput={props.setGenderInput}
+        <SignUpTabPanel setNationalityInput={props.setNationalityInput} setGenderInput={props.setGenderInput}
                         setBirthInput={props.setBirthInput} handleSignUpClick={props.handleSignUpClick}/>
         <LoginTabPanel setUserIdInput={props.setUserIdInput} handleLoginClick={props.handleLoginClick}/>
     </div>
 );
 
-const SingUpTabPanel = props => (
+const SignUpTabPanel = props => (
     <div className="tab-pane fade show active" id="signup-tab" role="tabpanel">
         {/* TODO: get list from server and use select box */}
         <SignUpNationalityInput setNationalityInput={props.setNationalityInput}/>

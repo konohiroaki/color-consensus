@@ -127,20 +127,6 @@ func TestColorController_GetNeighbors_FailServiceError(t *testing.T) {
 	assertErrorMessageEqual(t, serviceError, response.Body)
 }
 
-func authorizationSuccess(user *mock_services.MockUserService, client *mock_client.MockClient) (
-		*mock_services.MockUserService, *mock_client.MockClient) {
-	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
-	user.EXPECT().IsLoggedIn(gomock.Any()).Return(true)
-	return user, client
-}
-
-func authorizationFail(user *mock_services.MockUserService, client *mock_client.MockClient) (
-		*mock_services.MockUserService, *mock_client.MockClient) {
-	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
-	user.EXPECT().IsLoggedIn(gomock.Any()).Return(false)
-	return user, client
-}
-
 func colorFormatValid(color *mock_services.MockColorService) *mock_services.MockColorService {
 	color.EXPECT().IsValidCodeFormat(gomock.Any()).Return(true, "")
 	return color

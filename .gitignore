@@ -3,6 +3,8 @@ main.exe
 vendor/*
 !vendor/vendor.json
 
+backend/repositories/mock_repositories/dbtest/
+
 frontend/node_modules/
 
 frontend/dist/

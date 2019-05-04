@@ -81,6 +81,12 @@
 			"revisionTime": "2018-10-15T13:59:52Z"
 		},
 		{
+			"checksumSHA1": "CNlviwxdTGFMOlfu/SN7SgMAzv0=",
+			"path": "github.com/globalsign/mgo/dbtest",
+			"revision": "eeefdecb41b842af6dc652aaea4026e8403e62df",
+			"revisionTime": "2018-10-15T13:59:52Z"
+		},
+		{
 			"checksumSHA1": "v+cuxrB9eC9t+YodwIg1+ngBfPY=",
 			"path": "github.com/golang/mock/gomock",
 			"revision": "937870445b8bddd7f05ea90e81c58ebe83681534",
@@ -301,28 +307,40 @@
 			"revisionTime": "2018-09-26T22:07:39Z"
 		},
 		{
+			"checksumSHA1": "GtamqiJoL7PGHsN454AoffBFMa8=",
+			"path": "golang.org/x/net/context",
+			"revision": "f4e77d36d62c17c2336347bb2670ddbd02d092b7",
+			"revisionTime": "2019-05-02T22:26:14Z"
+		},
+		{
 			"checksumSHA1": "OFOdqBrDtsbofqQ0ZbqcZ2ckru8=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "10058d7d4faa7dd5ef860cbd31af00903076e7b8",
 			"revisionTime": "2019-03-06T17:49:41Z"
 		},
 		{
-			"checksumSHA1": "o3YChxWLvyCmkAn/ZNBj9HC9zKw=",
+			"checksumSHA1": "R9iBDY+aPnT+8pyRcqGjXq5QixA=",
 			"path": "golang.org/x/text/transform",
-			"revision": "5d731a35f4867878fc89f7744f7b6debb3beded6",
-			"revisionTime": "2019-03-06T14:45:11Z"
+			"revision": "342b2e1fbaa52c93f31447ad2c6abc048c63e475",
+			"revisionTime": "2018-12-15T17:52:45Z"
 		},
 		{
-			"checksumSHA1": "vAScJLvb0ucuuclyN9vmJUyWTBA=",
+			"checksumSHA1": "8fzd6fnxrstdNSVg+Srhf1nKgek=",
 			"path": "golang.org/x/text/unicode/norm",
-			"revision": "5d731a35f4867878fc89f7744f7b6debb3beded6",
-			"revisionTime": "2019-03-06T14:45:11Z"
+			"revision": "342b2e1fbaa52c93f31447ad2c6abc048c63e475",
+			"revisionTime": "2018-12-15T17:52:45Z"
 		},
 		{
 			"checksumSHA1": "q190bL03wQok3wVwYmMub2XhOiU=",
 			"path": "gopkg.in/go-playground/validator.v8",
 			"revision": "5f1438d3fca68893a817e4a66806cea46a9e4ebf",
 			"revisionTime": "2017-07-30T05:02:35Z"
+		},
+		{
+			"checksumSHA1": "9GbLV6uiNn3d2Md6e4cAA2ADpUI=",
+			"path": "gopkg.in/tomb.v2",
+			"revision": "d5d1b5820637886def9eef33e03a27a9f166942c",
+			"revisionTime": "2016-12-08T15:16:19Z"
 		},
 		{
 			"checksumSHA1": "oNqPrS2edE8peI3ah2INe379k8E=",

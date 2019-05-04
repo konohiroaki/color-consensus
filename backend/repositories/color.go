@@ -19,14 +19,18 @@ type colorRepository struct {
 func NewColorRepository(env string) ColorRepository {
 	uri, name := getDatabaseURIAndName()
 	session, _ := mgo.Dial(uri)
-	collection := session.DB(name).C("color")
-	repository := &colorRepository{collection}
+	database := session.DB(name)
+	repository := newColorRepository(database)
 
 	if env == "development" {
 		repository.insertSampleData()
 	}
 
 	return repository
+}
+
+func newColorRepository(database *mgo.Database) *colorRepository {
+	return &colorRepository{database.C("color")}
 }
 
 type color struct {

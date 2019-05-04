@@ -61,19 +61,19 @@ func (mr *MockUserServiceMockRecorder) GetID(getUserID interface{}) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetID", reflect.TypeOf((*MockUserService)(nil).GetID), getUserID)
 }
 
-// SingUpAndLogin mocks base method
-func (m *MockUserService) SingUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool) {
+// SignUpAndLogin mocks base method
+func (m *MockUserService) SignUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SingUpAndLogin", nationality, gender, birth, setUserID)
+	ret := m.ctrl.Call(m, "SignUpAndLogin", nationality, gender, birth, setUserID)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(bool)
 	return ret0, ret1
 }
 
-// SingUpAndLogin indicates an expected call of SingUpAndLogin
-func (mr *MockUserServiceMockRecorder) SingUpAndLogin(nationality, gender, birth, setUserID interface{}) *gomock.Call {
+// SignUpAndLogin indicates an expected call of SignUpAndLogin
+func (mr *MockUserServiceMockRecorder) SignUpAndLogin(nationality, gender, birth, setUserID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SingUpAndLogin", reflect.TypeOf((*MockUserService)(nil).SingUpAndLogin), nationality, gender, birth, setUserID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SignUpAndLogin", reflect.TypeOf((*MockUserService)(nil).SignUpAndLogin), nationality, gender, birth, setUserID)
 }
 
 // TryLogin mocks base method

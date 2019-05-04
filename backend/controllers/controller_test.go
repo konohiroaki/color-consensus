@@ -54,3 +54,17 @@ func getMocks(t *testing.T) (*gomock.Controller, *mock_services.MockColorService
 	mockClient := mock_client.NewMockClient(ctrl)
 	return ctrl, mockColorService, mockVoteService, mockUserService, mockLangService, mockClient
 }
+
+func authorizationSuccess(user *mock_services.MockUserService, client *mock_client.MockClient) (
+		*mock_services.MockUserService, *mock_client.MockClient) {
+	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
+	user.EXPECT().IsLoggedIn(gomock.Any()).Return(true)
+	return user, client
+}
+
+func authorizationFail(user *mock_services.MockUserService, client *mock_client.MockClient) (
+		*mock_services.MockUserService, *mock_client.MockClient) {
+	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
+	user.EXPECT().IsLoggedIn(gomock.Any()).Return(false)
+	return user, client
+}

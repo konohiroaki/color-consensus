@@ -35,10 +35,10 @@ func NewUserRepository(env string) UserRepository {
 type user struct {
 	ID string `json:"id"`
 	// https://ja.wikipedia.org/wiki/ISO_3166-1
-	Nationality string    `json:"nationality" bson:"nationality"`
-	Gender      string    `json:"gender" bson:"gender"`
-	Birth       int       `json:"birth" bson:"birth"`
-	Date        time.Time `json:"date" bson:"date"`
+	Nationality string    `bson:"nationality"`
+	Gender      string    `bson:"gender"`
+	Birth       int       `bson:"birth"`
+	Date        time.Time `bson:"date"`
 }
 
 func (r userRepository) IsPresent(id string) bool {

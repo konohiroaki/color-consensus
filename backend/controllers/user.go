@@ -45,7 +45,7 @@ func (uc UserController) Login(ctx *gin.Context) {
 	ctx.Status(http.StatusOK);
 }
 
-func (uc UserController) SingUpAndLogin(ctx *gin.Context) {
+func (uc UserController) SignUpAndLogin(ctx *gin.Context) {
 	type request struct {
 		Nationality string `json:"nationality" binding:"required"`
 		Gender      string `json:"gender" binding:"required"`
@@ -58,7 +58,7 @@ func (uc UserController) SingUpAndLogin(ctx *gin.Context) {
 		return
 	}
 
-	userID, success := uc.userService.SingUpAndLogin(req.Nationality, req.Gender, req.Birth, uc.client.SetUserIDFunc(ctx))
+	userID, success := uc.userService.SignUpAndLogin(req.Nationality, req.Gender, req.Birth, uc.client.SetUserIDFunc(ctx))
 	if !success {
 		ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
 		return

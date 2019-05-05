@@ -47,17 +47,17 @@ func (mr *MockUserRepositoryMockRecorder) IsPresent(id interface{}) *gomock.Call
 }
 
 // Add mocks base method
-func (m *MockUserRepository) Add(nationality, gender string, birth int) string {
+func (m *MockUserRepository) Add(nationality string, birth int, gender string) string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Add", nationality, gender, birth)
+	ret := m.ctrl.Call(m, "Add", nationality, birth, gender)
 	ret0, _ := ret[0].(string)
 	return ret0
 }
 
 // Add indicates an expected call of Add
-func (mr *MockUserRepositoryMockRecorder) Add(nationality, gender, birth interface{}) *gomock.Call {
+func (mr *MockUserRepositoryMockRecorder) Add(nationality, birth, gender interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockUserRepository)(nil).Add), nationality, gender, birth)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockUserRepository)(nil).Add), nationality, birth, gender)
 }
 
 // Remove mocks base method

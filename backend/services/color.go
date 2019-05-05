@@ -32,6 +32,7 @@ func (cs colorService) Add(lang, name, code string, getUserID func() (string, er
 	userID, _ := getUserID()
 	code = strings.ToLower(code)
 
+	// TODO: fail when same lang,name already present in repo.
 	cs.colorRepo.Add(lang, name, code, userID)
 }
 

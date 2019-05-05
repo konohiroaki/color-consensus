@@ -48,17 +48,17 @@ func (uc UserController) Login(ctx *gin.Context) {
 func (uc UserController) SignUpAndLogin(ctx *gin.Context) {
 	type request struct {
 		Nationality string `json:"nationality" binding:"required"`
-		Gender      string `json:"gender" binding:"required"`
 		Birth       int    `json:"birth" binding:"required"`
+		Gender      string `json:"gender" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("all nationality, gender, birth should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse("all nationality, birth, gender should be in the request"))
 		return
 	}
 
-	userID, success := uc.userService.SignUpAndLogin(req.Nationality, req.Gender, req.Birth, uc.client.SetUserIDFunc(ctx))
+	userID, success := uc.userService.SignUpAndLogin(req.Nationality, req.Birth, req.Gender, uc.client.SetUserIDFunc(ctx))
 	if !success {
 		ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
 		return

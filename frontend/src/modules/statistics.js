@@ -52,8 +52,8 @@ export const reducer = (state = DEFAULT_STATE, action) => {
             return {
                 ...state,
                 nationalityFilter: "",
-                genderFilter: "",
                 ageGroupFilter: "",
+                genderFilter: "",
             };
         case types.SET_PERCENTILE:
             return {

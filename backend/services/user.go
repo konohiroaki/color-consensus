@@ -8,7 +8,7 @@ import (
 type UserService interface {
 	IsLoggedIn(getUserID func() (string, error)) bool
 	GetID(getUserID func() (string, error)) (string, error)
-	SignUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool)
+	SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, bool)
 	TryLogin(userID string, setUserID func(string) error) bool
 }
 
@@ -36,8 +36,8 @@ func (us userService) GetID(getUserID func() (string, error)) (string, error) {
 	return userID, nil
 }
 
-func (us userService) SignUpAndLogin(nationality, gender string, birth int, setUserID func(string) error) (string, bool) {
-	userID := us.userRepo.Add(nationality, gender, birth)
+func (us userService) SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, bool) {
+	userID := us.userRepo.Add(nationality, birth, gender)
 
 	cookieErr := setUserID(userID)
 	if cookieErr != nil {

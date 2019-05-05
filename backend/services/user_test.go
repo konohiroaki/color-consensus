@@ -86,12 +86,12 @@ func TestUserService_SignUpAndLogin_Success(t *testing.T) {
 	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
 	defer ctrl.Finish()
 
-	userID, nationality, gender, birth := "id", "foo", "bar", 1000
-	mockUserRepo.EXPECT().Add(nationality, gender, birth).Return(userID)
+	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
+	mockUserRepo.EXPECT().Add(nationality, birth, gender).Return(userID)
 	service := NewUserService(mockUserRepo)
 
 	setUserID := func(string) error { return nil }
-	actual, success := service.SignUpAndLogin(nationality, gender, birth, setUserID)
+	actual, success := service.SignUpAndLogin(nationality, birth, gender, setUserID)
 
 	assert.Equal(t, userID, actual)
 	assert.True(t, success)
@@ -101,13 +101,13 @@ func TestUserService_SignUpAndLogin_CookieError(t *testing.T) {
 	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
 	defer ctrl.Finish()
 
-	userID, nationality, gender, birth := "id", "foo", "bar", 1000
-	mockUserRepo.EXPECT().Add(nationality, gender, birth).Return(userID)
+	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
+	mockUserRepo.EXPECT().Add(nationality, birth, gender).Return(userID)
 	mockUserRepo.EXPECT().Remove(userID)
 	service := NewUserService(mockUserRepo)
 
 	setUserID := func(string) error { return errors.New("error message") }
-	actual, success := service.SignUpAndLogin(nationality, gender, birth, setUserID)
+	actual, success := service.SignUpAndLogin(nationality, birth, gender, setUserID)
 
 	assert.Equal(t, "", actual)
 	assert.False(t, success)
@@ -154,4 +154,3 @@ func TestUserService_TryLogin_CookieError(t *testing.T) {
 
 	assert.False(t, actual)
 }
-

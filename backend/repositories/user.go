@@ -4,13 +4,12 @@ import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/twinj/uuid"
-	"log"
 	"time"
 )
 
 type UserRepository interface {
 	IsPresent(id string) bool
-	Add(nationality, gender string, birth int) string
+	Add(nationality string, birth int, gender string) string
 	Remove(id string) error
 }
 
@@ -19,25 +18,28 @@ type userRepository struct {
 }
 
 func NewUserRepository(env string) UserRepository {
-	uri, db := getDatabaseURIAndName()
+	uri, name := getDatabaseURIAndName()
 	session, _ := mgo.Dial(uri)
-	collection := session.DB(db).C("user")
-	repository := &userRepository{collection}
+	database := session.DB(name)
+	repository := newUserRepository(database)
 
 	if env == "development" {
-		log.Println("detected development mode. inserting sample user data.")
 		repository.insertSampleData()
 	}
 
 	return repository
 }
 
+func newUserRepository(database *mgo.Database) *userRepository {
+	return &userRepository{database.C("user")}
+}
+
 type user struct {
 	ID string `json:"id"`
 	// https://ja.wikipedia.org/wiki/ISO_3166-1
 	Nationality string    `bson:"nationality"`
-	Gender      string    `bson:"gender"`
 	Birth       int       `bson:"birth"`
+	Gender      string    `bson:"gender"`
 	Date        time.Time `bson:"date"`
 }
 
@@ -46,12 +48,12 @@ func (r userRepository) IsPresent(id string) bool {
 	return count > 0
 }
 
-func (r userRepository) Add(nationality, gender string, birth int) string {
+func (r userRepository) Add(nationality string, birth int, gender string) string {
 	user := user{
 		ID:          uuid.NewV4().String(),
 		Nationality: nationality,
-		Gender:      gender,
 		Birth:       birth,
+		Gender:      gender,
 		Date:        time.Now(),
 	}
 	_ = r.Collection.Insert(&user)
@@ -64,10 +66,10 @@ func (r userRepository) Remove(id string) error {
 
 func (r userRepository) insertSampleData() {
 	users := []*user{
-		{ID: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Nationality: "Japan", Gender: "Male", Birth: 1985, Date: time.Now()},
-		{ID: "0da04f70-dc71-4674-b47b-365c3b0805c4", Nationality: "America", Gender: "Male", Birth: 1990, Date: time.Now()},
-		{ID: "20af3406-8c7e-411a-851f-31732416fa83", Nationality: "Japan", Gender: "Female", Birth: 1995, Date: time.Now()},
-		{ID: "testuser", Nationality: "XXX", Gender: "XXX", Birth: 1, Date: time.Now()},
+		{ID: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Nationality: "Japan", Birth: 1985, Gender: "Male", Date: time.Now()},
+		{ID: "0da04f70-dc71-4674-b47b-365c3b0805c4", Nationality: "America", Birth: 1990, Gender: "Male", Date: time.Now()},
+		{ID: "20af3406-8c7e-411a-851f-31732416fa83", Nationality: "Japan", Birth: 1995, Gender: "Female", Date: time.Now()},
+		{ID: "testuser", Nationality: "XXX", Birth: 1, Gender: "XXX", Date: time.Now()},
 	}
 
 	_, _ = r.Collection.RemoveAll(nil)

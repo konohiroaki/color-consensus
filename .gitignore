@@ -3,7 +3,8 @@ main.exe
 vendor/*
 !vendor/vendor.json
 
-backend/repositories/mock_repositories/dbtest/
+backend/repositories/mock_repositories/dbtest/*
+!backend/repositories/mock_repositories/dbtest/.keep
 
 frontend/node_modules/
 

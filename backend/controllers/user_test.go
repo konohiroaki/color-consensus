@@ -86,17 +86,17 @@ func TestUserController_SignUpAndLogin_Success(t *testing.T) {
 	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
 	defer ctrl.Finish()
 
-	userID, nationality, gender, birth := "id", "foo", "bar", 1000
+	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
-	mockUserService.EXPECT().SignUpAndLogin(nationality, gender, birth, gomock.Any()).Return(userID, true)
+	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return(userID, true)
 	controller := NewUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
-			`{"nationality":"%s","gender":"%s","birth":%d}`, nationality, gender, birth))))
+			`{"nationality":"%s","birth":%d,"gender":"%s"}`, nationality, birth, gender))))
 
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, fmt.Sprintf(`"%s"`, userID), response.Body.String())
+	assert.Equal(t, fmt.Sprintf(`{"userID":"%s"}`, userID), response.Body.String())
 }
 
 func TestUserController_SignUpAndLogin_FailBind(t *testing.T) {
@@ -108,21 +108,21 @@ func TestUserController_SignUpAndLogin_FailBind(t *testing.T) {
 			`{"nationality":"%s","gender":"%s"}`, nationality, gender))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "all nationality, gender, birth should be in the request", response.Body)
+	assertErrorMessageEqual(t, "all nationality, birth, gender should be in the request", response.Body)
 }
 
 func TestUserController_SignUpAndLogin_FailService(t *testing.T) {
 	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
 	defer ctrl.Finish()
 
-	nationality, gender, birth := "foo", "bar", 1000
+	nationality, birth, gender := "foo", 1000, "bar"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
-	mockUserService.EXPECT().SignUpAndLogin(nationality, gender, birth, gomock.Any()).Return("", false)
+	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", false)
 	controller := NewUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
-			`{"nationality":"%s","gender":"%s","birth":%d}`, nationality, gender, birth))))
+			`{"nationality":"%s","birth":%d,"gender":"%s"}`, nationality, birth, gender))))
 
 	assert.Equal(t, http.StatusInternalServerError, response.Code)
 	assertErrorMessageEqual(t, "internal server error", response.Body)

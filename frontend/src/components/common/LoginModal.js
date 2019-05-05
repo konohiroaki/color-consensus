@@ -24,8 +24,8 @@ class LoginModal extends Component {
                     <ModalHeader/>
                     <ModalBody
                         setNationalityInput={input => this.setState({nationality: input})}
-                        setGenderInput={input => this.setState({gender: input})}
                         setBirthInput={input => this.setState({birth: input})}
+                        setGenderInput={input => this.setState({gender: input})}
                         handleSignUpClick={this.handleSignUpClick}
                         setUserIdInput={input => this.setState({userIdInput: input})}
                         handleLoginClick={this.handleLoginClick}/>
@@ -42,7 +42,7 @@ class LoginModal extends Component {
     }
 
     handleSignUpClick() {
-        this.props.signUp(this.state.nationality, this.state.gender, this.state.birth)
+        this.props.signUp(this.state.nationality, this.state.birth, this.state.gender)
             .then(() => $("#signup-login-modal").modal("toggle"))
             .then(() => this.runAndResetCallback())
             .catch(({response}) => toast.warn(response.data.error.message));
@@ -81,8 +81,8 @@ const ModalBody = props => (
 
 const TabContents = ({props}) => (
     <div className="tab-content">
-        <SignUpTabPanel setNationalityInput={props.setNationalityInput} setGenderInput={props.setGenderInput}
-                        setBirthInput={props.setBirthInput} handleSignUpClick={props.handleSignUpClick}/>
+        <SignUpTabPanel setNationalityInput={props.setNationalityInput} setBirthInput={props.setBirthInput}
+                        setGenderInput={props.setGenderInput} handleSignUpClick={props.handleSignUpClick}/>
         <LoginTabPanel setUserIdInput={props.setUserIdInput} handleLoginClick={props.handleLoginClick}/>
     </div>
 );
@@ -92,9 +92,9 @@ const SignUpTabPanel = props => (
         {/* TODO: get list from server and use select box */}
         <SignUpNationalityInput setNationalityInput={props.setNationalityInput}/>
         {/* TODO: get list from server and use select box */}
-        <SignUpGenderInput setGenderInput={props.setGenderInput}/>
-        {/* TODO: get list from server and use select box */}
         <SignUpBirthInput setBirthInput={props.setBirthInput}/>
+        {/* TODO: get list from server and use select box */}
+        <SignUpGenderInput setGenderInput={props.setGenderInput}/>
 
         <SignUpButton handleSignUpClick={props.handleSignUpClick}/>
     </div>
@@ -108,20 +108,20 @@ const SignUpNationalityInput = ({setNationalityInput}) => (
     </div>
 );
 
-const SignUpGenderInput = ({setGenderInput}) => (
-    <div>
-        <label className="mb-0">Gender:</label>
-        <input type="text" className="form-control" placeholder="Male"
-               onChange={e => setGenderInput(e.target.value)}/>
-    </div>
-);
-
 const SignUpBirthInput = ({setBirthInput}) => (
     <div className="form-group">
         <label className="mb-0">Birth Year:</label>
         <input type="number" min="1900" max={new Date().getFullYear()} required
                className="form-control" placeholder="1990"
                onChange={e => setBirthInput(e.target.value)}/>
+    </div>
+);
+
+const SignUpGenderInput = ({setGenderInput}) => (
+    <div>
+        <label className="mb-0">Gender:</label>
+        <input type="text" className="form-control" placeholder="Male"
+               onChange={e => setGenderInput(e.target.value)}/>
     </div>
 );
 
@@ -162,7 +162,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     login: (id) => dispatch(user.login(id)),
-    signUp: (nationality, gender, birth) => dispatch(user.signUp(nationality, gender, birth))
+    signUp: (nationality, birth, gender) => dispatch(user.signUp(nationality, birth, gender))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true})(LoginModal);

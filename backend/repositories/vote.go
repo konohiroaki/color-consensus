@@ -8,7 +8,7 @@ import (
 )
 
 type VoteRepository interface {
-	Add(user, lang, name string, newColors []string)
+	Add(lang, name string, newColors []string, userID string)
 	Get(lang, name string, fields []string) []map[string]interface{}
 	RemoveByUser(userID string)
 }
@@ -18,30 +18,33 @@ type voteRepository struct {
 }
 
 func NewVoteRepository(env string) VoteRepository {
-	uri, db := getDatabaseURIAndName()
+	uri, name := getDatabaseURIAndName()
 	session, _ := mgo.Dial(uri)
-	collection := session.DB(db).C("vote")
-	repository := &voteRepository{collection}
+	database := session.DB(name)
+	repository := newVoteRepository(database)
 
 	if env == "development" {
-		log.Println("detected development mode. inserting sample vote data.")
 		repository.insertSampleData()
 	}
 
 	return repository
 }
 
-type colorVote struct {
-	Lang   string    `bson:"lang"`
-	Name   string    `bson:"name"`
-	User   string    `bson:"user"`
-	Date   time.Time `bson:"date"`
-	Colors []string  `bson:"colors"`
+func newVoteRepository(database *mgo.Database) *voteRepository {
+	return &voteRepository{database.C("vote")}
 }
 
-func (r voteRepository) Add(user, lang, name string, newColors []string) {
-	vote := colorVote{Lang: lang, Name: name, User: user, Date: time.Now(), Colors: newColors}
-	_, _ = r.Collection.Upsert(bson.M{"lang": lang, "name": name, "user": user}, &vote)
+type vote struct {
+	Lang   string    `bson:"lang"`
+	Name   string    `bson:"name"`
+	Colors []string  `bson:"colors"`
+	Date   time.Time `bson:"date"`
+	User   string    `bson:"user"`
+}
+
+func (r voteRepository) Add(lang, name string, newColors []string, userID string) {
+	vote := vote{Lang: lang, Name: name, Colors: newColors, Date: time.Now(), User: userID}
+	_, _ = r.Collection.Upsert(bson.M{"lang": lang, "name": name, "user": userID}, &vote)
 }
 
 func (r voteRepository) Get(lang, name string, fields []string) []map[string]interface{} {
@@ -75,11 +78,11 @@ func (r voteRepository) getUserLookUpAggregators() []bson.M {
 	// ageGroup could be wrong since user input is only for year, but it's small problem. :D
 	// ageGroup = Math.floor((currentYear - birthYear) / 10) * 10
 	ageGroupAggregator :=
-		bson.M{"$multiply": []interface{}{
-			bson.M{"$floor":
-			bson.M{"$divide": []interface{}{
-				bson.M{"$subtract": []interface{}{bson.M{"$year": time.Now()}, "$voter.birth"}},
-				10}}}, 10}};
+			bson.M{"$multiply": []interface{}{
+				bson.M{"$floor":
+				bson.M{"$divide": []interface{}{
+					bson.M{"$subtract": []interface{}{bson.M{"$year": time.Now()}, "$voter.birth"}},
+					10}}}, 10}};
 	return []bson.M{
 		{"$lookup": bson.M{
 			"from":         "user",
@@ -123,11 +126,11 @@ func (r voteRepository) getProjector(fields []string) bson.M {
 }
 
 func (r voteRepository) insertSampleData() {
-	votes := []*colorVote{
-		{Lang: "en", Name: "red", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Date: time.Now(), Colors: []string{"#ff0000"}},
-		{Lang: "en", Name: "red", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now(), Colors: []string{"#f00000"}},
-		{Lang: "en", Name: "green", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now(), Colors: []string{"#008000"}},
-		{Lang: "ja", Name: "赤", User: "20af3406-8c7e-411a-851f-31732416fa83", Date: time.Now(), Colors: []string{"#bf1e33"}},
+	votes := []*vote{
+		{Lang: "en", Name: "red", Colors: []string{"#ff0000"}, Date: time.Now(), User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480"},
+		{Lang: "en", Name: "red", Colors: []string{"#f00000"}, Date: time.Now(), User: "0da04f70-dc71-4674-b47b-365c3b0805c4"},
+		{Lang: "en", Name: "green", Colors: []string{"#008000"}, Date: time.Now(), User: "0da04f70-dc71-4674-b47b-365c3b0805c4"},
+		{Lang: "ja", Name: "赤", Colors: []string{"#bf1e33"}, Date: time.Now(), User: "20af3406-8c7e-411a-851f-31732416fa83"},
 	}
 
 	_, _ = r.Collection.RemoveAll(nil)

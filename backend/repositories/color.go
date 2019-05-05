@@ -41,12 +41,12 @@ type color struct {
 	Date time.Time `bson:"date"`
 }
 
-func (r colorRepository) Add(lang, name, code, user string) {
+func (r colorRepository) Add(lang, name, code, userID string) {
 	err := r.Collection.Insert(color{
 		Lang: lang,
 		Name: name,
 		Code: code,
-		User: user,
+		User: userID,
 		Date: time.Now(),
 	})
 	if err != nil {

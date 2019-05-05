@@ -44,12 +44,12 @@ export const actions = {
                 }));
         };
     },
-    signUp(nationality, gender, birth) {
+    signUp(nationality, birth, gender) {
         return (dispatch) => {
             return axios.post(`${process.env.WEBAPI_HOST}/api/v1/users/signup`, {
                 nationality: nationality,
-                gender: gender,
-                birth: Number(birth)
+                birth: Number(birth),
+                gender: gender
             })
                 .then(({data}) => dispatch({
                     type: types.SET_ID,

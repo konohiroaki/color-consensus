@@ -57,12 +57,12 @@ describe("login(id)", function () {
     });
 });
 
-describe("signUp(nationality, gender, birth)", function () {
+describe("signUp(nationality, birth, gender)", function () {
     it("should dispatch when user registration succeeds", () => {
         const fakeUser = {
             nationality: "Japan",
-            gender: "Male",
-            birth: 1990
+            birth: 1990,
+            gender: "Male"
         };
         const fakeResponse = {
             userID: "foo"
@@ -72,7 +72,7 @@ describe("signUp(nationality, gender, birth)", function () {
             .reply(200, fakeResponse);
 
         const dispatch = jest.fn();
-        actions.signUp(fakeUser.nationality, fakeUser.gender, fakeUser.birth)(dispatch).then(() => {
+        actions.signUp(fakeUser.nationality, fakeUser.birth, fakeUser.gender)(dispatch).then(() => {
             expect(dispatch.mock.calls[0][0]).toEqual({
                 type: types.SET_ID,
                 payload: fakeResponse.userID

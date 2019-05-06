@@ -33,9 +33,11 @@ func (m *MockColorRepository) EXPECT() *MockColorRepositoryMockRecorder {
 }
 
 // Add mocks base method
-func (m *MockColorRepository) Add(lang, name, code, user string) {
+func (m *MockColorRepository) Add(lang, name, code, user string) error {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Add", lang, name, code, user)
+	ret := m.ctrl.Call(m, "Add", lang, name, code, user)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Add indicates an expected call of Add

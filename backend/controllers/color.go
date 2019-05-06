@@ -55,7 +55,11 @@ func (cc colorController) Add(ctx *gin.Context) {
 		return
 	}
 
-	cc.colorService.Add(req.Lang, req.Name, req.Code, cc.client.GetUserIDFunc(ctx))
+	err := cc.colorService.Add(req.Lang, req.Name, req.Code, cc.client.GetUserIDFunc(ctx))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err.Error()))
+		return
+	}
 	ctx.Status(http.StatusCreated);
 }
 

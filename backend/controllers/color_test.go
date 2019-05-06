@@ -34,7 +34,7 @@ func TestColorController_Add_Success(t *testing.T) {
 	lang, name, code := "en", "red", "#ff0000"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
-	mockColorService, mockClient = runAdd(mockColorService, mockClient, lang, name, code)
+	mockColorService, mockClient = runAdd(mockColorService, mockClient, lang, name, code, nil)
 	controller := NewColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
@@ -86,6 +86,23 @@ func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
 	assertErrorMessageEqual(t, fmt.Sprintf("color code should match regex: %s", msg), response.Body)
 }
 
+func TestColorController_Add_FailService(t *testing.T) {
+	ctrl, mockColorService, _, mockUserService, _, mockClient := getMocks(t)
+	defer ctrl.Finish()
+
+	lang, name, code, serviceError := "en", "red", "#ff0000", "error message"
+	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
+	mockColorService = colorFormatValid(mockColorService)
+	mockColorService, mockClient = runAdd(mockColorService, mockClient, lang, name, code, fmt.Errorf(serviceError))
+	controller := NewColorController(mockColorService, mockUserService, mockClient)
+
+	response := getResponseRecorder("", controller.Add,
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+	assertErrorMessageEqual(t, serviceError, response.Body)
+}
+
 func TestColorController_GetNeighbors_Success(t *testing.T) {
 	ctrl, mockColorService, _, _, _, _ := getMocks(t)
 	defer ctrl.Finish()
@@ -112,7 +129,7 @@ func TestColorController_GetNeighbors_FailSizeAtoiConversion(t *testing.T) {
 	assertErrorMessageEqual(t, "size should be a number", response.Body)
 }
 
-func TestColorController_GetNeighbors_FailServiceError(t *testing.T) {
+func TestColorController_GetNeighbors_FailService(t *testing.T) {
 	ctrl, mockColorService, _, _, _, _ := getMocks(t)
 	defer ctrl.Finish()
 
@@ -138,9 +155,9 @@ func colorFormatInvalid(color *mock_services.MockColorService) (*mock_services.M
 	return color, message
 }
 
-func runAdd(color *mock_services.MockColorService, client *mock_client.MockClient, lang, name, code string) (
+func runAdd(color *mock_services.MockColorService, client *mock_client.MockClient, lang, name, code string, err error) (
 		*mock_services.MockColorService, *mock_client.MockClient) {
 	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
-	color.EXPECT().Add(lang, name, code, gomock.Any())
+	color.EXPECT().Add(lang, name, code, gomock.Any()).Return(err)
 	return color, client
 }

@@ -11,7 +11,7 @@ import (
 
 type ColorService interface {
 	GetAll() []map[string]interface{}
-	Add(lang, name, code string, getUserID func() (string, error))
+	Add(lang, name, code string, getUserID func() (string, error)) error
 	GetNeighbors(code string, size int) ([]string, error)
 	IsValidCodeFormat(input string) (bool, string)
 }
@@ -28,12 +28,11 @@ func (cs colorService) GetAll() []map[string]interface{} {
 	return cs.colorRepo.GetAll([]string{"lang", "name", "code"})
 }
 
-func (cs colorService) Add(lang, name, code string, getUserID func() (string, error)) {
+func (cs colorService) Add(lang, name, code string, getUserID func() (string, error)) error {
 	userID, _ := getUserID()
 	code = strings.ToLower(code)
 
-	// TODO: fail when same lang,name already present in repo.
-	cs.colorRepo.Add(lang, name, code, userID)
+	return cs.colorRepo.Add(lang, name, code, userID)
 }
 
 func (cs colorService) GetNeighbors(code string, size int) ([]string, error) {

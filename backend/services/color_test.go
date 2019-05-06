@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -22,10 +23,24 @@ func TestColorService_Add_Success(t *testing.T) {
 	ctrl, mockColoRepo, _, _, _ := getRepoMocks(t)
 	defer ctrl.Finish()
 
-	mockColoRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User")
+	mockColoRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(nil)
 	service := NewColorService(mockColoRepo)
 
-	service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+
+	assert.Nil(t, err)
+}
+
+func TestColorService_Add_FailRepository(t *testing.T) {
+	ctrl, mockColoRepo, _, _, _ := getRepoMocks(t)
+	defer ctrl.Finish()
+
+	mockColoRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(fmt.Errorf("error"))
+	service := NewColorService(mockColoRepo)
+
+	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+
+	assert.Error(t, err)
 }
 
 func TestColorService_GetNeighbors_Cases(t *testing.T) {

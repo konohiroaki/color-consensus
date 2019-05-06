@@ -47,9 +47,11 @@ func (mr *MockColorServiceMockRecorder) GetAll() *gomock.Call {
 }
 
 // Add mocks base method
-func (m *MockColorService) Add(lang, name, code string, getUserID func() (string, error)) {
+func (m *MockColorService) Add(lang, name, code string, getUserID func() (string, error)) error {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Add", lang, name, code, getUserID)
+	ret := m.ctrl.Call(m, "Add", lang, name, code, getUserID)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Add indicates an expected call of Add

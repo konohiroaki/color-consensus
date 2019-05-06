@@ -13,7 +13,7 @@ func TestColorRepository_Add(t *testing.T) {
 	colorRepo := newColorRepository(testDB)
 
 	lang, name, code, userID := "en", "red", "#ff0000", "testuser"
-	colorRepo.Add(lang, name, code, userID)
+	_ = colorRepo.Add(lang, name, code, userID)
 
 	var actual []color
 	_ = testDB.C("color").Find(bson.M{}).All(&actual)
@@ -27,6 +27,19 @@ func TestColorRepository_Add(t *testing.T) {
 	} else {
 		t.Fatalf("number of documents should be exactly 1, but found %d", len(actual))
 	}
+}
+
+func TestColorRepository_Add_SameColorPresent(t *testing.T) {
+	testDB, teardown := setup()
+	defer teardown(t)
+	colorRepo := newColorRepository(testDB)
+
+	lang, name, code, userID := "en", "red", "#ff0000", "testuser"
+	_ = testDB.C("color").Insert(color{Lang: lang, Name: name, Code: code, User: userID, Date: time.Now()})
+
+	actual := colorRepo.Add(lang, name, "#ff0011", "anotheruser")
+
+	assert.Equal(t, "the requested color already exists", actual.Error())
 }
 
 func TestColorRepository_GetAll(t *testing.T) {

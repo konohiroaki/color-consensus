@@ -91,7 +91,6 @@ const SignUpTabPanel = props => (
     <div className="tab-pane fade show active" id="signup-tab" role="tabpanel">
         {/* TODO: get list from server and use select box */}
         <SignUpNationalityInput setNationalityInput={props.setNationalityInput}/>
-        {/* TODO: get list from server and use select box */}
         <SignUpBirthInput setBirthInput={props.setBirthInput}/>
         {/* TODO: get list from server and use select box */}
         <SignUpGenderInput setGenderInput={props.setGenderInput}/>

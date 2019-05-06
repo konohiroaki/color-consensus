@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"fmt"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"log"
@@ -8,7 +9,7 @@ import (
 )
 
 type ColorRepository interface {
-	Add(lang, name, code, user string)
+	Add(lang, name, code, user string) error
 	GetAll(fields []string) []map[string]interface{}
 }
 
@@ -41,7 +42,11 @@ type color struct {
 	Date time.Time `bson:"date"`
 }
 
-func (r colorRepository) Add(lang, name, code, userID string) {
+func (r colorRepository) Add(lang, name, code, userID string) error {
+	count, _ := r.Collection.Find(bson.M{"lang":lang, "name":name}).Limit(1).Count()
+	if count != 0 {
+		return fmt.Errorf("the requested color already exists")
+	}
 	err := r.Collection.Insert(color{
 		Lang: lang,
 		Name: name,
@@ -52,6 +57,7 @@ func (r colorRepository) Add(lang, name, code, userID string) {
 	if err != nil {
 		log.Println(err)
 	}
+	return err
 }
 
 func (r colorRepository) GetAll(fields []string) []map[string]interface{} {

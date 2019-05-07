@@ -60,6 +60,10 @@ func mockLangService(ctrl *gomock.Controller) *mock_services.MockLanguageService
 	return mock_services.NewMockLanguageService(ctrl)
 }
 
+func mockGenderService(ctrl *gomock.Controller) *mock_services.MockGenderService {
+	return mock_services.NewMockGenderService(ctrl)
+}
+
 func mockClient(ctrl *gomock.Controller) *mock_client.MockClient {
 	return mock_client.NewMockClient(ctrl)
 }

@@ -44,15 +44,24 @@ func getResponseRecorder(pathParam string, handlerFunc gin.HandlerFunc, method, 
 	return recorder
 }
 
-func getMocks(t *testing.T) (*gomock.Controller, *mock_services.MockColorService, *mock_services.MockVoteService,
-		*mock_services.MockUserService, *mock_services.MockLanguageService, *mock_client.MockClient) {
-	ctrl := gomock.NewController(t)
-	mockColorService := mock_services.NewMockColorService(ctrl)
-	mockVoteService := mock_services.NewMockVoteService(ctrl)
-	mockUserService := mock_services.NewMockUserService(ctrl)
-	mockLangService := mock_services.NewMockLanguageService(ctrl)
-	mockClient := mock_client.NewMockClient(ctrl)
-	return ctrl, mockColorService, mockVoteService, mockUserService, mockLangService, mockClient
+func mockColorService(ctrl *gomock.Controller) *mock_services.MockColorService {
+	return mock_services.NewMockColorService(ctrl)
+}
+
+func mockVoteService(ctrl *gomock.Controller) *mock_services.MockVoteService {
+	return mock_services.NewMockVoteService(ctrl)
+}
+
+func mockUserService(ctrl *gomock.Controller) *mock_services.MockUserService {
+	return mock_services.NewMockUserService(ctrl)
+}
+
+func mockLangService(ctrl *gomock.Controller) *mock_services.MockLanguageService {
+	return mock_services.NewMockLanguageService(ctrl)
+}
+
+func mockClient(ctrl *gomock.Controller) *mock_client.MockClient {
+	return mock_client.NewMockClient(ctrl)
 }
 
 func authorizationSuccess(user *mock_services.MockUserService, client *mock_client.MockClient) (

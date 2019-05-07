@@ -2,14 +2,16 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 )
 
 func TestLanguageController_GetAll_Success(t *testing.T) {
-	ctrl, _, _, _, mockLangService, _ := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockLangService := mockLangService(ctrl)
 
 	key, value := "iso_639-1", "language name in English"
 	mockLangService.EXPECT().GetAll().Return(map[string]string{key: value})

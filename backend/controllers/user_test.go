@@ -11,8 +11,9 @@ import (
 )
 
 func TestUserController_GetIDIfLoggedIn_Success(t *testing.T) {
-	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
 	userID := "id"
 	mockClient.EXPECT().GetUserIDFunc(gomock.Any())
@@ -26,8 +27,9 @@ func TestUserController_GetIDIfLoggedIn_Success(t *testing.T) {
 }
 
 func TestUserController_GetIDIfLoggedIn_NotLoggedIn(t *testing.T) {
-	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
 	serviceError := "message from service"
 	mockClient.EXPECT().GetUserIDFunc(gomock.Any())
@@ -41,8 +43,9 @@ func TestUserController_GetIDIfLoggedIn_NotLoggedIn(t *testing.T) {
 }
 
 func TestUserController_Login_Success(t *testing.T) {
-	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
 	userID := "id"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
@@ -67,8 +70,9 @@ func TestUserController_Login_FailBind(t *testing.T) {
 }
 
 func TestUserController_Login_FailService(t *testing.T) {
-	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
 	userID := "id"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
@@ -83,8 +87,9 @@ func TestUserController_Login_FailService(t *testing.T) {
 }
 
 func TestUserController_SignUpAndLogin_Success(t *testing.T) {
-	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
 	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
@@ -112,8 +117,9 @@ func TestUserController_SignUpAndLogin_FailBind(t *testing.T) {
 }
 
 func TestUserController_SignUpAndLogin_FailService(t *testing.T) {
-	ctrl, _, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
 	nationality, birth, gender := "foo", 1000, "bar"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())

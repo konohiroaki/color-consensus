@@ -13,8 +13,9 @@ import (
 )
 
 func TestColorController_GetAll_Success(t *testing.T) {
-	ctrl, mockColorService, _, _, _, _ := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService := mockColorService(ctrl)
 
 	lang, name, code := "en", "red", "#ff0000"
 	mockColorService.EXPECT().GetAll().Return(
@@ -28,13 +29,14 @@ func TestColorController_GetAll_Success(t *testing.T) {
 }
 
 func TestColorController_Add_Success(t *testing.T) {
-	ctrl, mockColorService, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	lang, name, code := "en", "red", "#ff0000"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
-	mockColorService, mockClient = runAdd(mockColorService, mockClient, lang, name, code, nil)
+	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, nil)
 	controller := NewColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
@@ -44,8 +46,9 @@ func TestColorController_Add_Success(t *testing.T) {
 }
 
 func TestColorController_Add_FailAuthorization(t *testing.T) {
-	ctrl, mockColorService, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	mockUserService, mockClient = authorizationFail(mockUserService, mockClient)
 	controller := NewColorController(mockColorService, mockUserService, mockClient)
@@ -58,8 +61,9 @@ func TestColorController_Add_FailAuthorization(t *testing.T) {
 }
 
 func TestColorController_Add_FailBind(t *testing.T) {
-	ctrl, mockColorService, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	controller := NewColorController(mockColorService, mockUserService, mockClient)
@@ -72,8 +76,9 @@ func TestColorController_Add_FailBind(t *testing.T) {
 }
 
 func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
-	ctrl, mockColorService, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService, msg := colorFormatInvalid(mockColorService)
@@ -87,13 +92,14 @@ func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
 }
 
 func TestColorController_Add_FailService(t *testing.T) {
-	ctrl, mockColorService, _, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	lang, name, code, serviceError := "en", "red", "#ff0000", "error message"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
-	mockColorService, mockClient = runAdd(mockColorService, mockClient, lang, name, code, fmt.Errorf(serviceError))
+	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, fmt.Errorf(serviceError))
 	controller := NewColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
@@ -104,8 +110,9 @@ func TestColorController_Add_FailService(t *testing.T) {
 }
 
 func TestColorController_GetNeighbors_Success(t *testing.T) {
-	ctrl, mockColorService, _, _, _, _ := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService := mockColorService(ctrl)
 
 	code, size := "ff0000", 1
 	mockColorService.EXPECT().GetNeighbors(code, size).Return([]string{"#ff0000"}, nil)
@@ -130,8 +137,9 @@ func TestColorController_GetNeighbors_FailSizeAtoiConversion(t *testing.T) {
 }
 
 func TestColorController_GetNeighbors_FailService(t *testing.T) {
-	ctrl, mockColorService, _, _, _, _ := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorService := mockColorService(ctrl)
 
 	code, size, serviceError := "ff0000", 1, "error message from service"
 	mockColorService.EXPECT().GetNeighbors(code, size).Return([]string{}, errors.New(serviceError))
@@ -155,7 +163,7 @@ func colorFormatInvalid(color *mock_services.MockColorService) (*mock_services.M
 	return color, message
 }
 
-func runAdd(color *mock_services.MockColorService, client *mock_client.MockClient, lang, name, code string, err error) (
+func doAdd(color *mock_services.MockColorService, client *mock_client.MockClient, lang, name, code string, err error) (
 		*mock_services.MockColorService, *mock_client.MockClient) {
 	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
 	color.EXPECT().Add(lang, name, code, gomock.Any()).Return(err)

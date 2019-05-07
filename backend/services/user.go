@@ -36,6 +36,7 @@ func (us userService) GetID(getUserID func() (string, error)) (string, error) {
 	return userID, nil
 }
 
+// TODO: check nationality, gender existence in repo.
 func (us userService) SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, bool) {
 	userID := us.userRepo.Add(nationality, birth, gender)
 

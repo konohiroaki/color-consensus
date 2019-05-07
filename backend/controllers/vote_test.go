@@ -13,8 +13,9 @@ import (
 )
 
 func TestVoteController_Vote_Success(t *testing.T) {
-	ctrl, _, mockVoteService, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	lang, name, colors := "en", "red", []string{"#000000", "#000010"}
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
@@ -29,8 +30,9 @@ func TestVoteController_Vote_Success(t *testing.T) {
 }
 
 func TestVoteController_Vote_FailAuthorization(t *testing.T) {
-	ctrl, _, mockVoteService, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	lang, name, colors := "en", "red", []string{"#000000", "#000010"}
 	mockUserService, mockClient = authorizationFail(mockUserService, mockClient)
@@ -45,8 +47,9 @@ func TestVoteController_Vote_FailAuthorization(t *testing.T) {
 }
 
 func TestVoteController_Vote_FailBind(t *testing.T) {
-	ctrl, _, mockVoteService, mockUserService, _, mockClient := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	lang, name := "en", "red"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
@@ -61,8 +64,9 @@ func TestVoteController_Vote_FailBind(t *testing.T) {
 }
 
 func TestVoteController_Get_Success(t *testing.T) {
-	ctrl, _, mockVoteService, _, _, _ := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockVoteService := mockVoteService(ctrl)
 
 	lang, name, fields := "en", "red", []string{"lang"}
 	mockVoteService.EXPECT().Get(lang, name, fields).Return([]map[string]interface{}{{"lang": "en"}})
@@ -87,8 +91,9 @@ func TestVoteController_Get_FailBind(t *testing.T) {
 }
 
 func TestVoteController_RemoveByUser_Success(t *testing.T) {
-	ctrl, _, mockVoteService, _, _, _ := getMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockVoteService := mockVoteService(ctrl)
 
 	userID := "id"
 	mockVoteService.EXPECT().RemoveByUser(userID)

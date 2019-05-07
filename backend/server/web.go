@@ -30,7 +30,7 @@ func NewRouter(env string) *gin.Engine {
 }
 
 func setUpEndpoints(router *gin.Engine, env string) {
-	color, vote, user, language := getControllers(env)
+	color, vote, user, language, gender := getControllers(env)
 
 	api := router.Group("/api")
 	{
@@ -48,13 +48,13 @@ func setUpEndpoints(router *gin.Engine, env string) {
 			v1api.GET("/users", user.GetIDIfLoggedIn)
 
 			v1api.GET("/languages", language.GetAll)
+			v1api.GET("/genders", gender.GetAll)
 		}
 	}
 }
 
-func getControllers(env string) (
-		color controllers.ColorController, vote controllers.VoteController,
-		user controllers.UserController, language controllers.LanguageController) {
+func getControllers(env string) (color controllers.ColorController, vote controllers.VoteController,
+		user controllers.UserController, language controllers.LanguageController, gender controllers.GenderController) {
 	colorRepo := repositories.NewColorRepository(env)
 	voteRepo := repositories.NewVoteRepository(env)
 	userRepo := repositories.NewUserRepository(env)
@@ -70,6 +70,7 @@ func getControllers(env string) (
 	vote = controllers.NewVoteController(voteService, userService, clientHandler)
 	user = controllers.NewUserController(userService, clientHandler)
 	language = controllers.NewLanguageController(langService)
+	gender = controllers.NewGenderController()
 
 	return
 }

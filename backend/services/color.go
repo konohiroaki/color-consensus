@@ -28,6 +28,7 @@ func (cs colorService) GetAll() []map[string]interface{} {
 	return cs.colorRepo.GetAll([]string{"lang", "name", "code"})
 }
 
+// TODO: check lang existence in repo.
 func (cs colorService) Add(lang, name, code string, getUserID func() (string, error)) error {
 	userID, _ := getUserID()
 	code = strings.ToLower(code)

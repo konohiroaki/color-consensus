@@ -11,12 +11,14 @@ import (
 func TestGenderController_GetAll_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockGenderService := mockGenderService(ctrl)
 
-	genders := []interface{}{"Female", "Male", "Others"}
-	controller := NewGenderController()
+	genders := []string{"foo", "bar"}
+	mockGenderService.EXPECT().GetAll().Return(genders)
+	controller := NewGenderController(mockGenderService)
 
 	response := getResponseRecorder("", controller.GetAll, http.MethodGet, "", nil)
 
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, fmt.Sprintf(`["%s","%s","%s"]`, genders...), response.Body.String())
+	assert.Equal(t, fmt.Sprintf(`["%s","%s"]`, genders[0], genders[1]), response.Body.String())
 }

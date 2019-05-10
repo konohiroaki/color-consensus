@@ -118,7 +118,6 @@ func TestUserService_SignUpAndLogin_ValidationError(t *testing.T) {
 	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
 
 	assert.Equal(t, "", actual)
-	fmt.Println(reflect.TypeOf(err))
 	assert.Equal(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
 }
 
@@ -137,7 +136,6 @@ func TestUserService_SignUpAndLogin_InternalServerError(t *testing.T) {
 	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
 
 	assert.Equal(t, "", actual)
-	fmt.Println(reflect.TypeOf(err))
 	assert.Equal(t, reflect.TypeOf(&InternalServerError{}), reflect.TypeOf(err))
 }
 

@@ -2,17 +2,19 @@ package services
 
 import (
 	"fmt"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestColorService_GetAll_Success(t *testing.T) {
-	ctrl, mockColoRepo, _, _, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorRepo := mockColorRepo(ctrl)
 
 	fields := []string{"lang", "name", "code"}
-	mockColoRepo.EXPECT().GetAll(fields).Return([]map[string]interface{}{})
-	service := NewColorService(mockColoRepo)
+	mockColorRepo.EXPECT().GetAll(fields).Return([]map[string]interface{}{})
+	service := NewColorService(mockColorRepo)
 
 	actual := service.GetAll()
 
@@ -20,11 +22,12 @@ func TestColorService_GetAll_Success(t *testing.T) {
 }
 
 func TestColorService_Add_Success(t *testing.T) {
-	ctrl, mockColoRepo, _, _, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorRepo := mockColorRepo(ctrl)
 
-	mockColoRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(nil)
-	service := NewColorService(mockColoRepo)
+	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(nil)
+	service := NewColorService(mockColorRepo)
 
 	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
@@ -32,11 +35,12 @@ func TestColorService_Add_Success(t *testing.T) {
 }
 
 func TestColorService_Add_FailRepository(t *testing.T) {
-	ctrl, mockColoRepo, _, _, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockColorRepo := mockColorRepo(ctrl)
 
-	mockColoRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(fmt.Errorf("error"))
-	service := NewColorService(mockColoRepo)
+	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(fmt.Errorf("error"))
+	service := NewColorService(mockColorRepo)
 
 	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 

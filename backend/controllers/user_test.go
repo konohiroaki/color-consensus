@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/golang/mock/gomock"
+	"github.com/konohiroaki/color-consensus/backend/services"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -93,7 +94,7 @@ func TestUserController_SignUpAndLogin_Success(t *testing.T) {
 
 	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
-	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return(userID, true)
+	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return(userID, nil)
 	controller := NewUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
@@ -116,14 +117,14 @@ func TestUserController_SignUpAndLogin_FailBind(t *testing.T) {
 	assertErrorMessageEqual(t, "all nationality, birth, gender should be in the request", response.Body)
 }
 
-func TestUserController_SignUpAndLogin_FailService(t *testing.T) {
+func TestUserController_SignUpAndLogin_InternalServerError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
-	nationality, birth, gender := "foo", 1000, "bar"
+	nationality, birth, gender, serviceError := "foo", 1000, "bar", "internal server error"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
-	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", false)
+	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", services.NewInternalServerError(serviceError))
 	controller := NewUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
@@ -131,5 +132,23 @@ func TestUserController_SignUpAndLogin_FailService(t *testing.T) {
 			`{"nationality":"%s","birth":%d,"gender":"%s"}`, nationality, birth, gender))))
 
 	assert.Equal(t, http.StatusInternalServerError, response.Code)
-	assertErrorMessageEqual(t, "internal server error", response.Body)
+	assertErrorMessageEqual(t, serviceError, response.Body)
+}
+
+func TestUserController_SignUpAndLogin_ValidationError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
+
+	nationality, birth, gender, serviceError := "foo", 1000, "bar", "gender format is not correct"
+	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
+	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", services.NewValidationError(serviceError))
+	controller := NewUserController(mockUserService, mockClient)
+
+	response := getResponseRecorder("", controller.SignUpAndLogin,
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
+			`{"nationality":"%s","birth":%d,"gender":"%s"}`, nationality, birth, gender))))
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+	assertErrorMessageEqual(t, serviceError, response.Body)
 }

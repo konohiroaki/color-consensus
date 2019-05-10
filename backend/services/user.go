@@ -8,16 +8,17 @@ import (
 type UserService interface {
 	IsLoggedIn(getUserID func() (string, error)) bool
 	GetID(getUserID func() (string, error)) (string, error)
-	SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, bool)
+	SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, error)
 	TryLogin(userID string, setUserID func(string) error) bool
 }
 
 type userService struct {
-	userRepo repositories.UserRepository
+	userRepo   repositories.UserRepository
+	genderRepo repositories.GenderRepository
 }
 
-func NewUserService(userRepo repositories.UserRepository) UserService {
-	return userService{userRepo}
+func NewUserService(userRepo repositories.UserRepository, genderRepo repositories.GenderRepository) UserService {
+	return userService{userRepo, genderRepo}
 }
 
 func (us userService) IsLoggedIn(getUserID func() (string, error)) bool {
@@ -37,17 +38,21 @@ func (us userService) GetID(getUserID func() (string, error)) (string, error) {
 }
 
 // TODO: check nationality, gender existence in repo.
-func (us userService) SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, bool) {
+func (us userService) SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, error) {
+	if !us.genderRepo.IsPresent(gender) {
+		return "", NewValidationError("gender format is not correct")
+	}
+
 	userID := us.userRepo.Add(nationality, birth, gender)
 
 	cookieErr := setUserID(userID)
 	if cookieErr != nil {
 		// ignore remove error because rare and it doesn't harm.
 		_ = us.userRepo.Remove(userID)
-		return "", false
+		return "", NewInternalServerError("internal server error")
 	}
 
-	return userID, true
+	return userID, nil
 }
 
 func (us userService) TryLogin(userID string, setUserID func(string) error) bool {

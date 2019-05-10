@@ -58,10 +58,16 @@ func (uc UserController) SignUpAndLogin(ctx *gin.Context) {
 		return
 	}
 
-	userID, success := uc.userService.SignUpAndLogin(req.Nationality, req.Birth, req.Gender, uc.client.SetUserIDFunc(ctx))
-	if !success {
-		ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
-		return
+	userID, err := uc.userService.SignUpAndLogin(req.Nationality, req.Birth, req.Gender, uc.client.SetUserIDFunc(ctx))
+	if err != nil {
+		switch e := err.(type) {
+		case *services.ValidationError:
+			ctx.JSON(http.StatusBadRequest, errorResponse(e.Error()))
+			return
+		case *services.InternalServerError:
+			ctx.JSON(http.StatusInternalServerError, errorResponse("internal server error"))
+			return
+		}
 	}
 	ctx.JSON(http.StatusOK, gin.H{"userID": userID});
 }

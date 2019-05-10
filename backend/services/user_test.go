@@ -2,18 +2,21 @@ package services
 
 import (
 	"fmt"
+	"github.com/golang/mock/gomock"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
 func TestUserService_IsLoggedIn_True(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo := mockUserRepo(ctrl)
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	actual := service.IsLoggedIn(getUserID)
@@ -22,12 +25,13 @@ func TestUserService_IsLoggedIn_True(t *testing.T) {
 }
 
 func TestUserService_IsLoggedIn_NotRegisteredUser(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo := mockUserRepo(ctrl)
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(false)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	actual := service.IsLoggedIn(getUserID)
@@ -36,7 +40,7 @@ func TestUserService_IsLoggedIn_NotRegisteredUser(t *testing.T) {
 }
 
 func TestUserService_IsLoggedIn_NotLoggedIn(t *testing.T) {
-	service := NewUserService(nil)
+	service := NewUserService(nil, nil)
 
 	getUserID := func() (s string, e error) { return "", errors.New("error message") }
 	actual := service.IsLoggedIn(getUserID)
@@ -45,12 +49,13 @@ func TestUserService_IsLoggedIn_NotLoggedIn(t *testing.T) {
 }
 
 func TestUserService_GetID_Success(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo := mockUserRepo(ctrl)
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	actual, _ := service.GetID(getUserID)
@@ -59,7 +64,7 @@ func TestUserService_GetID_Success(t *testing.T) {
 }
 
 func TestUserService_GetID_NotLoggedIn(t *testing.T) {
-	service := NewUserService(nil)
+	service := NewUserService(nil, nil)
 
 	repoError := fmt.Errorf("user is not logged in")
 	getUserID := func() (s string, e error) { return "", repoError }
@@ -69,12 +74,13 @@ func TestUserService_GetID_NotLoggedIn(t *testing.T) {
 }
 
 func TestUserService_GetID_NotRegisteredUser(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo := mockUserRepo(ctrl)
 
 	userID, err := "id", fmt.Errorf("user is not logged in")
 	mockUserRepo.EXPECT().IsPresent(userID).Return(false)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	_, actual := service.GetID(getUserID)
@@ -83,43 +89,66 @@ func TestUserService_GetID_NotRegisteredUser(t *testing.T) {
 }
 
 func TestUserService_SignUpAndLogin_Success(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo, mockGenderRepo := mockUserRepo(ctrl), mockGenderRepo(ctrl)
 
 	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
+	mockGenderRepo.EXPECT().IsPresent(gender).Return(true)
 	mockUserRepo.EXPECT().Add(nationality, birth, gender).Return(userID)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, mockGenderRepo)
 
 	setUserID := func(string) error { return nil }
-	actual, success := service.SignUpAndLogin(nationality, birth, gender, setUserID)
+	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
 
 	assert.Equal(t, userID, actual)
-	assert.True(t, success)
+	assert.Equal(t, nil, err)
 }
 
-func TestUserService_SignUpAndLogin_CookieError(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+func TestUserService_SignUpAndLogin_ValidationError(t *testing.T) {
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockGenderRepo := mockGenderRepo(ctrl)
 
-	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
-	mockUserRepo.EXPECT().Add(nationality, birth, gender).Return(userID)
-	mockUserRepo.EXPECT().Remove(userID)
-	service := NewUserService(mockUserRepo)
+	nationality, birth, gender := "foo", 1000, "bar"
+	mockGenderRepo.EXPECT().IsPresent(gender).Return(false)
+	service := NewUserService(nil, mockGenderRepo)
 
 	setUserID := func(string) error { return errors.New("error message") }
-	actual, success := service.SignUpAndLogin(nationality, birth, gender, setUserID)
+	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
 
 	assert.Equal(t, "", actual)
-	assert.False(t, success)
+	fmt.Println(reflect.TypeOf(err))
+	assert.Equal(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
+}
+
+func TestUserService_SignUpAndLogin_InternalServerError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockUserRepo, mockGenderRepo := mockUserRepo(ctrl), mockGenderRepo(ctrl)
+
+	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
+	mockGenderRepo.EXPECT().IsPresent(gender).Return(true)
+	mockUserRepo.EXPECT().Add(nationality, birth, gender).Return(userID)
+	mockUserRepo.EXPECT().Remove(userID)
+	service := NewUserService(mockUserRepo, mockGenderRepo)
+
+	setUserID := func(string) error { return errors.New("error message") }
+	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
+
+	assert.Equal(t, "", actual)
+	fmt.Println(reflect.TypeOf(err))
+	assert.Equal(t, reflect.TypeOf(&InternalServerError{}), reflect.TypeOf(err))
 }
 
 func TestUserService_TryLogin_Success(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo := mockUserRepo(ctrl)
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, nil)
 
 	setUserID := func(string) error { return nil }
 	actual := service.TryLogin(userID, setUserID)
@@ -128,12 +157,13 @@ func TestUserService_TryLogin_Success(t *testing.T) {
 }
 
 func TestUserService_TryLogin_NotRegisteredUser(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo := mockUserRepo(ctrl)
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(false)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, nil)
 
 	setUserID := func(string) error { return nil }
 	actual := service.TryLogin(userID, setUserID)
@@ -142,12 +172,13 @@ func TestUserService_TryLogin_NotRegisteredUser(t *testing.T) {
 }
 
 func TestUserService_TryLogin_CookieError(t *testing.T) {
-	ctrl, _, _, mockUserRepo, _ := getRepoMocks(t)
+	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+	mockUserRepo := mockUserRepo(ctrl)
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo)
+	service := NewUserService(mockUserRepo, nil)
 
 	setUserID := func(string) error { return errors.New("error message") }
 	actual := service.TryLogin(userID, setUserID)

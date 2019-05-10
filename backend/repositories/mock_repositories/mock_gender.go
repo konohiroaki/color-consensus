@@ -45,3 +45,17 @@ func (mr *MockGenderRepositoryMockRecorder) GetAll() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockGenderRepository)(nil).GetAll))
 }
+
+// IsPresent mocks base method
+func (m *MockGenderRepository) IsPresent(arg0 string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsPresent", arg0)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsPresent indicates an expected call of IsPresent
+func (mr *MockGenderRepositoryMockRecorder) IsPresent(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsPresent", reflect.TypeOf((*MockGenderRepository)(nil).IsPresent), arg0)
+}

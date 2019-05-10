@@ -62,11 +62,11 @@ func (mr *MockUserServiceMockRecorder) GetID(getUserID interface{}) *gomock.Call
 }
 
 // SignUpAndLogin mocks base method
-func (m *MockUserService) SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, bool) {
+func (m *MockUserService) SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SignUpAndLogin", nationality, birth, gender, setUserID)
 	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(bool)
+	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 

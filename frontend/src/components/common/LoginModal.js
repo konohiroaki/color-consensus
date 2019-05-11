@@ -23,8 +23,10 @@ class LoginModal extends Component {
                 <div className="modal-content bg-dark">
                     <ModalHeader/>
                     <ModalBody
+                        nationalities={this.props.nationalities}
                         setNationalityInput={input => this.setState({nationality: input})}
                         setBirthInput={input => this.setState({birth: input})}
+                        genders={this.props.genders}
                         setGenderInput={input => this.setState({gender: input})}
                         handleSignUpClick={this.handleSignUpClick}
                         setUserIdInput={input => this.setState({userIdInput: input})}
@@ -81,31 +83,39 @@ const ModalBody = props => (
 
 const TabContents = ({props}) => (
     <div className="tab-content">
-        <SignUpTabPanel setNationalityInput={props.setNationalityInput} setBirthInput={props.setBirthInput}
-                        setGenderInput={props.setGenderInput} handleSignUpClick={props.handleSignUpClick}/>
+        <SignUpTabPanel nationalities={props.nationalities} setNationalityInput={props.setNationalityInput}
+                        setBirthInput={props.setBirthInput}
+                        genders={props.genders} setGenderInput={props.setGenderInput}
+                        handleSignUpClick={props.handleSignUpClick}/>
         <LoginTabPanel setUserIdInput={props.setUserIdInput} handleLoginClick={props.handleLoginClick}/>
     </div>
 );
 
 const SignUpTabPanel = props => (
     <div className="tab-pane fade show active" id="signup-tab" role="tabpanel">
-        {/* TODO: get list from server and use select box */}
-        <SignUpNationalityInput setNationalityInput={props.setNationalityInput}/>
+        <SignUpNationalityInput nationalities={props.nationalities}
+                                setNationalityInput={props.setNationalityInput}/>
         <SignUpBirthInput setBirthInput={props.setBirthInput}/>
-        {/* TODO: get list from server and use select box */}
-        <SignUpGenderInput setGenderInput={props.setGenderInput}/>
+        <SignUpGenderInput genders={props.genders} setGenderInput={props.setGenderInput}/>
 
         <SignUpButton handleSignUpClick={props.handleSignUpClick}/>
     </div>
 );
 
-const SignUpNationalityInput = ({setNationalityInput}) => (
-    <div>
+const SignUpNationalityInput = props => {
+    var nationalities = Object.keys(props.nationalities)
+        .sort((a, b) => props.nationalities[a] > props.nationalities[b] ? 1 : -1)
+        .map(n => <option key={n} value={n}>{props.nationalities[n]}</option>);
+    nationalities.unshift(<option key="0" value="">Choose from dropdown</option>);
+
+    return <div>
         <label className="mb-0">Nationality:</label>
-        <input type="text" className="form-control" placeholder="Japan"
-               onChange={e => setNationalityInput(e.target.value)}/>
-    </div>
-);
+        <select className="custom-select"
+                onChange={e => props.setNationalityInput(e.target.value)}>
+            {nationalities}
+        </select>
+    </div>;
+};
 
 const SignUpBirthInput = ({setBirthInput}) => (
     <div className="form-group">
@@ -116,13 +126,19 @@ const SignUpBirthInput = ({setBirthInput}) => (
     </div>
 );
 
-const SignUpGenderInput = ({setGenderInput}) => (
-    <div>
+const SignUpGenderInput = props => {
+    var genders = props.genders
+        .map(g => <option key={g} value={g}>{g}</option>);
+    genders.unshift(<option key="0" value="">Choose from dropdown</option>);
+
+    return <div>
         <label className="mb-0">Gender:</label>
-        <input type="text" className="form-control" placeholder="Male"
-               onChange={e => setGenderInput(e.target.value)}/>
-    </div>
-);
+        <select className="custom-select"
+                onChange={e => props.setGenderInput(e.target.value)}>
+            {genders}
+        </select>
+    </div>;
+};
 
 const SignUpButton = ({handleSignUpClick}) => (
     <div className="col-3 ml-auto pt-3">
@@ -157,6 +173,8 @@ const LoginButton = ({handleLoginClick}) => (
 
 const mapStateToProps = state => ({
     userId: state.user.id,
+    nationalities: state.nationality.nationalities,
+    genders: state.gender.genders,
 });
 
 const mapDispatchToProps = dispatch => ({

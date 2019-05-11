@@ -13,6 +13,7 @@ class StatisticsHeader extends Component {
                 <div className="row ml-0 mr-0">
                     <div className="col-10">
                         <StatisticsFilter votes={this.props.votes}
+                                          nationalities={this.props.nationalities}
                                           nationalityFilter={this.props.nationalityFilter}
                                           setNationalityFilter={this.props.setNationalityFilter}
                                           ageGroupFilter={this.props.ageGroupFilter}
@@ -33,7 +34,7 @@ const StatisticsFilter = (props) => {
         .map(v => v.voter.nationality)
         .filter(distinct)
         .sort()
-        .map(n => <option key={n} value={n}>{n}</option>);
+        .map(n => <option key={n} value={n}>{props.nationalities[n]}</option>);
     const ageGroups = props.votes
         .map(v => v.voter.ageGroup)
         .filter(distinct)
@@ -101,6 +102,7 @@ const mapStateToProps = state => ({
     ageGroupFilter: state.statistics.ageGroupFilter,
     genderFilter: state.statistics.genderFilter,
     percentile: state.statistics.percentile,
+    nationalities: state.nationality.nationalities
 });
 
 const mapDispatchToProps = dispatch => ({

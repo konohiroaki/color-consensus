@@ -5,6 +5,8 @@ import Body from "./body/Body";
 import LoginModal from "./common/LoginModal";
 import {actions as user} from "../modules/user";
 import {actions as language} from "../modules/language";
+import {actions as nationality} from "../modules/nationality";
+import {actions as gender} from "../modules/gender";
 
 class App extends Component {
 
@@ -25,12 +27,16 @@ class App extends Component {
     componentDidMount() {
         this.props.verifyLoginState();
         this.props.setLanguages();
+        this.props.setNationalities();
+        this.props.setGenders();
     }
 }
 
 const mapDispatchToProps = dispatch => ({
     verifyLoginState: () => dispatch(user.verifyLoginState()),
     setLanguages: () => dispatch(language.setLanguages()),
+    setNationalities: () => dispatch(nationality.setNationalities()),
+    setGenders: () => dispatch(gender.setGenders()),
 });
 
 export default connect(null, mapDispatchToProps)(App);

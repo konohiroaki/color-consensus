@@ -13,6 +13,10 @@ func mockUserRepo(ctrl *gomock.Controller) *mock_repositories.MockUserRepository
 	return mock_repositories.NewMockUserRepository(ctrl)
 }
 
+func mockNationRepo(ctrl *gomock.Controller) *mock_repositories.MockNationalityRepository {
+	return mock_repositories.NewMockNationalityRepository(ctrl)
+}
+
 func mockGenderRepo(ctrl *gomock.Controller) *mock_repositories.MockGenderRepository {
 	return mock_repositories.NewMockGenderRepository(ctrl)
 }

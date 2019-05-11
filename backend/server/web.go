@@ -30,7 +30,7 @@ func NewRouter(env string) *gin.Engine {
 }
 
 func setUpEndpoints(router *gin.Engine, env string) {
-	color, vote, user, language, gender := getControllers(env)
+	color, vote, user, language, nationality, gender := getControllers(env)
 
 	api := router.Group("/api")
 	{
@@ -48,30 +48,35 @@ func setUpEndpoints(router *gin.Engine, env string) {
 			v1api.GET("/users", user.GetIDIfLoggedIn)
 
 			v1api.GET("/languages", language.GetAll)
+			v1api.GET("/nationalities", nationality.GetAll)
 			v1api.GET("/genders", gender.GetAll)
 		}
 	}
 }
 
 func getControllers(env string) (color controllers.ColorController, vote controllers.VoteController,
-		user controllers.UserController, language controllers.LanguageController, gender controllers.GenderController) {
+		user controllers.UserController, language controllers.LanguageController,
+		nationality controllers.NationalityController, gender controllers.GenderController) {
 	colorRepo := repositories.NewColorRepository(env)
 	voteRepo := repositories.NewVoteRepository(env)
 	userRepo := repositories.NewUserRepository(env)
 	langRepo := repositories.NewLanguageRepository()
+	nationRepo := repositories.NewNationalityRepository()
 	genderRepo := repositories.NewGenderRepository()
 
 	clientHandler := client.NewClient()
 	colorService := services.NewColorService(colorRepo)
 	voteService := services.NewVoteService(voteRepo)
-	userService := services.NewUserService(userRepo, genderRepo)
+	userService := services.NewUserService(userRepo, nationRepo, genderRepo)
 	langService := services.NewLanguageService(langRepo)
+	nationService := services.NewNationalityService(nationRepo)
 	genderService := services.NewGenderService(genderRepo)
 
 	color = controllers.NewColorController(colorService, userService, clientHandler)
 	vote = controllers.NewVoteController(voteService, userService, clientHandler)
 	user = controllers.NewUserController(userService, clientHandler)
 	language = controllers.NewLanguageController(langService)
+	nationality = controllers.NewNationalityController(nationService)
 	gender = controllers.NewGenderController(genderService)
 
 	return

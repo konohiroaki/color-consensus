@@ -14,11 +14,12 @@ type UserService interface {
 
 type userService struct {
 	userRepo   repositories.UserRepository
+	nationRepo repositories.NationalityRepository
 	genderRepo repositories.GenderRepository
 }
 
-func NewUserService(userRepo repositories.UserRepository, genderRepo repositories.GenderRepository) UserService {
-	return userService{userRepo, genderRepo}
+func NewUserService(userRepo repositories.UserRepository, nationRepo repositories.NationalityRepository, genderRepo repositories.GenderRepository) UserService {
+	return userService{userRepo, nationRepo, genderRepo}
 }
 
 func (us userService) IsLoggedIn(getUserID func() (string, error)) bool {
@@ -37,10 +38,12 @@ func (us userService) GetID(getUserID func() (string, error)) (string, error) {
 	return userID, nil
 }
 
-// TODO: check nationality, gender existence in repo.
 func (us userService) SignUpAndLogin(nationality string, birth int, gender string, setUserID func(string) error) (string, error) {
 	if !us.genderRepo.IsPresent(gender) {
 		return "", NewValidationError("gender format is not correct")
+	}
+	if !us.nationRepo.IsCodePresent(nationality) {
+		return "", NewValidationError("nationality format is not correct")
 	}
 
 	userID := us.userRepo.Add(nationality, birth, gender)

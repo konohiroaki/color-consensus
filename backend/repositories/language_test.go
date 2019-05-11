@@ -14,18 +14,18 @@ func TestLanguageRepository_GetAll(t *testing.T) {
 	assert.Equal(t, "English", actual["en"])
 }
 
-func TestLanguageRepository_Get(t *testing.T) {
+func TestLanguageRepository_IsCodePresent_True(t *testing.T) {
 	langRepo := NewLanguageRepository()
 
-	actual, _ := langRepo.Get("ja")
+	actual := langRepo.IsCodePresent("ja")
 
-	assert.Equal(t, "Japanese", actual)
+	assert.True(t, actual)
 }
 
-func TestLanguageRepository_Get_KeyNotFound(t *testing.T) {
+func TestLanguageRepository_IsCodePresent_False(t *testing.T) {
 	langRepo := NewLanguageRepository()
 
-	_, actual := langRepo.Get("aa")
+	actual := langRepo.IsCodePresent("aa")
 
-	assert.Equal(t, "language key not found", actual.Error())
+	assert.False(t, actual)
 }

@@ -57,8 +57,14 @@ func (cc colorController) Add(ctx *gin.Context) {
 
 	err := cc.colorService.Add(req.Lang, req.Name, req.Code, cc.client.GetUserIDFunc(ctx))
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err.Error()))
-		return
+		switch err.(type) {
+		case *services.ValidationError:
+			ctx.JSON(http.StatusBadRequest, errorResponse(err.Error()))
+			return
+		default:
+			ctx.JSON(http.StatusInternalServerError, errorResponse(err.Error()))
+			return
+		}
 	}
 	ctx.Status(http.StatusCreated);
 }

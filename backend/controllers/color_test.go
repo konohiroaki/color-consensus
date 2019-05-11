@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/konohiroaki/color-consensus/backend/client/mock_client"
+	"github.com/konohiroaki/color-consensus/backend/services"
 	"github.com/konohiroaki/color-consensus/backend/services/mock_services"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -91,7 +92,25 @@ func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
 	assertErrorMessageEqual(t, fmt.Sprintf("color code should match regex: %s", msg), response.Body)
 }
 
-func TestColorController_Add_FailService(t *testing.T) {
+func TestColorController_Add_FailServiceValidationError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
+
+	lang, name, code, serviceError := "en", "red", "#ff0000", "error message"
+	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
+	mockColorService = colorFormatValid(mockColorService)
+	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, services.NewValidationError(serviceError))
+	controller := NewColorController(mockColorService, mockUserService, mockClient)
+
+	response := getResponseRecorder("", controller.Add,
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+	assertErrorMessageEqual(t, serviceError, response.Body)
+}
+
+func TestColorController_Add_FailServiceInternalError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
@@ -105,7 +124,7 @@ func TestColorController_Add_FailService(t *testing.T) {
 	response := getResponseRecorder("", controller.Add,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
 
-	assert.Equal(t, http.StatusBadRequest, response.Code)
+	assert.Equal(t, http.StatusInternalServerError, response.Code)
 	assertErrorMessageEqual(t, serviceError, response.Body)
 }
 

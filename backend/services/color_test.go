@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"reflect"
 	"testing"
 )
 
@@ -14,7 +15,7 @@ func TestColorService_GetAll_Success(t *testing.T) {
 
 	fields := []string{"lang", "name", "code"}
 	mockColorRepo.EXPECT().GetAll(fields).Return([]map[string]interface{}{})
-	service := NewColorService(mockColorRepo)
+	service := NewColorService(mockColorRepo, nil)
 
 	actual := service.GetAll()
 
@@ -24,31 +25,47 @@ func TestColorService_GetAll_Success(t *testing.T) {
 func TestColorService_Add_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockColorRepo := mockColorRepo(ctrl)
+	mockColorRepo, mockLangRepo := mockColorRepo(ctrl), mockLangRepo(ctrl)
 
+	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(true)
 	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(nil)
-	service := NewColorService(mockColorRepo)
+	service := NewColorService(mockColorRepo, mockLangRepo)
 
 	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
 	assert.Nil(t, err)
 }
 
-func TestColorService_Add_FailRepository(t *testing.T) {
+func TestColorService_Add_FailLangFormat(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockColorRepo := mockColorRepo(ctrl)
+	mockLangRepo := mockLangRepo(ctrl)
 
+	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(false)
+	service := NewColorService(nil, mockLangRepo)
+
+	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+
+	assert.Equal(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
+}
+
+func TestColorService_Add_FailAdd(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockColorRepo, mockLangRepo := mockColorRepo(ctrl), mockLangRepo(ctrl)
+
+	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(true)
 	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(fmt.Errorf("error"))
-	service := NewColorService(mockColorRepo)
+	service := NewColorService(mockColorRepo, mockLangRepo)
 
 	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
 	assert.Error(t, err)
+	assert.NotEqual(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
 }
 
 func TestColorService_GetNeighbors_Cases(t *testing.T) {
-	service := NewColorService(nil)
+	service := NewColorService(nil, nil)
 
 	testCases := []struct {
 		code     string
@@ -71,7 +88,7 @@ func TestColorService_GetNeighbors_Cases(t *testing.T) {
 }
 
 func TestColorService_IsValidCodeFormat_Cases(t *testing.T) {
-	service := NewColorService(nil)
+	service := NewColorService(nil, nil)
 
 	testCases := []struct {
 		argument string

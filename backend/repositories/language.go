@@ -1,10 +1,8 @@
 package repositories
 
-import "fmt"
-
 type LanguageRepository interface {
 	GetAll() map[string]string
-	Get(string) (string, error)
+	IsCodePresent(key string) bool
 }
 
 type languageRepository struct {
@@ -22,11 +20,11 @@ func (r languageRepository) GetAll() map[string]string {
 	return r.languageMap
 }
 
-func (r languageRepository) Get(key string) (string, error) {
-	if v, ok := r.languageMap[key]; ok {
-		return v, nil
+func (r languageRepository) IsCodePresent(key string) bool {
+	if _, ok := r.languageMap[key]; ok {
+		return true
 	}
-	return "", fmt.Errorf("language key not found")
+	return false
 }
 
 func (r *languageRepository) setUpData() {

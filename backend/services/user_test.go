@@ -16,7 +16,7 @@ func TestUserService_IsLoggedIn_True(t *testing.T) {
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo, nil)
+	service := NewUserService(mockUserRepo, nil, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	actual := service.IsLoggedIn(getUserID)
@@ -31,7 +31,7 @@ func TestUserService_IsLoggedIn_NotRegisteredUser(t *testing.T) {
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(false)
-	service := NewUserService(mockUserRepo, nil)
+	service := NewUserService(mockUserRepo, nil, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	actual := service.IsLoggedIn(getUserID)
@@ -40,7 +40,7 @@ func TestUserService_IsLoggedIn_NotRegisteredUser(t *testing.T) {
 }
 
 func TestUserService_IsLoggedIn_NotLoggedIn(t *testing.T) {
-	service := NewUserService(nil, nil)
+	service := NewUserService(nil, nil, nil)
 
 	getUserID := func() (s string, e error) { return "", errors.New("error message") }
 	actual := service.IsLoggedIn(getUserID)
@@ -55,7 +55,7 @@ func TestUserService_GetID_Success(t *testing.T) {
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo, nil)
+	service := NewUserService(mockUserRepo, nil, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	actual, _ := service.GetID(getUserID)
@@ -64,7 +64,7 @@ func TestUserService_GetID_Success(t *testing.T) {
 }
 
 func TestUserService_GetID_NotLoggedIn(t *testing.T) {
-	service := NewUserService(nil, nil)
+	service := NewUserService(nil, nil, nil)
 
 	repoError := fmt.Errorf("user is not logged in")
 	getUserID := func() (s string, e error) { return "", repoError }
@@ -80,7 +80,7 @@ func TestUserService_GetID_NotRegisteredUser(t *testing.T) {
 
 	userID, err := "id", fmt.Errorf("user is not logged in")
 	mockUserRepo.EXPECT().IsPresent(userID).Return(false)
-	service := NewUserService(mockUserRepo, nil)
+	service := NewUserService(mockUserRepo, nil, nil)
 
 	getUserID := func() (s string, e error) { return userID, nil }
 	_, actual := service.GetID(getUserID)
@@ -91,12 +91,13 @@ func TestUserService_GetID_NotRegisteredUser(t *testing.T) {
 func TestUserService_SignUpAndLogin_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockUserRepo, mockGenderRepo := mockUserRepo(ctrl), mockGenderRepo(ctrl)
+	mockUserRepo, mockNationRepo, mockGenderRepo := mockUserRepo(ctrl), mockNationRepo(ctrl), mockGenderRepo(ctrl)
 
 	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
 	mockGenderRepo.EXPECT().IsPresent(gender).Return(true)
+	mockNationRepo.EXPECT().IsCodePresent(nationality).Return(true)
 	mockUserRepo.EXPECT().Add(nationality, birth, gender).Return(userID)
-	service := NewUserService(mockUserRepo, mockGenderRepo)
+	service := NewUserService(mockUserRepo, mockNationRepo, mockGenderRepo)
 
 	setUserID := func(string) error { return nil }
 	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
@@ -105,32 +106,52 @@ func TestUserService_SignUpAndLogin_Success(t *testing.T) {
 	assert.Equal(t, nil, err)
 }
 
-func TestUserService_SignUpAndLogin_ValidationError(t *testing.T) {
+func TestUserService_SignUpAndLogin_GenderValidationError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockGenderRepo := mockGenderRepo(ctrl)
 
 	nationality, birth, gender := "foo", 1000, "bar"
 	mockGenderRepo.EXPECT().IsPresent(gender).Return(false)
-	service := NewUserService(nil, mockGenderRepo)
+	service := NewUserService(nil, nil, mockGenderRepo)
 
 	setUserID := func(string) error { return errors.New("error message") }
 	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
 
 	assert.Equal(t, "", actual)
 	assert.Equal(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
+	assert.Equal(t, "gender format is not correct", err.Error())
+}
+
+func TestUserService_SignUpAndLogin_NationalityValidationError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockNationRepo, mockGenderRepo := mockNationRepo(ctrl), mockGenderRepo(ctrl)
+
+	nationality, birth, gender := "foo", 1000, "bar"
+	mockGenderRepo.EXPECT().IsPresent(gender).Return(true)
+	mockNationRepo.EXPECT().IsCodePresent(nationality).Return(false)
+	service := NewUserService(nil, mockNationRepo, mockGenderRepo)
+
+	setUserID := func(string) error { return errors.New("error message") }
+	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
+
+	assert.Equal(t, "", actual)
+	assert.Equal(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
+	assert.Equal(t, "nationality format is not correct", err.Error())
 }
 
 func TestUserService_SignUpAndLogin_InternalServerError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockUserRepo, mockGenderRepo := mockUserRepo(ctrl), mockGenderRepo(ctrl)
+	mockUserRepo, mockNationRepo, mockGenderRepo := mockUserRepo(ctrl), mockNationRepo(ctrl), mockGenderRepo(ctrl)
 
 	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
 	mockGenderRepo.EXPECT().IsPresent(gender).Return(true)
+	mockNationRepo.EXPECT().IsCodePresent(nationality).Return(true)
 	mockUserRepo.EXPECT().Add(nationality, birth, gender).Return(userID)
 	mockUserRepo.EXPECT().Remove(userID)
-	service := NewUserService(mockUserRepo, mockGenderRepo)
+	service := NewUserService(mockUserRepo, mockNationRepo, mockGenderRepo)
 
 	setUserID := func(string) error { return errors.New("error message") }
 	actual, err := service.SignUpAndLogin(nationality, birth, gender, setUserID)
@@ -146,7 +167,7 @@ func TestUserService_TryLogin_Success(t *testing.T) {
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo, nil)
+	service := NewUserService(mockUserRepo, nil, nil)
 
 	setUserID := func(string) error { return nil }
 	actual := service.TryLogin(userID, setUserID)
@@ -161,7 +182,7 @@ func TestUserService_TryLogin_NotRegisteredUser(t *testing.T) {
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(false)
-	service := NewUserService(mockUserRepo, nil)
+	service := NewUserService(mockUserRepo, nil, nil)
 
 	setUserID := func(string) error { return nil }
 	actual := service.TryLogin(userID, setUserID)
@@ -176,7 +197,7 @@ func TestUserService_TryLogin_CookieError(t *testing.T) {
 
 	userID := "id"
 	mockUserRepo.EXPECT().IsPresent(userID).Return(true)
-	service := NewUserService(mockUserRepo, nil)
+	service := NewUserService(mockUserRepo, nil, nil)
 
 	setUserID := func(string) error { return errors.New("error message") }
 	actual := service.TryLogin(userID, setUserID)

@@ -18,18 +18,22 @@ type ColorService interface {
 
 type colorService struct {
 	colorRepo repositories.ColorRepository
+	langRepo  repositories.LanguageRepository
 }
 
-func NewColorService(colorRepo repositories.ColorRepository) ColorService {
-	return colorService{colorRepo}
+func NewColorService(colorRepo repositories.ColorRepository, langRepo repositories.LanguageRepository) ColorService {
+	return colorService{colorRepo, langRepo}
 }
 
 func (cs colorService) GetAll() []map[string]interface{} {
 	return cs.colorRepo.GetAll([]string{"lang", "name", "code"})
 }
 
-// TODO: check lang existence in repo.
 func (cs colorService) Add(lang, name, code string, getUserID func() (string, error)) error {
+	if !cs.langRepo.IsCodePresent(lang) {
+		return NewValidationError("lang format is not correct")
+	}
+
 	userID, _ := getUserID()
 	code = strings.ToLower(code)
 

@@ -65,7 +65,7 @@ func getControllers(env string) (color controllers.ColorController, vote control
 	genderRepo := repositories.NewGenderRepository()
 
 	clientHandler := client.NewClient()
-	colorService := services.NewColorService(colorRepo)
+	colorService := services.NewColorService(colorRepo, langRepo)
 	voteService := services.NewVoteService(voteRepo)
 	userService := services.NewUserService(userRepo, nationRepo, genderRepo)
 	langService := services.NewLanguageService(langRepo)

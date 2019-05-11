@@ -46,17 +46,16 @@ func (mr *MockLanguageRepositoryMockRecorder) GetAll() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockLanguageRepository)(nil).GetAll))
 }
 
-// Get mocks base method
-func (m *MockLanguageRepository) Get(arg0 string) (string, error) {
+// IsCodePresent mocks base method
+func (m *MockLanguageRepository) IsCodePresent(key string) bool {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret := m.ctrl.Call(m, "IsCodePresent", key)
+	ret0, _ := ret[0].(bool)
+	return ret0
 }
 
-// Get indicates an expected call of Get
-func (mr *MockLanguageRepositoryMockRecorder) Get(arg0 interface{}) *gomock.Call {
+// IsCodePresent indicates an expected call of IsCodePresent
+func (mr *MockLanguageRepositoryMockRecorder) IsCodePresent(key interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockLanguageRepository)(nil).Get), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsCodePresent", reflect.TypeOf((*MockLanguageRepository)(nil).IsCodePresent), key)
 }

@@ -36,7 +36,7 @@
     "axios": "^0.18.0",
     "babel-loader": "^8.0.5",
     "babel-plugin-transform-remove-console": "^6.9.4",
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.3.1",
     "clean-webpack-plugin": "^1.0.1",
     "core-js": "^2.6.3",
     "cross-env": "^5.2.0",

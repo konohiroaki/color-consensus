@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import AddColorCard from "./AddColorCard";
-import {isSameColor} from "../../common/Utility";
 import {actions as searchBar} from "../../../modules/searchBar";
 import {actions as board} from "../../../modules/board";
 import {connect} from "react-redux";
@@ -120,6 +119,8 @@ const getLangList = colorList => colorList.map(color => color.lang)
 const isLangMatchingFilter = (lang, filter) => filter === "" || lang === filter;
 const isNameMatchingFilter = (name, filter) => filter === "" || name.includes(filter.toLowerCase());
 const colorComparator = (c1, c2) => c1.lang !== c2.lang ? (c1.lang > c2.lang ? 1 : -1) : (c1.name > c2.name ? 1 : -1);
+const isSameColor = (c1, c2) => c1 !== undefined && c2 !== undefined
+                                && c1.lang === c2.lang && c1.name === c2.name && c1.code === c2.code;
 
 const mapStateToProps = state => ({
     colorList: state.searchBar.colors,

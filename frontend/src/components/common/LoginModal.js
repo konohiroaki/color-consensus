@@ -118,7 +118,7 @@ const SignUpNationalityInput = props => {
 };
 
 const SignUpBirthInput = ({setBirthInput}) => (
-    <div className="form-group">
+    <div>
         <label className="mb-0">Birth Year:</label>
         <input type="number" min="1900" max={new Date().getFullYear()} required
                className="form-control" placeholder="1990"
@@ -157,7 +157,7 @@ const LoginTabPanel = ({setUserIdInput, handleLoginClick}) => (
 
 const LoginIdInput = ({setUserIdInput}) => (
     <div>
-        <label>ID:</label>
+        <label className="mb-0">ID:</label>
         <input type="text" className="form-control" placeholder="00000000-0000-0000-0000-000000000000"
                onChange={e => setUserIdInput(e.target.value)}/>
     </div>

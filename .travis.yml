@@ -1,0 +1,7 @@
+matrix:
+  include:
+    - language: go
+      go: 1.11.x
+    - language: node_js
+      node_js: node
+      install: "cd frontend && npm install"

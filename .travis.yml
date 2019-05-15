@@ -3,5 +3,5 @@ matrix:
     - language: go
       go: 1.11.x
     - language: node_js
-      node_js: 10.15.x
+      node_js: node
       install: "cd frontend && npm install"

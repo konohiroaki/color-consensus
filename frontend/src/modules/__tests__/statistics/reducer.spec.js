@@ -16,16 +16,21 @@ it("should set votes", () => {
     expect(result.votes).toEqual(fakeData);
 });
 
-it("should set borders", () => {
-    const fakeData = [
-        [{top: true, right: true, bottom: false, left: true}],
-        [{top: false, right: true, bottom: true, left: true}]
-    ];
+it("should set borders and filteredVoteCount", () => {
+    const fakeData = {
+        cellBorder: [
+            [{top: true, right: true, bottom: false, left: true}],
+            [{top: false, right: true, bottom: true, left: true}]
+        ],
+        filteredVoteCount: 1
+    };
     const result = reducer(undefined, {
-        type: types.CALCULATE_BORDER,
+        type: types.APPLY_NEW_VOTE_SET,
         payload: fakeData,
     });
-    expect(result.cellBorder).toEqual(fakeData);
+    expect(result.cellBorder).toEqual(fakeData.cellBorder);
+    expect(result.filteredVoteCount).toEqual(fakeData.filteredVoteCount);
+
 });
 
 it("should set nationality filter", () => {

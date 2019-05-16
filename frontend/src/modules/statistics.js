@@ -7,12 +7,14 @@ export const types = {
     SET_AGE_GROUP_FILTER: "SET_AGE_GROUP_FILTER",
     SET_GENDER_FILTER: "SET_GENDER_FILTER",
     SET_PERCENTILE: "SET_PERCENTILE",
-    CALCULATE_BORDER: "CALCULATE_BORDER",
+    APPLY_NEW_VOTE_SET: "APPLY_NEW_VOTE_SET",
     RESET_FILTERS: "RESET_FILTERS",
 };
 
 const DEFAULT_STATE = {
     votes: [],
+    filteredVoteCount: 0,
+
     nationalityFilter: "",
     ageGroupFilter: "",
     genderFilter: "",
@@ -28,10 +30,11 @@ export const reducer = (state = DEFAULT_STATE, action) => {
                 ...state,
                 votes: action.payload
             };
-        case types.CALCULATE_BORDER:
+        case types.APPLY_NEW_VOTE_SET:
             return {
                 ...state,
-                cellBorder: action.payload
+                cellBorder: action.payload.cellBorder,
+                filteredVoteCount: action.payload.filteredVoteCount,
             };
         case types.SET_NATIONALITY_FILTER:
             return {
@@ -73,41 +76,47 @@ export const actions = {
                     dispatch({type: types.SET_VOTES, payload: data});
                     // resetting filters because specific filter might not exist for other vote set.
                     dispatch(this.resetFilters());
-                    dispatch(this.calculateBorder());
+                    dispatch(this.applyNewVoteSet());
                 })
                 .catch(({response}) => toast.warn(response.data.error.message));
         };
     },
-    calculateBorder() {
+    applyNewVoteSet() {
         return (dispatch, getState) => {
-            const cellRatio = getCellRatio(getState);
+            const filteredVotes = getFilteredVotes(getState().statistics);
+            const cellRatio = getCellRatio(getState, filteredVotes);
             const cellBorder = getCellBorder(getState, cellRatio);
-            dispatch({type: types.CALCULATE_BORDER, payload: cellBorder});
+            dispatch({
+                type: types.APPLY_NEW_VOTE_SET, payload: {
+                    cellBorder: cellBorder,
+                    filteredVoteCount: filteredVotes.length,
+                }
+            });
         };
     },
     setNationalityFilter(nationality) {
         return (dispatch) => {
             dispatch({type: types.SET_NATIONALITY_FILTER, payload: nationality});
-            dispatch(this.calculateBorder());
+            dispatch(this.applyNewVoteSet());
         };
     },
     setAgeGroupFilter(ageGroup) {
         return (dispatch) => {
             ageGroup = ageGroup !== "" ? parseInt(ageGroup) : ageGroup;
             dispatch({type: types.SET_AGE_GROUP_FILTER, payload: ageGroup});
-            dispatch(this.calculateBorder());
+            dispatch(this.applyNewVoteSet());
         };
     },
     setGenderFilter(gender) {
         return (dispatch) => {
             dispatch({type: types.SET_GENDER_FILTER, payload: gender});
-            dispatch(this.calculateBorder());
+            dispatch(this.applyNewVoteSet());
         };
     },
     setPercentile(percentile) {
         return (dispatch) => {
             dispatch({type: types.SET_PERCENTILE, payload: percentile});
-            dispatch(this.calculateBorder());
+            dispatch(this.applyNewVoteSet());
         };
     },
     resetFilters() {
@@ -122,14 +131,13 @@ const getStatisticsUrl = ({lang, name}) => {
     return `${process.env.WEBAPI_HOST}/api/v1/votes?lang=${lang}&name=${name}&fields=${fields}`;
 };
 
-const getCellRatio = (getState) => {
+const getCellRatio = (getState, filteredVotes) => {
     const colorCodeList = getState().board.colorCodeList;
     const boardSize = getState().board.sideLength;
     const arraySize = boardSize + 2;
 
     let ratio = Array(arraySize).fill(0).map(() => Array(arraySize).fill(0));
 
-    const filteredVotes = getFilteredVotes(getState().statistics);
     filteredVotes
         .reduce((acc, vote) => acc.concat(vote.colors), [])
         .forEach(color => {

@@ -26,7 +26,7 @@ describe("setVotes(color)", function () {
     });
 });
 
-describe("calculateBorder()", function () {
+describe("applyNewVoteSet()", function () {
     const filterEmptyState = () => ({
         board: {
             sideLength: 2,
@@ -46,21 +46,27 @@ describe("calculateBorder()", function () {
         }
     });
 
-    const allFalsePayload = () => Array(4).fill(0).map(() => Array(4).fill(
-        {top: false, right: false, bottom: false, left: false}
-    ));
+    const defaultPayload = () => {
+        return {
+            cellBorder: Array(4).fill(0).map(() => Array(4).fill(
+                {top: false, right: false, bottom: false, left: false}
+            )),
+            filteredVoteCount: 0
+        };
+    };
 
     it("should dispatch with empty filter", () => {
         const dispatch = jest.fn();
 
-        actions.calculateBorder()(dispatch, filterEmptyState);
+        actions.applyNewVoteSet()(dispatch, filterEmptyState);
 
-        let expectedPayload = allFalsePayload();
-        expectedPayload[1][1] = {top: true, right: false, bottom: false, left: true};
-        expectedPayload[1][2] = {top: true, right: true, bottom: true, left: false};
-        expectedPayload[2][1] = {top: false, right: true, bottom: true, left: true};
+        let expectedPayload = defaultPayload();
+        expectedPayload.cellBorder[1][1] = {top: true, right: false, bottom: false, left: true};
+        expectedPayload.cellBorder[1][2] = {top: true, right: true, bottom: true, left: false};
+        expectedPayload.cellBorder[2][1] = {top: false, right: true, bottom: true, left: true};
+        expectedPayload.filteredVoteCount = 4;
         expect(dispatch.mock.calls[0][0]).toEqual({
-            type: types.CALCULATE_BORDER,
+            type: types.APPLY_NEW_VOTE_SET,
             payload: expectedPayload
         });
     });
@@ -70,13 +76,14 @@ describe("calculateBorder()", function () {
 
         let state = filterEmptyState();
         state.statistics.nationalityFilter = "Japan";
-        actions.calculateBorder()(dispatch, () => state);
+        actions.applyNewVoteSet()(dispatch, () => state);
 
-        let expectedPayload = allFalsePayload();
-        expectedPayload[1][1] = {top: true, right: false, bottom: true, left: true};
-        expectedPayload[1][2] = {top: true, right: true, bottom: true, left: false};
+        let expectedPayload = defaultPayload();
+        expectedPayload.cellBorder[1][1] = {top: true, right: false, bottom: true, left: true};
+        expectedPayload.cellBorder[1][2] = {top: true, right: true, bottom: true, left: false};
+        expectedPayload.filteredVoteCount = 2;
         expect(dispatch.mock.calls[0][0]).toEqual({
-            type: types.CALCULATE_BORDER,
+            type: types.APPLY_NEW_VOTE_SET,
             payload: expectedPayload
         });
     });
@@ -86,12 +93,13 @@ describe("calculateBorder()", function () {
 
         let state = filterEmptyState();
         state.statistics.ageGroupFilter = 50;
-        actions.calculateBorder()(dispatch, () => state);
+        actions.applyNewVoteSet()(dispatch, () => state);
 
-        let expectedPayload = allFalsePayload();
-        expectedPayload[2][1] = {top: true, right: true, bottom: true, left: true};
+        let expectedPayload = defaultPayload();
+        expectedPayload.cellBorder[2][1] = {top: true, right: true, bottom: true, left: true};
+        expectedPayload.filteredVoteCount = 1;
         expect(dispatch.mock.calls[0][0]).toEqual({
-            type: types.CALCULATE_BORDER,
+            type: types.APPLY_NEW_VOTE_SET,
             payload: expectedPayload
         });
     });
@@ -101,13 +109,14 @@ describe("calculateBorder()", function () {
 
         let state = filterEmptyState();
         state.statistics.genderFilter = "Male";
-        actions.calculateBorder()(dispatch, () => state);
+        actions.applyNewVoteSet()(dispatch, () => state);
 
-        let expectedPayload = allFalsePayload();
-        expectedPayload[1][1] = {top: true, right: false, bottom: true, left: true};
-        expectedPayload[1][2] = {top: true, right: true, bottom: true, left: false};
+        let expectedPayload = defaultPayload();
+        expectedPayload.cellBorder[1][1] = {top: true, right: false, bottom: true, left: true};
+        expectedPayload.cellBorder[1][2] = {top: true, right: true, bottom: true, left: false};
+        expectedPayload.filteredVoteCount = 2;
         expect(dispatch.mock.calls[0][0]).toEqual({
-            type: types.CALCULATE_BORDER,
+            type: types.APPLY_NEW_VOTE_SET,
             payload: expectedPayload
         });
     });
@@ -117,12 +126,13 @@ describe("calculateBorder()", function () {
 
         let state = filterEmptyState();
         state.statistics.percentile = 50;
-        actions.calculateBorder()(dispatch, () => state);
+        actions.applyNewVoteSet()(dispatch, () => state);
 
-        let expectedPayload = allFalsePayload();
-        expectedPayload[1][1] = {top: true, right: true, bottom: true, left: true};
+        let expectedPayload = defaultPayload();
+        expectedPayload.cellBorder[1][1] = {top: true, right: true, bottom: true, left: true};
+        expectedPayload.filteredVoteCount = 4;
         expect(dispatch.mock.calls[0][0]).toEqual({
-            type: types.CALCULATE_BORDER,
+            type: types.APPLY_NEW_VOTE_SET,
             payload: expectedPayload
         });
     });

@@ -22,7 +22,7 @@ class StatisticsHeader extends Component {
                                           setGenderFilter={this.props.setGenderFilter}/>
                         <StatisticsPercentile percentile={this.props.percentile} setPercentile={this.props.setPercentile}/>
                     </div>
-                    <VoteCounter style="col-2" voteCount={this.props.votes.length}/>
+                    <VoteCounter style="col-2" voteCount={this.props.filteredVoteCount}/>
                 </div>
             </div>
         </div>;
@@ -98,6 +98,7 @@ const VoteCounter = ({style, voteCount}) => (
 
 const mapStateToProps = state => ({
     votes: state.statistics.votes,
+    filteredVoteCount: state.statistics.filteredVoteCount,
     nationalityFilter: state.statistics.nationalityFilter,
     ageGroupFilter: state.statistics.ageGroupFilter,
     genderFilter: state.statistics.genderFilter,

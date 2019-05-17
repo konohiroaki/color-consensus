@@ -1,11 +1,15 @@
-matrix:
+jobs:
   include:
-  - language: go
-    go: 1.11.x
-  - language: node_js
-    node_js: node
-    install: cd frontend && npm install
-deploy:
-  provider: heroku
-  api_key:
-    secure: mQncCa5qZqntXcEn3rLT9dYWh/JxAatSJmAo7RaOZpac3FLc210hOGAFqK0qNBCV/QJRCDBO47hWSuUPkG0d97C4eXBTXniqbYAM4L4+ovQrH2ALEjw+aD6aNINyftzL/qHqaL7b6Wgex1/agVWfnoNq6CYoHW5vcwDFfgZISQ8UptcZZo2+GxgnLjPt8kJoiu/v3U3k/AhlU/DAg/osaMwyYaUq2FtLvQ8iy56OagK8p9HrbU1G61H3rQmCI/08q+14vHTBnT+HqJtrbDvtNR4+O45QbLpssCB/GgTlDRPPnal0xTvo6vS5H70EoqOafwjF8idS+KLabuTylD8xgyUX9UrX1fMLKs87QHJSbBw7Mfv3Taq/KmngmilP9/tOJA3N5jilQFDcvBdpW//Onw+A4sWQP+e4jYYC6OFhpUW3rbfh6MyESPkqRUQDG3rVxpfM1eSZ9KHTBsH5vCEChxjl1TPJNGJlgQ07jhdezO8M8r8rTNJNWcIwbUlGxa8ORD92lfJrgkZQZlpePbRpKgAJF/G9hZGUN1H4ZeR0D6Od20/KuPpB48g8o0ZKhN4xe2L0hryoXdv0gYRimek+VE55Iv1LXTlb9hodah4zKhINqE3JQvNXDHmAonJM2Ktc7jVEsH3O4KSseFtzknPc0ZejOXwosRiQ6tHuWHEZNcM=
+    - stage: test
+      language: go
+      go: 1.11.x
+    - stage: test
+      language: node_js
+      node_js: node
+      install: cd frontend && npm install
+    - stage: deploy
+      script: skip
+      deploy:
+        provider: heroku
+        api_key:
+          secure: mQncCa5qZqntXcEn3rLT9dYWh/JxAatSJmAo7RaOZpac3FLc210hOGAFqK0qNBCV/QJRCDBO47hWSuUPkG0d97C4eXBTXniqbYAM4L4+ovQrH2ALEjw+aD6aNINyftzL/qHqaL7b6Wgex1/agVWfnoNq6CYoHW5vcwDFfgZISQ8UptcZZo2+GxgnLjPt8kJoiu/v3U3k/AhlU/DAg/osaMwyYaUq2FtLvQ8iy56OagK8p9HrbU1G61H3rQmCI/08q+14vHTBnT+HqJtrbDvtNR4+O45QbLpssCB/GgTlDRPPnal0xTvo6vS5H70EoqOafwjF8idS+KLabuTylD8xgyUX9UrX1fMLKs87QHJSbBw7Mfv3Taq/KmngmilP9/tOJA3N5jilQFDcvBdpW//Onw+A4sWQP+e4jYYC6OFhpUW3rbfh6MyESPkqRUQDG3rVxpfM1eSZ9KHTBsH5vCEChxjl1TPJNGJlgQ07jhdezO8M8r8rTNJNWcIwbUlGxa8ORD92lfJrgkZQZlpePbRpKgAJF/G9hZGUN1H4ZeR0D6Od20/KuPpB48g8o0ZKhN4xe2L0hryoXdv0gYRimek+VE55Iv1LXTlb9hodah4zKhINqE3JQvNXDHmAonJM2Ktc7jVEsH3O4KSseFtzknPc0ZejOXwosRiQ6tHuWHEZNcM=

@@ -15,7 +15,7 @@ func TestLanguageController_GetAll_Success(t *testing.T) {
 
 	key, value := "iso_639-1", "language name in English"
 	mockLangService.EXPECT().GetAll().Return(map[string]string{key: value})
-	controller := NewLanguageController(mockLangService)
+	controller := newLanguageController(mockLangService)
 
 	response := getResponseRecorder("", controller.GetAll, http.MethodGet, "", nil)
 

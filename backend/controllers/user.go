@@ -6,6 +6,7 @@ import (
 	"github.com/konohiroaki/color-consensus/backend/services"
 	"log"
 	"net/http"
+	"sync"
 )
 
 type UserController struct {
@@ -13,7 +14,19 @@ type UserController struct {
 	client      client.Client
 }
 
-func NewUserController(userService services.UserService, client client.Client) UserController {
+var (
+	userControllerInstance UserController
+	userControllerOnce     sync.Once
+)
+
+func GetUserController(env string) UserController {
+	userControllerOnce.Do(func() {
+		userControllerInstance = newUserController(services.GetUserService(env), client.GetClient())
+	})
+	return userControllerInstance
+}
+
+func newUserController(userService services.UserService, client client.Client) UserController {
 	return UserController{userService, client}
 }
 

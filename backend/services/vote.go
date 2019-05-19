@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/konohiroaki/color-consensus/backend/repositories"
+	"sync"
 )
 
 type VoteService interface {
@@ -14,7 +15,19 @@ type voteService struct {
 	voteRepo repositories.VoteRepository
 }
 
-func NewVoteService(voteRepo repositories.VoteRepository) VoteService {
+var (
+	voteServiceInstance VoteService
+	voteServiceOnce     sync.Once
+)
+
+func GetVoteService(env string) VoteService {
+	voteServiceOnce.Do(func() {
+		voteServiceInstance = newVoteService(repositories.GetVoteRepository(env))
+	})
+	return voteServiceInstance
+}
+
+func newVoteService(voteRepo repositories.VoteRepository) VoteService {
 	return voteService{voteRepo}
 }
 

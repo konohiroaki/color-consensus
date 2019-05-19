@@ -15,7 +15,7 @@ func TestNationalityController_GetAll_Success(t *testing.T) {
 
 	key, value := "iso_3166-1", "nationality name in English"
 	mockNationService.EXPECT().GetAll().Return(map[string]string{key: value})
-	controller := NewNationalityController(mockNationService)
+	controller := newNationalityController(mockNationService)
 
 	response := getResponseRecorder("", controller.GetAll, http.MethodGet, "", nil)
 

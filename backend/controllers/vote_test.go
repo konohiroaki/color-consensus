@@ -20,7 +20,7 @@ func TestVoteController_Vote_Success(t *testing.T) {
 	lang, name, colors := "en", "red", []string{"#000000", "#000010"}
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockVoteService, mockClient = doVote(mockVoteService, mockClient, lang, name, colors)
-	controller := NewVoteController(mockVoteService, mockUserService, mockClient)
+	controller := newVoteController(mockVoteService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Vote,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
@@ -36,7 +36,7 @@ func TestVoteController_Vote_FailAuthorization(t *testing.T) {
 
 	lang, name, colors := "en", "red", []string{"#000000", "#000010"}
 	mockUserService, mockClient = authorizationFail(mockUserService, mockClient)
-	controller := NewVoteController(mockVoteService, mockUserService, mockClient)
+	controller := newVoteController(mockVoteService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Vote,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
@@ -53,7 +53,7 @@ func TestVoteController_Vote_FailBind(t *testing.T) {
 
 	lang, name := "en", "red"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
-	controller := NewVoteController(mockVoteService, mockUserService, mockClient)
+	controller := newVoteController(mockVoteService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Vote,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
@@ -70,7 +70,7 @@ func TestVoteController_Get_Success(t *testing.T) {
 
 	lang, name, fields := "en", "red", []string{"lang"}
 	mockVoteService.EXPECT().Get(lang, name, fields).Return([]map[string]interface{}{{"lang": "en"}})
-	controller := NewVoteController(mockVoteService, nil, nil)
+	controller := newVoteController(mockVoteService, nil, nil)
 
 	response := getResponseRecorder("", controller.Get,
 		http.MethodGet, fmt.Sprintf("?lang=%s&name=%s&fields=%s", lang, name, strings.Join(fields, ",")), nil)
@@ -81,7 +81,7 @@ func TestVoteController_Get_Success(t *testing.T) {
 
 func TestVoteController_Get_FailBind(t *testing.T) {
 	lang, name := "en", "red"
-	controller := NewVoteController(nil, nil, nil)
+	controller := newVoteController(nil, nil, nil)
 
 	response := getResponseRecorder("", controller.Get,
 		http.MethodGet, fmt.Sprintf("?lang=%s&name=%s", lang, name), nil)
@@ -97,7 +97,7 @@ func TestVoteController_RemoveByUser_Success(t *testing.T) {
 
 	userID := "id"
 	mockVoteService.EXPECT().RemoveByUser(userID)
-	controller := NewVoteController(mockVoteService, nil, nil)
+	controller := newVoteController(mockVoteService, nil, nil)
 
 	response := getResponseRecorder("", controller.RemoveByUser,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, userID))))
@@ -107,7 +107,7 @@ func TestVoteController_RemoveByUser_Success(t *testing.T) {
 
 func TestVoteController_RemoveByUser_FailBind(t *testing.T) {
 	userID := "id"
-	controller := NewVoteController(nil, nil, nil)
+	controller := newVoteController(nil, nil, nil)
 
 	response := getResponseRecorder("", controller.RemoveByUser,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"user":"%s"}`, userID))))

@@ -8,10 +8,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/controllers"
-	"github.com/konohiroaki/color-consensus/backend/repositories"
-	"github.com/konohiroaki/color-consensus/backend/services"
 )
 
 func NewRouter(env string) *gin.Engine {
@@ -30,54 +27,30 @@ func NewRouter(env string) *gin.Engine {
 }
 
 func setUpEndpoints(router *gin.Engine, env string) {
-	color, vote, user, language, nationality, gender := getControllers(env)
-
 	api := router.Group("/api")
 	{
 		v1api := api.Group("/v1")
 		{
+			color := controllers.GetColorController(env)
 			v1api.POST("/colors", color.Add)
 			v1api.GET("/colors", color.GetAll)
 			v1api.GET("/colors/:code/neighbors", color.GetNeighbors)
 
+			vote := controllers.GetVoteController(env)
 			v1api.POST("/votes", vote.Vote)
 			v1api.GET("/votes", vote.Get)
 
+			user := controllers.GetUserController(env)
 			v1api.POST("/users/signup", user.SignUpAndLogin)
 			v1api.POST("/users/login", user.Login)
 			v1api.GET("/users", user.GetIDIfLoggedIn)
 
+			language := controllers.GetLanguageController()
 			v1api.GET("/languages", language.GetAll)
+			nationality := controllers.GetNationalityController()
 			v1api.GET("/nationalities", nationality.GetAll)
+			gender := controllers.GetGenderController()
 			v1api.GET("/genders", gender.GetAll)
 		}
 	}
-}
-
-func getControllers(env string) (color controllers.ColorController, vote controllers.VoteController,
-		user controllers.UserController, language controllers.LanguageController,
-		nationality controllers.NationalityController, gender controllers.GenderController) {
-	colorRepo := repositories.NewColorRepository(env)
-	voteRepo := repositories.NewVoteRepository(env)
-	userRepo := repositories.NewUserRepository(env)
-	langRepo := repositories.NewLanguageRepository()
-	nationRepo := repositories.NewNationalityRepository()
-	genderRepo := repositories.NewGenderRepository()
-
-	clientHandler := client.NewClient()
-	colorService := services.NewColorService(colorRepo, langRepo)
-	voteService := services.NewVoteService(voteRepo)
-	userService := services.NewUserService(userRepo, nationRepo, genderRepo)
-	langService := services.NewLanguageService(langRepo)
-	nationService := services.NewNationalityService(nationRepo)
-	genderService := services.NewGenderService(genderRepo)
-
-	color = controllers.NewColorController(colorService, userService, clientHandler)
-	vote = controllers.NewVoteController(voteService, userService, clientHandler)
-	user = controllers.NewUserController(userService, clientHandler)
-	language = controllers.NewLanguageController(langService)
-	nationality = controllers.NewNationalityController(nationService)
-	gender = controllers.NewGenderController(genderService)
-
-	return
 }

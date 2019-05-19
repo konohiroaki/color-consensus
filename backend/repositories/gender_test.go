@@ -6,7 +6,7 @@ import (
 )
 
 func TestGenderRepository_GetAll(t *testing.T) {
-	genderRepo := NewGenderRepository()
+	genderRepo := GetGenderRepository()
 
 	actual := genderRepo.GetAll()
 
@@ -15,7 +15,7 @@ func TestGenderRepository_GetAll(t *testing.T) {
 }
 
 func TestGenderRepository_IsPresent_True(t *testing.T) {
-	genderRepo := NewGenderRepository()
+	genderRepo := GetGenderRepository()
 
 	actual := genderRepo.IsPresent("Male")
 
@@ -23,7 +23,7 @@ func TestGenderRepository_IsPresent_True(t *testing.T) {
 }
 
 func TestGenderRepository_IsPresent_False(t *testing.T) {
-	genderRepo := NewGenderRepository()
+	genderRepo := GetGenderRepository()
 
 	actual := genderRepo.IsPresent("Foo")
 

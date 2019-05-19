@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 )
 
 type VoteController struct {
@@ -15,7 +16,19 @@ type VoteController struct {
 	client      client.Client
 }
 
-func NewVoteController(voteService services.VoteService, userService services.UserService, client client.Client) VoteController {
+var (
+	voteControllerInstance VoteController
+	voteControllerOnce     sync.Once
+)
+
+func GetVoteController(env string) VoteController {
+	voteControllerOnce.Do(func() {
+		voteControllerInstance = newVoteController(services.GetVoteService(env), services.GetUserService(env), client.GetClient())
+	})
+	return voteControllerInstance
+}
+
+func newVoteController(voteService services.VoteService, userService services.UserService, client client.Client) VoteController {
 	return VoteController{voteService, userService, client}
 }
 

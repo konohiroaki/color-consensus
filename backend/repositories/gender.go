@@ -1,5 +1,9 @@
 package repositories
 
+import (
+	"sync"
+)
+
 type GenderRepository interface {
 	GetAll() []string
 	IsPresent(string) bool
@@ -9,11 +13,22 @@ type genderRepository struct {
 	genderList []string
 }
 
-func NewGenderRepository() GenderRepository {
-	repository := genderRepository{}
-	repository.setUpData()
+var (
+	genderRepoInstance GenderRepository
+	genderRepoOnce     sync.Once
+)
 
-	return repository
+func GetGenderRepository() GenderRepository {
+	genderRepoOnce.Do(func() {
+		repository := newGenderRepository()
+		repository.setUpData()
+		genderRepoInstance = repository
+	})
+	return genderRepoInstance
+}
+
+func newGenderRepository() *genderRepository {
+	return &genderRepository{}
 }
 
 func (r genderRepository) GetAll() []string {

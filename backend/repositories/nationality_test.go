@@ -6,7 +6,7 @@ import (
 )
 
 func TestNationalityRepository_GetAll(t *testing.T) {
-	nationRepo := NewNationalityRepository()
+	nationRepo := GetNationalityRepository()
 
 	actual := nationRepo.GetAll()
 
@@ -15,7 +15,7 @@ func TestNationalityRepository_GetAll(t *testing.T) {
 }
 
 func TestNationalityRepository_IsCodePresent_True(t *testing.T) {
-	nationRepo := NewNationalityRepository()
+	nationRepo := GetNationalityRepository()
 
 	actual := nationRepo.IsCodePresent("JP")
 
@@ -23,7 +23,7 @@ func TestNationalityRepository_IsCodePresent_True(t *testing.T) {
 }
 
 func TestNationalityRepository_IsCodePresent_False(t *testing.T) {
-	nationRepo := NewNationalityRepository()
+	nationRepo := GetNationalityRepository()
 
 	actual := nationRepo.IsCodePresent("JJ")
 

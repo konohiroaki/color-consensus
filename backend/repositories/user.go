@@ -4,6 +4,7 @@ import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"github.com/twinj/uuid"
+	"sync"
 	"time"
 )
 
@@ -17,17 +18,24 @@ type userRepository struct {
 	Collection *mgo.Collection
 }
 
-func NewUserRepository(env string) UserRepository {
-	uri, name := getDatabaseURIAndName()
-	session, _ := mgo.Dial(uri)
-	database := session.DB(name)
-	repository := newUserRepository(database)
+var (
+	userRepoInstance UserRepository
+	userRepoOnce     sync.Once
+)
 
-	if env == "development" {
-		repository.insertSampleData()
-	}
+func GetUserRepository(env string) UserRepository {
+	userRepoOnce.Do(func() {
+		uri, name := getDatabaseURIAndName()
+		session, _ := mgo.Dial(uri)
+		database := session.DB(name)
+		repository := newUserRepository(database)
 
-	return repository
+		if env == "development" {
+			repository.insertSampleData()
+		}
+		userRepoInstance = repository
+	})
+	return userRepoInstance
 }
 
 func newUserRepository(database *mgo.Database) *userRepository {

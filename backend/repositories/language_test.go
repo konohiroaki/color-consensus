@@ -6,7 +6,7 @@ import (
 )
 
 func TestLanguageRepository_GetAll(t *testing.T) {
-	langRepo := NewLanguageRepository()
+	langRepo := GetLanguageRepository()
 
 	actual := langRepo.GetAll()
 
@@ -15,7 +15,7 @@ func TestLanguageRepository_GetAll(t *testing.T) {
 }
 
 func TestLanguageRepository_IsCodePresent_True(t *testing.T) {
-	langRepo := NewLanguageRepository()
+	langRepo := GetLanguageRepository()
 
 	actual := langRepo.IsCodePresent("ja")
 
@@ -23,7 +23,7 @@ func TestLanguageRepository_IsCodePresent_True(t *testing.T) {
 }
 
 func TestLanguageRepository_IsCodePresent_False(t *testing.T) {
-	langRepo := NewLanguageRepository()
+	langRepo := GetLanguageRepository()
 
 	actual := langRepo.IsCodePresent("aa")
 

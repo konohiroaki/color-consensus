@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type ColorService interface {
@@ -21,7 +22,19 @@ type colorService struct {
 	langRepo  repositories.LanguageRepository
 }
 
-func NewColorService(colorRepo repositories.ColorRepository, langRepo repositories.LanguageRepository) ColorService {
+var (
+	colorServiceInstance ColorService
+	colorServiceOnce     sync.Once
+)
+
+func GetColorService(env string) ColorService {
+	colorServiceOnce.Do(func() {
+		colorServiceInstance = newColorService(repositories.GetColorRepository(env), repositories.GetLanguageRepository())
+	})
+	return colorServiceInstance
+}
+
+func newColorService(colorRepo repositories.ColorRepository, langRepo repositories.LanguageRepository) ColorService {
 	return colorService{colorRepo, langRepo}
 }
 

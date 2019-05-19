@@ -19,7 +19,7 @@ func TestUserController_GetIDIfLoggedIn_Success(t *testing.T) {
 	userID := "id"
 	mockClient.EXPECT().GetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().GetID(gomock.Any()).Return(userID, nil)
-	controller := NewUserController(mockUserService, mockClient)
+	controller := newUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.GetIDIfLoggedIn, http.MethodGet, "", nil)
 
@@ -35,7 +35,7 @@ func TestUserController_GetIDIfLoggedIn_NotLoggedIn(t *testing.T) {
 	serviceError := "message from service"
 	mockClient.EXPECT().GetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().GetID(gomock.Any()).Return("", errors.New(serviceError))
-	controller := NewUserController(mockUserService, mockClient)
+	controller := newUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.GetIDIfLoggedIn, http.MethodGet, "", nil)
 
@@ -51,7 +51,7 @@ func TestUserController_Login_Success(t *testing.T) {
 	userID := "id"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().TryLogin(userID, gomock.Any()).Return(true)
-	controller := NewUserController(mockUserService, mockClient)
+	controller := newUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Login,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, userID))))
@@ -61,7 +61,7 @@ func TestUserController_Login_Success(t *testing.T) {
 
 func TestUserController_Login_FailBind(t *testing.T) {
 	userID := "id"
-	controller := NewUserController(nil, nil)
+	controller := newUserController(nil, nil)
 
 	response := getResponseRecorder("", controller.Login,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"user":"%s"}`, userID))))
@@ -78,7 +78,7 @@ func TestUserController_Login_FailService(t *testing.T) {
 	userID := "id"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().TryLogin(userID, gomock.Any()).Return(false)
-	controller := NewUserController(mockUserService, mockClient)
+	controller := newUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Login,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, userID))))
@@ -95,7 +95,7 @@ func TestUserController_SignUpAndLogin_Success(t *testing.T) {
 	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return(userID, nil)
-	controller := NewUserController(mockUserService, mockClient)
+	controller := newUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
@@ -107,7 +107,7 @@ func TestUserController_SignUpAndLogin_Success(t *testing.T) {
 
 func TestUserController_SignUpAndLogin_FailBind(t *testing.T) {
 	nationality, gender := "foo", "bar"
-	controller := NewUserController(nil, nil)
+	controller := newUserController(nil, nil)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
@@ -125,7 +125,7 @@ func TestUserController_SignUpAndLogin_InternalServerError(t *testing.T) {
 	nationality, birth, gender, serviceError := "foo", 1000, "bar", "internal server error"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", services.NewInternalServerError(serviceError))
-	controller := NewUserController(mockUserService, mockClient)
+	controller := newUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
@@ -143,7 +143,7 @@ func TestUserController_SignUpAndLogin_ValidationError(t *testing.T) {
 	nationality, birth, gender, serviceError := "foo", 1000, "bar", "gender format is not correct"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", services.NewValidationError(serviceError))
-	controller := NewUserController(mockUserService, mockClient)
+	controller := newUserController(mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.SignUpAndLogin,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(

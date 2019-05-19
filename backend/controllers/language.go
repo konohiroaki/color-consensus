@@ -4,13 +4,26 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/services"
 	"net/http"
+	"sync"
 )
 
 type LanguageController struct {
 	langService services.LanguageService
 }
 
-func NewLanguageController(langService services.LanguageService) LanguageController {
+var (
+	langControllerInstance LanguageController
+	langControllerOnce     sync.Once
+)
+
+func GetLanguageController() LanguageController {
+	langControllerOnce.Do(func() {
+		langControllerInstance = newLanguageController(services.GetLanguageService())
+	})
+	return langControllerInstance
+}
+
+func newLanguageController(langService services.LanguageService) LanguageController {
 	return LanguageController{langService}
 }
 

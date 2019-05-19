@@ -1,5 +1,9 @@
 package repositories
 
+import (
+	"sync"
+)
+
 type NationalityRepository interface {
 	GetAll() map[string]string
 	IsCodePresent(code string) bool
@@ -9,11 +13,22 @@ type nationalityRepository struct {
 	nationalityMap map[string]string
 }
 
-func NewNationalityRepository() NationalityRepository {
-	repository := nationalityRepository{}
-	repository.setUpData()
+var (
+	nationalityRepoInstance NationalityRepository
+	nationalityRepoOnce     sync.Once
+)
 
-	return repository
+func GetNationalityRepository() NationalityRepository {
+	nationalityRepoOnce.Do(func() {
+		repository := newNationalityRepository()
+		repository.setUpData()
+		nationalityRepoInstance = repository
+	})
+	return nationalityRepoInstance
+}
+
+func newNationalityRepository() *nationalityRepository {
+	return &nationalityRepository{}
 }
 
 func (r nationalityRepository) GetAll() map[string]string {

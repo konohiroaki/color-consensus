@@ -4,6 +4,7 @@ import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -17,17 +18,24 @@ type voteRepository struct {
 	Collection *mgo.Collection
 }
 
-func NewVoteRepository(env string) VoteRepository {
-	uri, name := getDatabaseURIAndName()
-	session, _ := mgo.Dial(uri)
-	database := session.DB(name)
-	repository := newVoteRepository(database)
+var (
+	voteRepoInstance VoteRepository
+	voteRepoOnce     sync.Once
+)
 
-	if env == "development" {
-		repository.insertSampleData()
-	}
+func GetVoteRepository(env string) VoteRepository {
+	voteRepoOnce.Do(func() {
+		uri, name := getDatabaseURIAndName()
+		session, _ := mgo.Dial(uri)
+		database := session.DB(name)
+		repository := newVoteRepository(database)
 
-	return repository
+		if env == "development" {
+			repository.insertSampleData()
+		}
+		voteRepoInstance = repository
+	})
+	return voteRepoInstance
 }
 
 func newVoteRepository(database *mgo.Database) *voteRepository {

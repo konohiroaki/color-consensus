@@ -1,5 +1,7 @@
 package repositories
 
+import "sync"
+
 type LanguageRepository interface {
 	GetAll() map[string]string
 	IsCodePresent(key string) bool
@@ -9,11 +11,22 @@ type languageRepository struct {
 	languageMap map[string]string
 }
 
-func NewLanguageRepository() LanguageRepository {
-	repository := languageRepository{}
-	repository.setUpData()
+var (
+	langRepoInstance LanguageRepository
+	langRepoOnce     sync.Once
+)
 
-	return repository
+func GetLanguageRepository() LanguageRepository {
+	langRepoOnce.Do(func() {
+		repository := newLanguageRepository()
+		repository.setUpData()
+		langRepoInstance = repository
+	})
+	return langRepoInstance
+}
+
+func newLanguageRepository() *languageRepository {
+	return &languageRepository{}
 }
 
 func (r languageRepository) GetAll() map[string]string {

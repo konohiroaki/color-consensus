@@ -5,6 +5,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"log"
+	"sync"
 )
 
 type Client interface {
@@ -14,8 +15,17 @@ type Client interface {
 
 type client struct{}
 
-func NewClient() Client {
-	return client{}
+var (
+	clientInstance Client
+	clientOnce     sync.Once
+)
+
+func GetClient() Client {
+	clientOnce.Do(func() {
+		client := client{}
+		clientInstance = client
+	})
+	return clientInstance
 }
 
 func (client) GetUserIDFunc(ctx *gin.Context) (func() (string, error)) {

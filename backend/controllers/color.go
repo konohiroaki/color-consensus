@@ -7,32 +7,39 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 )
 
-type ColorController interface {
-	GetAll(ctx *gin.Context)
-	Add(ctx *gin.Context)
-	GetNeighbors(ctx *gin.Context)
-}
-
-type colorController struct {
+type ColorController struct {
 	colorService services.ColorService
 	userService  services.UserService
 	client       client.Client
 }
 
-func NewColorController(colorService services.ColorService, userService services.UserService, client client.Client) ColorController {
-	return colorController{colorService, userService, client}
+var (
+	colorControllerInstance ColorController
+	colorControllerOnce     sync.Once
+)
+
+func GetColorController(env string) ColorController {
+	colorControllerOnce.Do(func() {
+		colorControllerInstance = newColorController(services.GetColorService(env), services.GetUserService(env), client.GetClient())
+	})
+	return colorControllerInstance
 }
 
-func (cc colorController) GetAll(ctx *gin.Context) {
+func newColorController(colorService services.ColorService, userService services.UserService, client client.Client) ColorController {
+	return ColorController{colorService, userService, client}
+}
+
+func (cc ColorController) GetAll(ctx *gin.Context) {
 	colors := cc.colorService.GetAll()
 
 	ctx.JSON(http.StatusOK, colors)
 	return
 }
 
-func (cc colorController) Add(ctx *gin.Context) {
+func (cc ColorController) Add(ctx *gin.Context) {
 	if !cc.userService.IsLoggedIn(cc.client.GetUserIDFunc(ctx)) {
 		ctx.JSON(http.StatusForbidden, errorResponse("user need to be logged in to add a color"))
 		return
@@ -69,7 +76,7 @@ func (cc colorController) Add(ctx *gin.Context) {
 	ctx.Status(http.StatusCreated);
 }
 
-func (cc colorController) GetNeighbors(ctx *gin.Context) {
+func (cc ColorController) GetNeighbors(ctx *gin.Context) {
 	code := ctx.Param("code")
 	size, sizeErr := strconv.Atoi(ctx.Query("size"));
 	if sizeErr != nil {

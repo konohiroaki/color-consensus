@@ -15,7 +15,7 @@ func TestColorService_GetAll_Success(t *testing.T) {
 
 	fields := []string{"lang", "name", "code"}
 	mockColorRepo.EXPECT().GetAll(fields).Return([]map[string]interface{}{})
-	service := NewColorService(mockColorRepo, nil)
+	service := newColorService(mockColorRepo, nil)
 
 	actual := service.GetAll()
 
@@ -29,7 +29,7 @@ func TestColorService_Add_Success(t *testing.T) {
 
 	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(true)
 	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(nil)
-	service := NewColorService(mockColorRepo, mockLangRepo)
+	service := newColorService(mockColorRepo, mockLangRepo)
 
 	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
@@ -42,7 +42,7 @@ func TestColorService_Add_FailLangFormat(t *testing.T) {
 	mockLangRepo := mockLangRepo(ctrl)
 
 	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(false)
-	service := NewColorService(nil, mockLangRepo)
+	service := newColorService(nil, mockLangRepo)
 
 	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
@@ -56,7 +56,7 @@ func TestColorService_Add_FailAdd(t *testing.T) {
 
 	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(true)
 	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(fmt.Errorf("error"))
-	service := NewColorService(mockColorRepo, mockLangRepo)
+	service := newColorService(mockColorRepo, mockLangRepo)
 
 	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
@@ -65,7 +65,7 @@ func TestColorService_Add_FailAdd(t *testing.T) {
 }
 
 func TestColorService_GetNeighbors_Cases(t *testing.T) {
-	service := NewColorService(nil, nil)
+	service := newColorService(nil, nil)
 
 	testCases := []struct {
 		code     string
@@ -88,7 +88,7 @@ func TestColorService_GetNeighbors_Cases(t *testing.T) {
 }
 
 func TestColorService_IsValidCodeFormat_Cases(t *testing.T) {
-	service := NewColorService(nil, nil)
+	service := newColorService(nil, nil)
 
 	testCases := []struct {
 		argument string

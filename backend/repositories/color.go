@@ -5,6 +5,7 @@ import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -17,17 +18,24 @@ type colorRepository struct {
 	Collection *mgo.Collection
 }
 
-func NewColorRepository(env string) ColorRepository {
-	uri, name := getDatabaseURIAndName()
-	session, _ := mgo.Dial(uri)
-	database := session.DB(name)
-	repository := newColorRepository(database)
+var (
+	colorRepoInstance ColorRepository
+	colorRepoOnce     sync.Once
+)
 
-	if env == "development" {
-		repository.insertSampleData()
-	}
+func GetColorRepository(env string) ColorRepository {
+	colorRepoOnce.Do(func() {
+		uri, name := getDatabaseURIAndName()
+		session, _ := mgo.Dial(uri)
+		database := session.DB(name)
+		repository := newColorRepository(database)
 
-	return repository
+		if env == "development" {
+			repository.insertSampleData()
+		}
+		colorRepoInstance = repository
+	})
+	return colorRepoInstance
 }
 
 func newColorRepository(database *mgo.Database) *colorRepository {
@@ -43,7 +51,7 @@ type color struct {
 }
 
 func (r colorRepository) Add(lang, name, code, userID string) error {
-	count, _ := r.Collection.Find(bson.M{"lang":lang, "name":name}).Limit(1).Count()
+	count, _ := r.Collection.Find(bson.M{"lang": lang, "name": name}).Limit(1).Count()
 	if count != 0 {
 		return fmt.Errorf("the requested color already exists")
 	}

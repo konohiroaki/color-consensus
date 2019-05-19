@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
+	"sync"
 )
 
 type UserService interface {
@@ -18,7 +19,19 @@ type userService struct {
 	genderRepo repositories.GenderRepository
 }
 
-func NewUserService(userRepo repositories.UserRepository, nationRepo repositories.NationalityRepository, genderRepo repositories.GenderRepository) UserService {
+var (
+	userServiceInstance UserService
+	userServiceOnce     sync.Once
+)
+
+func GetUserService(env string) UserService {
+	userServiceOnce.Do(func() {
+		userServiceInstance = newUserService(repositories.GetUserRepository(env), repositories.GetNationalityRepository(), repositories.GetGenderRepository())
+	})
+	return userServiceInstance
+}
+
+func newUserService(userRepo repositories.UserRepository, nationRepo repositories.NationalityRepository, genderRepo repositories.GenderRepository) UserService {
 	return userService{userRepo, nationRepo, genderRepo}
 }
 

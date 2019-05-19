@@ -15,7 +15,7 @@ func TestGenderController_GetAll_Success(t *testing.T) {
 
 	genders := []string{"foo", "bar"}
 	mockGenderService.EXPECT().GetAll().Return(genders)
-	controller := NewGenderController(mockGenderService)
+	controller := newGenderController(mockGenderService)
 
 	response := getResponseRecorder("", controller.GetAll, http.MethodGet, "", nil)
 

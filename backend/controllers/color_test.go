@@ -21,7 +21,7 @@ func TestColorController_GetAll_Success(t *testing.T) {
 	lang, name, code := "en", "red", "#ff0000"
 	mockColorService.EXPECT().GetAll().Return(
 		[]map[string]interface{}{{"lang": lang, "name": name, "code": code}})
-	controller := NewColorController(mockColorService, nil, nil)
+	controller := newColorController(mockColorService, nil, nil)
 
 	response := getResponseRecorder("", controller.GetAll, http.MethodGet, "", nil)
 
@@ -38,7 +38,7 @@ func TestColorController_Add_Success(t *testing.T) {
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
 	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, nil)
-	controller := NewColorController(mockColorService, mockUserService, mockClient)
+	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
@@ -52,7 +52,7 @@ func TestColorController_Add_FailAuthorization(t *testing.T) {
 	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	mockUserService, mockClient = authorizationFail(mockUserService, mockClient)
-	controller := NewColorController(mockColorService, mockUserService, mockClient)
+	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
 		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","name":"red","code":"#ff0000"}`)))
@@ -67,7 +67,7 @@ func TestColorController_Add_FailBind(t *testing.T) {
 	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
-	controller := NewColorController(mockColorService, mockUserService, mockClient)
+	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
 		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","code":"#ff0000"}`))) // "name" not sent
@@ -83,7 +83,7 @@ func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
 
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService, msg := colorFormatInvalid(mockColorService)
-	controller := NewColorController(mockColorService, mockUserService, mockClient)
+	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
 		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","name":"red","code":"ff0000"}`)))
@@ -101,7 +101,7 @@ func TestColorController_Add_FailServiceValidationError(t *testing.T) {
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
 	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, services.NewValidationError(serviceError))
-	controller := NewColorController(mockColorService, mockUserService, mockClient)
+	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
@@ -119,7 +119,7 @@ func TestColorController_Add_FailServiceInternalError(t *testing.T) {
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
 	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, fmt.Errorf(serviceError))
-	controller := NewColorController(mockColorService, mockUserService, mockClient)
+	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
@@ -135,7 +135,7 @@ func TestColorController_GetNeighbors_Success(t *testing.T) {
 
 	code, size := "ff0000", 1
 	mockColorService.EXPECT().GetNeighbors(code, size).Return([]string{"#ff0000"}, nil)
-	controller := NewColorController(mockColorService, nil, nil)
+	controller := newColorController(mockColorService, nil, nil)
 
 	response := getResponseRecorder("/:code", controller.GetNeighbors,
 		http.MethodPost, fmt.Sprintf("/%s?size=%d", code, size), nil)
@@ -146,7 +146,7 @@ func TestColorController_GetNeighbors_Success(t *testing.T) {
 
 func TestColorController_GetNeighbors_FailSizeAtoiConversion(t *testing.T) {
 	code, size := "ff0000", "a"
-	controller := NewColorController(nil, nil, nil)
+	controller := newColorController(nil, nil, nil)
 
 	response := getResponseRecorder("/:code", controller.GetNeighbors,
 		http.MethodPost, fmt.Sprintf("/%s?size=%s", code, size), nil)
@@ -162,7 +162,7 @@ func TestColorController_GetNeighbors_FailService(t *testing.T) {
 
 	code, size, serviceError := "ff0000", 1, "error message from service"
 	mockColorService.EXPECT().GetNeighbors(code, size).Return([]string{}, errors.New(serviceError))
-	controller := NewColorController(mockColorService, nil, nil)
+	controller := newColorController(mockColorService, nil, nil)
 
 	response := getResponseRecorder("/:code", controller.GetNeighbors,
 		http.MethodPost, fmt.Sprintf("/%s?size=%d", code, size), nil)

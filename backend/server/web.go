@@ -13,10 +13,13 @@ import (
 
 func NewRouter(env string) *gin.Engine {
 	router := gin.Default()
-	pprof.Register(router)
 
-	router.GET("/debug/vars", expvar.Handler())
-	router.Use(cors.Default())
+	if env == "development" {
+		pprof.Register(router)
+		router.GET("/debug/vars", expvar.Handler())
+		router.Use(cors.Default())
+	}
+
 	router.Use(static.Serve("/", static.LocalFile("frontend/dist", false)))
 	router.NoRoute(func(c *gin.Context) { c.File("frontend/dist/index.html") })
 	router.Use(sessions.Sessions("session", cookie.NewStore([]byte("secret"))))

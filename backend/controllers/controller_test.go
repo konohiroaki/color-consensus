@@ -48,6 +48,10 @@ func mockColorService(ctrl *gomock.Controller) *mock_services.MockColorService {
 	return mock_services.NewMockColorService(ctrl)
 }
 
+func mockColorCategoryService(ctrl *gomock.Controller) *mock_services.MockColorCategoryService {
+	return mock_services.NewMockColorCategoryService(ctrl)
+}
+
 func mockVoteService(ctrl *gomock.Controller) *mock_services.MockVoteService {
 	return mock_services.NewMockVoteService(ctrl)
 }

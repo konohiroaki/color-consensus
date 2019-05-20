@@ -22,7 +22,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 };
 
 export const actions = {
-    setColorCategories() {
+    fetchColorCategories() {
         return (dispatch) => {
             return axios.get(`${process.env.WEBAPI_HOST}/api/v1/color-categories`)
                 .then(({data}) => dispatch({type: types.SET_COLOR_CATEGORY, payload: data}))

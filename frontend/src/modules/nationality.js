@@ -22,7 +22,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 };
 
 export const actions = {
-    setNationalities() {
+    fetchNationalities() {
         return (dispatch) => {
             return axios.get(`${process.env.WEBAPI_HOST}/api/v1/nationalities`)
                 .then(({data}) => dispatch({type: types.SET_NATIONALITIES, payload: data}))

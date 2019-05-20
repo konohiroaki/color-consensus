@@ -22,7 +22,7 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 };
 
 export const actions = {
-    setGenders() {
+    fetchGenders() {
         return (dispatch) => {
             return axios.get(`${process.env.WEBAPI_HOST}/api/v1/genders`)
                 .then(({data}) => dispatch({type: types.SET_GENDERS, payload: data}))

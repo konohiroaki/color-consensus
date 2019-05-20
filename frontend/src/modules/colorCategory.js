@@ -2,19 +2,19 @@ import axios from "axios";
 import {toast} from "react-toastify";
 
 export const types = {
-    SET_LANGUAGES: "SET_LANGUAGES",
+    SET_COLOR_CATEGORY: "SET_COLOR_CATEGORY",
 };
 
 const DEFAULT_STATE = {
-    languages: {}
+    categories: []
 };
 
 export const reducer = (state = DEFAULT_STATE, action) => {
     switch (action.type) {
-        case types.SET_LANGUAGES:
+        case types.SET_COLOR_CATEGORY:
             return {
                 ...state,
-                languages: action.payload
+                categories: action.payload
             };
         default:
             return state;
@@ -22,10 +22,10 @@ export const reducer = (state = DEFAULT_STATE, action) => {
 };
 
 export const actions = {
-    setLanguages() {
+    setColorCategories() {
         return (dispatch) => {
-            return axios.get(`${process.env.WEBAPI_HOST}/api/v1/languages`)
-                .then(({data}) => dispatch({type: types.SET_LANGUAGES, payload: data}))
+            return axios.get(`${process.env.WEBAPI_HOST}/api/v1/color-categories`)
+                .then(({data}) => dispatch({type: types.SET_COLOR_CATEGORY, payload: data}))
                 .catch(({response}) => toast.warn(response.data.error.message));
         };
     },

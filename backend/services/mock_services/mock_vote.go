@@ -33,29 +33,29 @@ func (m *MockVoteService) EXPECT() *MockVoteServiceMockRecorder {
 }
 
 // Get mocks base method
-func (m *MockVoteService) Get(lang, name string, fields []string) []map[string]interface{} {
+func (m *MockVoteService) Get(category, name string, fields []string) []map[string]interface{} {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", lang, name, fields)
+	ret := m.ctrl.Call(m, "Get", category, name, fields)
 	ret0, _ := ret[0].([]map[string]interface{})
 	return ret0
 }
 
 // Get indicates an expected call of Get
-func (mr *MockVoteServiceMockRecorder) Get(lang, name, fields interface{}) *gomock.Call {
+func (mr *MockVoteServiceMockRecorder) Get(category, name, fields interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockVoteService)(nil).Get), lang, name, fields)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockVoteService)(nil).Get), category, name, fields)
 }
 
 // Vote mocks base method
-func (m *MockVoteService) Vote(lang, name string, newColors []string, getUserID func() (string, error)) {
+func (m *MockVoteService) Vote(category, name string, newColors []string, getUserID func() (string, error)) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Vote", lang, name, newColors, getUserID)
+	m.ctrl.Call(m, "Vote", category, name, newColors, getUserID)
 }
 
 // Vote indicates an expected call of Vote
-func (mr *MockVoteServiceMockRecorder) Vote(lang, name, newColors, getUserID interface{}) *gomock.Call {
+func (mr *MockVoteServiceMockRecorder) Vote(category, name, newColors, getUserID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Vote", reflect.TypeOf((*MockVoteService)(nil).Vote), lang, name, newColors, getUserID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Vote", reflect.TypeOf((*MockVoteService)(nil).Vote), category, name, newColors, getUserID)
 }
 
 // RemoveByUser mocks base method

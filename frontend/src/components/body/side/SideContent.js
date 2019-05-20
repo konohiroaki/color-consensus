@@ -9,7 +9,7 @@ class SideContent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            langFilter: "",
+            categoryFilter: "",
             nameFilter: "",
         };
     }
@@ -31,10 +31,10 @@ class SideContent extends Component {
         return <div className={this.props.className + " d-flex flex-column"}
                     style={this.props.style}>
             <SearchBar colorList={this.props.colorList}
-                       langFilter={this.state.langFilter} setLangFilter={e => this.setState({langFilter: e})}
+                       categoryFilter={this.state.categoryFilter} setCategoryFilter={e => this.setState({categoryFilter: e})}
                        nameFilter={this.state.nameFilter} setNameFilter={e => this.setState({nameFilter: e})}/>
             <Cards colorList={this.props.colorList} baseColor={this.props.baseColor}
-                   langFilter={this.state.langFilter} nameFilter={this.state.nameFilter}
+                   categoryFilter={this.state.categoryFilter} nameFilter={this.state.nameFilter}
                    setBaseColor={this.props.setBaseColor}/>
         </div>;
     }
@@ -42,20 +42,20 @@ class SideContent extends Component {
 
 const SearchBar = (props) => {
     return <div className="input-group rounded-0">
-        <LangFilterSelector colorList={props.colorList}
-                            langFilter={props.langFilter} setLangFilter={props.setLangFilter}/>
+        <CategoryFilterSelector colorList={props.colorList}
+                            categoryFilter={props.categoryFilter} setCategoryFilter={props.setCategoryFilter}/>
         <NameFilterInput nameFilter={props.nameFilter} setNameFilter={props.setNameFilter}/>
     </div>;
 };
 
-const LangFilterSelector = ({colorList, langFilter, setLangFilter}) => {
-    const langOptions = getLangList(colorList)
-        .map(lang => <option key={lang} value={lang}>{lang !== "" ? lang : "Language"}</option>);
+const CategoryFilterSelector = ({colorList, categoryFilter, setCategoryFilter}) => {
+    const categoryOptions = getCategoryList(colorList)
+        .map(category => <option key={category} value={category}>{category !== "" ? category : "Category"}</option>);
 
     return <div className="input-group-prepend">
-        <select className="custom-select rounded-0" value={langFilter}
-                onChange={e => setLangFilter(e.target.value)}>
-            {langOptions}
+        <select className="custom-select rounded-0" value={categoryFilter}
+                onChange={e => setCategoryFilter(e.target.value)}>
+            {categoryOptions}
         </select>
     </div>;
 };
@@ -67,48 +67,39 @@ const NameFilterInput = ({nameFilter, setNameFilter}) => {
 
 const Cards = (props) => {
     return <div style={{height: "100%", overflowY: "auto"}}>
-        <BaseColorCard baseColor={props.baseColor}/>
+        <ColorCard color={props.baseColor} borderColor="border-primary" setBaseColor={{}}/>
         <SelectableColorCards colorList={props.colorList} baseColor={props.baseColor}
-                              langFilter={props.langFilter} nameFilter={props.nameFilter}
+                              categoryFilter={props.categoryFilter} nameFilter={props.nameFilter}
                               setBaseColor={props.setBaseColor}/>
         <AddColorCard/>
     </div>;
 };
 
-const BaseColorCard = ({baseColor}) => {
-    if (baseColor === null) {
-        return null;
-    }
-    return <div className="d-block m-2 card btn bg-dark text-light border border border-primary">
-        <div className="row">
-            <div className="col-3 border-right border-secondary p-3">{baseColor.lang}</div>
-            <div className="col-9 p-3">{baseColor.name}</div>
-        </div>
-    </div>;
-};
-
-const SelectableColorCards = ({colorList, baseColor, langFilter, nameFilter, setBaseColor}) => {
+const SelectableColorCards = ({colorList, baseColor, categoryFilter, nameFilter, setBaseColor}) => {
     const selectableCards = colorList
         .filter(c => baseColor !== null && !isSameColor(c, baseColor))
-        .filter(c => isLangMatchingFilter(c.lang, langFilter))
+        .filter(c => isCategoryMatchingFilter(c.category, categoryFilter))
         .filter(c => isNameMatchingFilter(c.name, nameFilter))
         .sort(colorComparator)
-        .map(c => <ColorCard key={c.lang + ":" + c.name} color={c} setBaseColor={setBaseColor}/>);
+        .map(c => <ColorCard key={c.category + ":" + c.name} color={c} borderColor="border-secondary" setBaseColor={setBaseColor}/>);
 
     return selectableCards.length !== 0 ? <div>{selectableCards}</div> : null;
 };
 
-const ColorCard = ({color, setBaseColor}) => {
-    return <div className="d-block m-2 card btn bg-dark text-light border border border-secondary"
+const ColorCard = ({color, borderColor, setBaseColor}) => {
+    if (color === null) {
+        return null;
+    }
+    return <div className={"d-block m-2 card btn bg-dark text-light border border " + borderColor}
                 onClick={() => setBaseColor(color)}>
         <div className="row">
-            <div className="col-3 border-right border-secondary p-3">{color.lang}</div>
-            <div className="col-9 p-3">{color.name}</div>
+            <div className="col-6 border-right border-secondary p-3 m-auto">{color.category}</div>
+            <div className="col-6 p-3 m-auto">{color.name}</div>
         </div>
     </div>;
 };
 
-const getLangList = colorList => colorList.map(color => color.lang)
+const getCategoryList = colorList => colorList.map(color => color.category)
     .reduce((acc, current) => {
         if (!acc.includes(current)) {
             acc.push(current);
@@ -116,11 +107,11 @@ const getLangList = colorList => colorList.map(color => color.lang)
         return acc;
     }, [""]);
 
-const isLangMatchingFilter = (lang, filter) => filter === "" || lang === filter;
+const isCategoryMatchingFilter = (category, filter) => filter === "" || category === filter;
 const isNameMatchingFilter = (name, filter) => filter === "" || name.includes(filter.toLowerCase());
-const colorComparator = (c1, c2) => c1.lang !== c2.lang ? (c1.lang > c2.lang ? 1 : -1) : (c1.name > c2.name ? 1 : -1);
+const colorComparator = (c1, c2) => c1.category !== c2.category ? (c1.category > c2.category ? 1 : -1) : (c1.name > c2.name ? 1 : -1);
 const isSameColor = (c1, c2) => c1 !== undefined && c2 !== undefined
-                                && c1.lang === c2.lang && c1.name === c2.name && c1.code === c2.code;
+                                && c1.category === c2.category && c1.name === c2.name && c1.code === c2.code;
 
 const mapStateToProps = state => ({
     colorList: state.searchBar.colors,

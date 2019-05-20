@@ -9,8 +9,8 @@ import (
 )
 
 type VoteRepository interface {
-	Add(lang, name string, newColors []string, userID string)
-	Get(lang, name string, fields []string) []map[string]interface{}
+	Add(category, name string, newColors []string, userID string)
+	Get(category, name string, fields []string) []map[string]interface{}
 	RemoveByUser(userID string)
 }
 
@@ -43,22 +43,22 @@ func newVoteRepository(database *mgo.Database) *voteRepository {
 }
 
 type vote struct {
-	Lang   string    `bson:"lang"`
-	Name   string    `bson:"name"`
-	Colors []string  `bson:"colors"`
-	Date   time.Time `bson:"date"`
-	User   string    `bson:"user"`
+	Category string    `bson:"category"`
+	Name     string    `bson:"name"`
+	Colors   []string  `bson:"colors"`
+	Date     time.Time `bson:"date"`
+	User     string    `bson:"user"`
 }
 
-func (r voteRepository) Add(lang, name string, newColors []string, userID string) {
-	vote := vote{Lang: lang, Name: name, Colors: newColors, Date: time.Now(), User: userID}
-	_, _ = r.Collection.Upsert(bson.M{"lang": lang, "name": name, "user": userID}, &vote)
+func (r voteRepository) Add(category, name string, newColors []string, userID string) {
+	vote := vote{Category: category, Name: name, Colors: newColors, Date: time.Now(), User: userID}
+	_, _ = r.Collection.Upsert(bson.M{"category": category, "name": name, "user": userID}, &vote)
 }
 
-func (r voteRepository) Get(lang, name string, fields []string) []map[string]interface{} {
+func (r voteRepository) Get(category, name string, fields []string) []map[string]interface{} {
 	var result []map[string]interface{}
 	err := r.Collection.
-		Pipe(r.getAggregators(lang, name, fields)).
+		Pipe(r.getAggregators(category, name, fields)).
 		All(&result)
 
 	if result == nil {
@@ -74,9 +74,9 @@ func (r voteRepository) RemoveByUser(userID string) {
 	_, _ = r.Collection.RemoveAll(bson.M{"user": userID})
 }
 
-func (r voteRepository) getAggregators(lang, name string, fields []string) []bson.M {
+func (r voteRepository) getAggregators(category, name string, fields []string) []bson.M {
 	var aggregators = []bson.M{}
-	aggregators = append(aggregators, bson.M{"$match": r.getMatcher(lang, name)})
+	aggregators = append(aggregators, bson.M{"$match": r.getMatcher(category, name)})
 	aggregators = append(aggregators, r.getUserLookUpAggregators()...)
 	aggregators = append(aggregators, bson.M{"$project": r.getProjector(fields)})
 	return aggregators
@@ -104,7 +104,7 @@ func (r voteRepository) getUserLookUpAggregators() []bson.M {
 			"voter.nationality": 1,
 			"voter.ageGroup":    ageGroupAggregator,
 			"voter.gender":      1,
-			"lang":              1,
+			"category":          1,
 			"name":              1,
 			"colors":            1,
 			"date":              1,
@@ -112,9 +112,9 @@ func (r voteRepository) getUserLookUpAggregators() []bson.M {
 	}
 }
 
-func (r voteRepository) getMatcher(lang, name string) bson.M {
+func (r voteRepository) getMatcher(category, name string) bson.M {
 	var matcher = bson.M{}
-	r.setIfValuePresent(matcher, "lang", lang)
+	r.setIfValuePresent(matcher, "category", category)
 	r.setIfValuePresent(matcher, "name", name)
 	return matcher
 }
@@ -135,10 +135,10 @@ func (r voteRepository) getProjector(fields []string) bson.M {
 
 func (r voteRepository) insertSampleData() {
 	votes := []*vote{
-		{Lang: "en", Name: "red", Colors: []string{"#ff0000"}, Date: time.Now(), User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480"},
-		{Lang: "en", Name: "red", Colors: []string{"#f00000"}, Date: time.Now(), User: "0da04f70-dc71-4674-b47b-365c3b0805c4"},
-		{Lang: "en", Name: "green", Colors: []string{"#008000"}, Date: time.Now(), User: "0da04f70-dc71-4674-b47b-365c3b0805c4"},
-		{Lang: "ja", Name: "赤", Colors: []string{"#bf1e33"}, Date: time.Now(), User: "20af3406-8c7e-411a-851f-31732416fa83"},
+		{Category: "HTML Color", Name: "Red", Colors: []string{"#ff0000"}, Date: time.Now(), User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480"},
+		{Category: "HTML Color", Name: "Red", Colors: []string{"#f00000"}, Date: time.Now(), User: "0da04f70-dc71-4674-b47b-365c3b0805c4"},
+		{Category: "HTML Color", Name: "Green", Colors: []string{"#008000"}, Date: time.Now(), User: "0da04f70-dc71-4674-b47b-365c3b0805c4"},
+		{Category: "JIS慣用色名", Name: "赤", Colors: []string{"#bf1e33"}, Date: time.Now(), User: "20af3406-8c7e-411a-851f-31732416fa83"},
 	}
 
 	_, _ = r.Collection.RemoveAll(nil)

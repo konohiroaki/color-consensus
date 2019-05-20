@@ -48,8 +48,6 @@ func setUpEndpoints(router *gin.Engine, env string) {
 			v1api.POST("/users/login", user.Login)
 			v1api.GET("/users", user.GetIDIfLoggedIn)
 
-			language := controllers.GetLanguageController()
-			v1api.GET("/languages", language.GetAll)
 			colorCategory := controllers.GetColorCategoryController(env)
 			v1api.GET("/color-categories", colorCategory.GetAll)
 			nationality := controllers.GetNationalityController()

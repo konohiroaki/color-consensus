@@ -8,8 +8,8 @@ describe("setVotes(color)", function () {
         colors: ["#ff0000"],
         voter: {nationality: "Japan", ageGroup: 20, gender: "Male"}
     }];
-    const fakeArgument = {lang: "en", name: "red", code: "#ff0000"};
-    const url = process.env.WEBAPI_HOST + "/api/v1/votes?lang=en&name=red"
+    const fakeArgument = {category: "X11 Color", name: "Red", code: "#ff0000"};
+    const url = process.env.WEBAPI_HOST + "/api/v1/votes?category=X11%20Color&name=Red"
                 + "&fields=colors,voter.nationality,voter.ageGroup,voter.gender";
 
     it("should dispatch SET_VOTES when fetch is success", () => {

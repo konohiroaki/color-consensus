@@ -17,14 +17,14 @@ func TestVoteController_Vote_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
-	lang, name, colors := "en", "red", []string{"#000000", "#000010"}
+	category, name, colors := "X11", "Red", []string{"#000000", "#000010"}
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
-	mockVoteService, mockClient = doVote(mockVoteService, mockClient, lang, name, colors)
+	mockVoteService, mockClient = doVote(mockVoteService, mockClient, category, name, colors)
 	controller := newVoteController(mockVoteService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Vote,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
-			`{"lang":"%s","name":"%s","colors":["%s"]}`, lang, name, strings.Join(colors, "\",\"")))))
+			`{"category":"%s","name":"%s","colors":["%s"]}`, category, name, strings.Join(colors, "\",\"")))))
 
 	assert.Equal(t, http.StatusOK, response.Code)
 }
@@ -34,13 +34,13 @@ func TestVoteController_Vote_FailAuthorization(t *testing.T) {
 	defer ctrl.Finish()
 	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
-	lang, name, colors := "en", "red", []string{"#000000", "#000010"}
+	category, name, colors := "X11", "Red", []string{"#000000", "#000010"}
 	mockUserService, mockClient = authorizationFail(mockUserService, mockClient)
 	controller := newVoteController(mockVoteService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Vote,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
-			`{"lang":"%s","name":"%s","colors":["%s"]}`, lang, name, strings.Join(colors, "\",\"")))))
+			`{"category":"%s","name":"%s","colors":["%s"]}`, category, name, strings.Join(colors, "\",\"")))))
 
 	assert.Equal(t, http.StatusForbidden, response.Code)
 	assertErrorMessageEqual(t, "user need to be logged in to vote", response.Body)
@@ -51,16 +51,16 @@ func TestVoteController_Vote_FailBind(t *testing.T) {
 	defer ctrl.Finish()
 	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
-	lang, name := "en", "red"
+	category, name := "X11", "Red"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	controller := newVoteController(mockVoteService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Vote,
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
-			`{"lang":"%s","name":"%s"}`, lang, name))))
+			`{"category":"%s","name":"%s"}`, category, name))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "all lang, name, colors should be in the request", response.Body)
+	assertErrorMessageEqual(t, "all category, name, colors should be in the request", response.Body)
 }
 
 func TestVoteController_Get_Success(t *testing.T) {
@@ -68,23 +68,23 @@ func TestVoteController_Get_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockVoteService := mockVoteService(ctrl)
 
-	lang, name, fields := "en", "red", []string{"lang"}
-	mockVoteService.EXPECT().Get(lang, name, fields).Return([]map[string]interface{}{{"lang": "en"}})
+	category, name, fields := "X11", "Red", []string{"category"}
+	mockVoteService.EXPECT().Get(category, name, fields).Return([]map[string]interface{}{{"category": "X11"}})
 	controller := newVoteController(mockVoteService, nil, nil)
 
 	response := getResponseRecorder("", controller.Get,
-		http.MethodGet, fmt.Sprintf("?lang=%s&name=%s&fields=%s", lang, name, strings.Join(fields, ",")), nil)
+		http.MethodGet, fmt.Sprintf("?category=%s&name=%s&fields=%s", category, name, strings.Join(fields, ",")), nil)
 
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, `[{"lang":"en"}]`, response.Body.String())
+	assert.Equal(t, `[{"category":"X11"}]`, response.Body.String())
 }
 
 func TestVoteController_Get_FailBind(t *testing.T) {
-	lang, name := "en", "red"
+	category, name := "X11", "Red"
 	controller := newVoteController(nil, nil, nil)
 
 	response := getResponseRecorder("", controller.Get,
-		http.MethodGet, fmt.Sprintf("?lang=%s&name=%s", lang, name), nil)
+		http.MethodGet, fmt.Sprintf("?category=%s&name=%s", category, name), nil)
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
 	assertErrorMessageEqual(t, "fields should be in the request", response.Body)
@@ -116,9 +116,9 @@ func TestVoteController_RemoveByUser_FailBind(t *testing.T) {
 	assertErrorMessageEqual(t, "userID should be in the request", response.Body)
 }
 
-func doVote(vote *mock_services.MockVoteService, client *mock_client.MockClient, lang, name string, colors []string) (
+func doVote(vote *mock_services.MockVoteService, client *mock_client.MockClient, category, name string, colors []string) (
 		*mock_services.MockVoteService, *mock_client.MockClient) {
 	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
-	vote.EXPECT().Vote(lang, name, colors, gomock.Any())
+	vote.EXPECT().Vote(category, name, colors, gomock.Any())
 	return vote, client
 }

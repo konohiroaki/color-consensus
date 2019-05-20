@@ -33,29 +33,29 @@ func (m *MockVoteRepository) EXPECT() *MockVoteRepositoryMockRecorder {
 }
 
 // Add mocks base method
-func (m *MockVoteRepository) Add(user, lang, name string, newColors []string) {
+func (m *MockVoteRepository) Add(category, name string, newColors []string, userID string) {
 	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Add", user, lang, name, newColors)
+	m.ctrl.Call(m, "Add", category, name, newColors, userID)
 }
 
 // Add indicates an expected call of Add
-func (mr *MockVoteRepositoryMockRecorder) Add(user, lang, name, newColors interface{}) *gomock.Call {
+func (mr *MockVoteRepositoryMockRecorder) Add(category, name, newColors, userID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockVoteRepository)(nil).Add), user, lang, name, newColors)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockVoteRepository)(nil).Add), category, name, newColors, userID)
 }
 
 // Get mocks base method
-func (m *MockVoteRepository) Get(lang, name string, fields []string) []map[string]interface{} {
+func (m *MockVoteRepository) Get(category, name string, fields []string) []map[string]interface{} {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", lang, name, fields)
+	ret := m.ctrl.Call(m, "Get", category, name, fields)
 	ret0, _ := ret[0].([]map[string]interface{})
 	return ret0
 }
 
 // Get indicates an expected call of Get
-func (mr *MockVoteRepositoryMockRecorder) Get(lang, name, fields interface{}) *gomock.Call {
+func (mr *MockVoteRepositoryMockRecorder) Get(category, name, fields interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockVoteRepository)(nil).Get), lang, name, fields)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockVoteRepository)(nil).Get), category, name, fields)
 }
 
 // RemoveByUser mocks base method

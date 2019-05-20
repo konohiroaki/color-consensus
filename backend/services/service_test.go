@@ -9,12 +9,12 @@ func mockColorRepo(ctrl *gomock.Controller) *mock_repositories.MockColorReposito
 	return mock_repositories.NewMockColorRepository(ctrl)
 }
 
-func mockUserRepo(ctrl *gomock.Controller) *mock_repositories.MockUserRepository {
-	return mock_repositories.NewMockUserRepository(ctrl)
+func mockColorCategoryRepo(ctrl *gomock.Controller) *mock_repositories.MockColorCategoryRepository {
+	return mock_repositories.NewMockColorCategoryRepository(ctrl)
 }
 
-func mockLangRepo(ctrl *gomock.Controller) *mock_repositories.MockLanguageRepository {
-	return mock_repositories.NewMockLanguageRepository(ctrl)
+func mockUserRepo(ctrl *gomock.Controller) *mock_repositories.MockUserRepository {
+	return mock_repositories.NewMockUserRepository(ctrl)
 }
 
 func mockNationRepo(ctrl *gomock.Controller) *mock_repositories.MockNationalityRepository {

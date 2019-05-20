@@ -51,9 +51,9 @@ class VotingPage extends Component {
     }
 
     submit() {
-        const {lang, name} = this.props.baseColor;
+        const {category, name} = this.props.baseColor;
         const url = `${process.env.WEBAPI_HOST}/api/v1/votes`;
-        const body = {"lang": lang, "name": name, "colors": this.props.selectedColorCodeList};
+        const body = {"category": category, "name": name, "colors": this.props.selectedColorCodeList};
         axios.post(url, body).then(() => this.props.history.push("/statistics"));
     }
 }

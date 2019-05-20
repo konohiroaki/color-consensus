@@ -6,8 +6,8 @@ import (
 )
 
 type VoteService interface {
-	Get(lang, name string, fields []string) []map[string]interface{}
-	Vote(lang, name string, newColors []string, getUserID func() (string, error))
+	Get(category, name string, fields []string) []map[string]interface{}
+	Vote(category, name string, newColors []string, getUserID func() (string, error))
 	RemoveByUser(userID string)
 }
 
@@ -31,13 +31,13 @@ func newVoteService(voteRepo repositories.VoteRepository) VoteService {
 	return voteService{voteRepo}
 }
 
-func (vs voteService) Get(lang, name string, fields []string) []map[string]interface{} {
-	return vs.voteRepo.Get(lang, name, fields)
+func (vs voteService) Get(category, name string, fields []string) []map[string]interface{} {
+	return vs.voteRepo.Get(category, name, fields)
 }
 
-func (vs voteService) Vote(lang, name string, newColors []string, getUserID func() (string, error)) {
+func (vs voteService) Vote(category, name string, newColors []string, getUserID func() (string, error)) {
 	userID, _ := getUserID() // ensured there is no error
-	vs.voteRepo.Add(lang, name, newColors, userID)
+	vs.voteRepo.Add(category, name, newColors, userID)
 }
 
 func (vs voteService) RemoveByUser(userID string) {

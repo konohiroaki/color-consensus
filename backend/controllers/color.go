@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/client"
+	"github.com/konohiroaki/color-consensus/backend/repositories"
 	"github.com/konohiroaki/color-consensus/backend/services"
 	"log"
 	"net/http"
@@ -46,14 +47,14 @@ func (cc ColorController) Add(ctx *gin.Context) {
 	}
 
 	type request struct {
-		Lang string `json:"lang" binding:"required"`
-		Name string `json:"name" binding:"required"`
-		Code string `json:"code" binding:"required"`
+		Category string `json:"category" binding:"required"`
+		Name     string `json:"name" binding:"required"`
+		Code     string `json:"code" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("all language, name, code are necessary"))
+		ctx.JSON(http.StatusBadRequest, errorResponse("all category, name, code are necessary"))
 		return
 	}
 
@@ -62,10 +63,13 @@ func (cc ColorController) Add(ctx *gin.Context) {
 		return
 	}
 
-	err := cc.colorService.Add(req.Lang, req.Name, req.Code, cc.client.GetUserIDFunc(ctx))
+	err := cc.colorService.Add(req.Category, req.Name, req.Code, cc.client.GetUserIDFunc(ctx))
 	if err != nil {
 		switch err.(type) {
 		case *services.ValidationError:
+			ctx.JSON(http.StatusBadRequest, errorResponse(err.Error()))
+			return
+		case *repositories.DuplicateError:
 			ctx.JSON(http.StatusBadRequest, errorResponse(err.Error()))
 			return
 		default:

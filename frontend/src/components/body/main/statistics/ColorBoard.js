@@ -4,11 +4,6 @@ import {connect} from "react-redux";
 
 class ColorBoard extends Component {
 
-    constructor(props) {
-        super(props);
-        this.baseColor = {};
-    }
-
     render() {
         if (this.props.colorCodeList.length === 0 || this.props.cellBorder.length === 0) {
             return null;

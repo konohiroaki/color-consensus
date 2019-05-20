@@ -15,3 +15,15 @@ func getDatabaseURIAndName() (string, string) {
 	}
 	return uri, db
 }
+
+type DuplicateError struct {
+	message string
+}
+
+func NewDuplicateError(message string) *DuplicateError {
+	return &DuplicateError{message}
+}
+
+func (e DuplicateError) Error() string {
+	return e.message
+}

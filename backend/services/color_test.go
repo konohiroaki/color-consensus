@@ -13,7 +13,7 @@ func TestColorService_GetAll_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockColorRepo := mockColorRepo(ctrl)
 
-	fields := []string{"lang", "name", "code"}
+	fields := []string{"category", "name", "code"}
 	mockColorRepo.EXPECT().GetAll(fields).Return([]map[string]interface{}{})
 	service := newColorService(mockColorRepo, nil)
 
@@ -25,40 +25,57 @@ func TestColorService_GetAll_Success(t *testing.T) {
 func TestColorService_Add_Success(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockColorRepo, mockLangRepo := mockColorRepo(ctrl), mockLangRepo(ctrl)
+	mockColorRepo, colorCategoryRepo := mockColorRepo(ctrl), mockColorCategoryRepo(ctrl)
 
-	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(true)
-	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(nil)
-	service := newColorService(mockColorRepo, mockLangRepo)
+	colorCategoryRepo.EXPECT().IsPresent(gomock.Any()).Return(true)
+	mockColorRepo.EXPECT().Add("Category", "Name", "#ff00ff", "User").Return(nil)
+	service := newColorService(mockColorRepo, colorCategoryRepo)
 
-	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+	err := service.Add("Category", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
 	assert.Nil(t, err)
 }
 
-func TestColorService_Add_FailLangFormat(t *testing.T) {
+func TestColorService_Add_SuccessNewCategory(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockLangRepo := mockLangRepo(ctrl)
+	mockColorRepo, colorCategoryRepo := mockColorRepo(ctrl), mockColorCategoryRepo(ctrl)
 
-	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(false)
-	service := newColorService(nil, mockLangRepo)
+	colorCategoryRepo.EXPECT().IsPresent(gomock.Any()).Return(false)
+	colorCategoryRepo.EXPECT().Add("Category", "User").Return(nil)
+	mockColorRepo.EXPECT().Add("Category", "Name", "#ff00ff", "User").Return(nil)
+	service := newColorService(mockColorRepo, colorCategoryRepo)
 
-	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+	err := service.Add("Category", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
-	assert.Equal(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
+	assert.Nil(t, err)
+}
+
+func TestColorService_Add_FailCategoryAdd(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockColorRepo, colorCategoryRepo := mockColorRepo(ctrl), mockColorCategoryRepo(ctrl)
+
+	colorCategoryRepo.EXPECT().IsPresent(gomock.Any()).Return(false)
+	colorCategoryRepo.EXPECT().Add("Category", "User").Return(fmt.Errorf("error"))
+	service := newColorService(mockColorRepo, colorCategoryRepo)
+
+	err := service.Add("Category", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+
+	assert.Error(t, err)
 }
 
 func TestColorService_Add_FailAdd(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	mockColorRepo, mockLangRepo := mockColorRepo(ctrl), mockLangRepo(ctrl)
+	mockColorRepo, colorCategoryRepo := mockColorRepo(ctrl), mockColorCategoryRepo(ctrl)
 
-	mockLangRepo.EXPECT().IsCodePresent(gomock.Any()).Return(true)
-	mockColorRepo.EXPECT().Add("Lang", "Name", "#ff00ff", "User").Return(fmt.Errorf("error"))
-	service := newColorService(mockColorRepo, mockLangRepo)
+	colorCategoryRepo.EXPECT().IsPresent(gomock.Any()).Return(false)
+	colorCategoryRepo.EXPECT().Add("Category", "User").Return(nil)
+	mockColorRepo.EXPECT().Add("Category", "Name", "#ff00ff", "User").Return(fmt.Errorf("error"))
+	service := newColorService(mockColorRepo, colorCategoryRepo)
 
-	err := service.Add("Lang", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+	err := service.Add("Category", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
 	assert.Error(t, err)
 	assert.NotEqual(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))

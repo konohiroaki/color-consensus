@@ -12,14 +12,14 @@ import (
 
 type ColorService interface {
 	GetAll() []map[string]interface{}
-	Add(lang, name, code string, getUserID func() (string, error)) error
+	Add(category, name, code string, getUserID func() (string, error)) error
 	GetNeighbors(code string, size int) ([]string, error)
 	IsValidCodeFormat(input string) (bool, string)
 }
 
 type colorService struct {
-	colorRepo repositories.ColorRepository
-	langRepo  repositories.LanguageRepository
+	colorRepo         repositories.ColorRepository
+	colorCategoryRepo repositories.ColorCategoryRepository
 }
 
 var (
@@ -29,28 +29,31 @@ var (
 
 func GetColorService(env string) ColorService {
 	colorServiceOnce.Do(func() {
-		colorServiceInstance = newColorService(repositories.GetColorRepository(env), repositories.GetLanguageRepository())
+		colorServiceInstance = newColorService(repositories.GetColorRepository(env), repositories.GetColorCategoryRepository(env))
 	})
 	return colorServiceInstance
 }
 
-func newColorService(colorRepo repositories.ColorRepository, langRepo repositories.LanguageRepository) ColorService {
-	return colorService{colorRepo, langRepo}
+func newColorService(colorRepo repositories.ColorRepository, colorCategoryRepo repositories.ColorCategoryRepository) ColorService {
+	return colorService{colorRepo, colorCategoryRepo}
 }
 
 func (cs colorService) GetAll() []map[string]interface{} {
-	return cs.colorRepo.GetAll([]string{"lang", "name", "code"})
+	return cs.colorRepo.GetAll([]string{"category", "name", "code"})
 }
 
-func (cs colorService) Add(lang, name, code string, getUserID func() (string, error)) error {
-	if !cs.langRepo.IsCodePresent(lang) {
-		return NewValidationError("lang format is not correct")
+func (cs colorService) Add(category, name, code string, getUserID func() (string, error)) error {
+	userID, _ := getUserID()
+	if !cs.colorCategoryRepo.IsPresent(category) {
+		err := cs.colorCategoryRepo.Add(category, userID)
+		if err != nil {
+			return err
+		}
 	}
 
-	userID, _ := getUserID()
 	code = strings.ToLower(code)
 
-	return cs.colorRepo.Add(lang, name, code, userID)
+	return cs.colorRepo.Add(category, name, code, userID)
 }
 
 func (cs colorService) GetNeighbors(code string, size int) ([]string, error) {

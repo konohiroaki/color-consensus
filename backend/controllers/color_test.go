@@ -18,15 +18,15 @@ func TestColorController_GetAll_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockColorService := mockColorService(ctrl)
 
-	lang, name, code := "en", "red", "#ff0000"
+	category, name, code := "X11", "Red", "#ff0000"
 	mockColorService.EXPECT().GetAll().Return(
-		[]map[string]interface{}{{"lang": lang, "name": name, "code": code}})
+		[]map[string]interface{}{{"category": category, "name": name, "code": code}})
 	controller := newColorController(mockColorService, nil, nil)
 
 	response := getResponseRecorder("", controller.GetAll, http.MethodGet, "", nil)
 
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, fmt.Sprintf(`[{"code":"%s","lang":"%s","name":"%s"}]`, code, lang, name), response.Body.String())
+	assert.Equal(t, fmt.Sprintf(`[{"category":"%s","code":"%s","name":"%s"}]`, category, code, name), response.Body.String())
 }
 
 func TestColorController_Add_Success(t *testing.T) {
@@ -34,14 +34,14 @@ func TestColorController_Add_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
-	lang, name, code := "en", "red", "#ff0000"
+	category, name, code := "X11", "Red", "#ff0000"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
-	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, nil)
+	mockColorService, mockClient = doAdd(mockColorService, mockClient, category, name, code, nil)
 	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"category":"%s","name":"%s","code":"%s"}`, category, name, code))))
 
 	assert.Equal(t, http.StatusCreated, response.Code)
 }
@@ -55,7 +55,7 @@ func TestColorController_Add_FailAuthorization(t *testing.T) {
 	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
-		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","name":"red","code":"#ff0000"}`)))
+		http.MethodPost, "", bytes.NewBuffer([]byte(`{"category":"X11","name":"Red","code":"#ff0000"}`)))
 
 	assert.Equal(t, http.StatusForbidden, response.Code)
 	assertErrorMessageEqual(t, "user need to be logged in to add a color", response.Body)
@@ -70,10 +70,10 @@ func TestColorController_Add_FailBind(t *testing.T) {
 	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
-		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","code":"#ff0000"}`))) // "name" not sent
+		http.MethodPost, "", bytes.NewBuffer([]byte(`{"category":"X11","code":"#ff0000"}`))) // "name" not sent
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "all language, name, code are necessary", response.Body)
+	assertErrorMessageEqual(t, "all category, name, code are necessary", response.Body)
 }
 
 func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
@@ -86,7 +86,7 @@ func TestColorController_Add_FailColorFormatValidation(t *testing.T) {
 	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
-		http.MethodPost, "", bytes.NewBuffer([]byte(`{"lang":"en","name":"red","code":"ff0000"}`)))
+		http.MethodPost, "", bytes.NewBuffer([]byte(`{"category":"X11","name":"Red","code":"ff0000"}`)))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
 	assertErrorMessageEqual(t, fmt.Sprintf("color code should match regex: %s", msg), response.Body)
@@ -97,14 +97,14 @@ func TestColorController_Add_FailServiceValidationError(t *testing.T) {
 	defer ctrl.Finish()
 	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
-	lang, name, code, serviceError := "en", "red", "#ff0000", "error message"
+	category, name, code, serviceError := "X11", "Red", "#ff0000", "error message"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
-	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, services.NewValidationError(serviceError))
+	mockColorService, mockClient = doAdd(mockColorService, mockClient, category, name, code, services.NewValidationError(serviceError))
 	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"category":"%s","name":"%s","code":"%s"}`, category, name, code))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
 	assertErrorMessageEqual(t, serviceError, response.Body)
@@ -115,14 +115,14 @@ func TestColorController_Add_FailServiceInternalError(t *testing.T) {
 	defer ctrl.Finish()
 	mockColorService, mockUserService, mockClient := mockColorService(ctrl), mockUserService(ctrl), mockClient(ctrl)
 
-	lang, name, code, serviceError := "en", "red", "#ff0000", "error message"
+	category, name, code, serviceError := "X11", "Red", "#ff0000", "error message"
 	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
 	mockColorService = colorFormatValid(mockColorService)
-	mockColorService, mockClient = doAdd(mockColorService, mockClient, lang, name, code, fmt.Errorf(serviceError))
+	mockColorService, mockClient = doAdd(mockColorService, mockClient, category, name, code, fmt.Errorf(serviceError))
 	controller := newColorController(mockColorService, mockUserService, mockClient)
 
 	response := getResponseRecorder("", controller.Add,
-		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"lang":"%s","name":"%s","code":"%s"}`, lang, name, code))))
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"category":"%s","name":"%s","code":"%s"}`, category, name, code))))
 
 	assert.Equal(t, http.StatusInternalServerError, response.Code)
 	assertErrorMessageEqual(t, serviceError, response.Body)
@@ -182,9 +182,9 @@ func colorFormatInvalid(color *mock_services.MockColorService) (*mock_services.M
 	return color, message
 }
 
-func doAdd(color *mock_services.MockColorService, client *mock_client.MockClient, lang, name, code string, err error) (
+func doAdd(color *mock_services.MockColorService, client *mock_client.MockClient, category, name, code string, err error) (
 		*mock_services.MockColorService, *mock_client.MockClient) {
 	client.EXPECT().GetUserIDFunc(gomock.Any()).Return(func() (string, error) { return "", nil })
-	color.EXPECT().Add(lang, name, code, gomock.Any()).Return(err)
+	color.EXPECT().Add(category, name, code, gomock.Any()).Return(err)
 	return color, client
 }

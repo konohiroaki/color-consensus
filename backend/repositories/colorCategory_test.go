@@ -32,3 +32,26 @@ func TestColorCategoryRepository_GetAll_Empty(t *testing.T) {
 
 	assert.Len(t, actual, 0)
 }
+
+func TestColorCategoryRepository_IsPresent_True(t *testing.T) {
+	testDB, teardown := setup()
+	defer teardown(t)
+	colorCategoryRepo := newColorCategoryRepository(testDB)
+
+	name, userID := "X11", "testuser"
+	_ = testDB.C("colorCategory").Insert(colorCategory{Name: name, User: userID, Date: time.Now()})
+
+	actual := colorCategoryRepo.IsPresent(name)
+
+	assert.True(t, actual)
+}
+
+func TestColorCategoryRepository_IsPresent_False(t *testing.T) {
+	testDB, teardown := setup()
+	defer teardown(t)
+	colorCategoryRepo := newColorCategoryRepository(testDB)
+
+	actual := colorCategoryRepo.IsPresent("X11")
+
+	assert.False(t, actual)
+}

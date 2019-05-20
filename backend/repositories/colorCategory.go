@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"fmt"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 	"log"
@@ -12,6 +11,7 @@ import (
 type ColorCategoryRepository interface {
 	Add(name, user string) error
 	GetAll() []string
+	IsPresent(category string) bool
 }
 
 type colorCategoryRepository struct {
@@ -51,7 +51,7 @@ type colorCategory struct {
 func (r colorCategoryRepository) Add(name, userID string) error {
 	count, _ := r.Collection.Find(bson.M{"name": name}).Limit(1).Count()
 	if count != 0 {
-		return fmt.Errorf("the requested color category already exists")
+		return NewDuplicateError("the requested color category already exists")
 	}
 	err := r.Collection.Insert(color{
 		Name: name,
@@ -84,10 +84,15 @@ func (r colorCategoryRepository) GetAll() []string {
 	return arrayResult
 }
 
+func (r colorCategoryRepository) IsPresent(category string) bool {
+	count, _ := r.Collection.Find(bson.M{"name": category}).Limit(1).Count()
+	return count > 0
+}
+
 func (r colorCategoryRepository) insertSampleData() {
 	votes := []*colorCategory{
 		{Name: "X11", User: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Date: time.Now()},
-		{Name: "Web Color", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now()},
+		{Name: "HTML Color", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now()},
 		{Name: "JIS慣用色名", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now()},
 		{Name: "Japanese", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now()},
 		{Name: "English", User: "0da04f70-dc71-4674-b47b-365c3b0805c4", Date: time.Now()},

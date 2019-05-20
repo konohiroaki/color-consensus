@@ -60,10 +60,6 @@ func mockUserService(ctrl *gomock.Controller) *mock_services.MockUserService {
 	return mock_services.NewMockUserService(ctrl)
 }
 
-func mockLangService(ctrl *gomock.Controller) *mock_services.MockLanguageService {
-	return mock_services.NewMockLanguageService(ctrl)
-}
-
 func mockNationService(ctrl *gomock.Controller) *mock_services.MockNationalityService {
 	return mock_services.NewMockNationalityService(ctrl)
 }

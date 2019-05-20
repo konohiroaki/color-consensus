@@ -12,7 +12,8 @@ class AddColorCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            lang: "",
+            category: "",
+            newCategory: "",
             name: "",
             code: ""
         };
@@ -24,7 +25,10 @@ class AddColorCard extends Component {
         console.log("rendering [add color card]");
         return <div>
             <Card/>
-            <AddColorModal lang={this.state.lang} langSetter={input => this.setState({lang: input})} languages={this.props.languages}
+            <AddColorModal category={this.state.category} newCategory={this.state.newCategory}
+                           categorySetter={input => this.setState({category: input})}
+                           newCategorySetter={input => this.setState({newCategory: input})}
+                           categories={this.props.categories}
                            name={this.state.name} nameSetter={input => this.setState({name: input})}
                            code={this.state.code} codeSetter={input => this.setState({code: input})}
                            handleClick={this.handleClick}/>
@@ -32,11 +36,16 @@ class AddColorCard extends Component {
     }
 
     handleClick() {
-        axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, this.state)
+        const request = {
+            category: this.state.category !== "" ? this.state.category : this.state.newCategory,
+            name: this.state.name,
+            code: this.state.code,
+        };
+        axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, request)
             .then(() => {
                 this.props.fetchColors();
                 $("#color-add-modal").modal("toggle");
-                this.setState({lang: "", name: "", code: ""});
+                this.setState({category: "", newCategory: "", name: "", code: ""});
             })
             .catch(({response}) => toast.warn(response.data.error.message));
     }
@@ -58,7 +67,9 @@ const AddColorModal = (props) => (
                     <span className="modal-title">Add Color</span>
                 </div>
                 <div className="modal-body">
-                    <LanguageInput lang={props.lang} langSetter={props.langSetter} languages={props.languages}/>
+                    <ColorCategoryInput category={props.category} newCategory={props.newCategory}
+                                        categorySetter={props.categorySetter} newCategorySetter={props.newCategorySetter}
+                                        categories={props.categories}/>
                     <ColorNameInput name={props.name} nameSetter={props.nameSetter}/>
                     <ColorCodeInput code={props.code} codeSetter={props.codeSetter}/>
                 </div>
@@ -73,24 +84,31 @@ const AddColorModal = (props) => (
     </div>
 );
 
-const LanguageInput = props => {
-    var languages = Object.keys(props.languages)
-        .sort((a, b) => props.languages[a] > props.languages[b] ? 1 : -1)
-        .map(l => <option key={l} value={l}>{props.languages[l]}</option>);
-    languages.unshift(<option key="0" value="">Choose from dropdown</option>);
+const ColorCategoryInput = props => {
+    const categories = props.categories
+        .sort((a, b) => a > b ? 1 : -1)
+        .map(c => <option key={c} value={c}>{c}</option>);
+    const selectDisabled = props.newCategory !== "";
+    const textDisabled = props.category !== "";
 
     return <div>
-        <label className="mb-0">Language:</label>
-        <select className="custom-select" value={props.lang}
-                onChange={e => props.langSetter(e.target.value)}>
-            {languages}
-        </select>
+        <label className="mb-0">Color Category:</label>
+        <div className="input-group">
+            <select className="input-group-prepend custom-select" value={props.category}
+                    onChange={e => props.categorySetter(e.target.value)} disabled={selectDisabled}>
+                <option key="0" value="">Choose from dropdown</option>
+                {categories}
+            </select>
+            <input type="text" className="form-control" value={props.newCategory} placeholder="or input new"
+                   onChange={e => props.newCategorySetter(e.target.value)} disabled={textDisabled}/>
+        </div>
     </div>;
 };
+
 const ColorNameInput = props => (
     <div>
         <label className="mb-0">Color Name:</label>
-        <input type="text" className="form-control" placeholder="eg. red"
+        <input type="text" className="form-control" placeholder="eg. Red"
                value={props.name} onChange={e => props.nameSetter(e.target.value)}/>
     </div>
 );
@@ -104,7 +122,7 @@ const ColorCodeInput = props => (
 );
 
 const mapStateToProps = state => ({
-    languages: state.language.languages,
+    categories: state.colorCategory.categories
 });
 
 const mapDispatchToProps = dispatch => ({

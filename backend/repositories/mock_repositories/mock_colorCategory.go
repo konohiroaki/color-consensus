@@ -59,3 +59,17 @@ func (mr *MockColorCategoryRepositoryMockRecorder) GetAll() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockColorCategoryRepository)(nil).GetAll))
 }
+
+// IsPresent mocks base method
+func (m *MockColorCategoryRepository) IsPresent(category string) bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsPresent", category)
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// IsPresent indicates an expected call of IsPresent
+func (mr *MockColorCategoryRepositoryMockRecorder) IsPresent(category interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsPresent", reflect.TypeOf((*MockColorCategoryRepository)(nil).IsPresent), category)
+}

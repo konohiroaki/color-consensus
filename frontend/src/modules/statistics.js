@@ -126,9 +126,9 @@ export const actions = {
     },
 };
 
-const getStatisticsUrl = ({lang, name}) => {
+const getStatisticsUrl = ({category, name}) => {
     const fields = ["colors", "voter.nationality", "voter.ageGroup", "voter.gender"];
-    return `${process.env.WEBAPI_HOST}/api/v1/votes?lang=${lang}&name=${name}&fields=${fields}`;
+    return `${process.env.WEBAPI_HOST}/api/v1/votes?category=${category}&name=${name}&fields=${fields}`;
 };
 
 const getCellRatio = (getState, filteredVotes) => {

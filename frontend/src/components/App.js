@@ -4,7 +4,7 @@ import Header from "./header/Header";
 import Body from "./body/Body";
 import LoginModal from "./common/LoginModal";
 import {actions as user} from "../modules/user";
-import {actions as language} from "../modules/language";
+import {actions as colorCategory} from "../modules/colorCategory";
 import {actions as nationality} from "../modules/nationality";
 import {actions as gender} from "../modules/gender";
 
@@ -26,7 +26,7 @@ class App extends Component {
 
     componentDidMount() {
         this.props.verifyLoginState();
-        this.props.setLanguages();
+        this.props.setColorCategories();
         this.props.setNationalities();
         this.props.setGenders();
     }
@@ -34,7 +34,7 @@ class App extends Component {
 
 const mapDispatchToProps = dispatch => ({
     verifyLoginState: () => dispatch(user.verifyLoginState()),
-    setLanguages: () => dispatch(language.setLanguages()),
+    setColorCategories: () => dispatch(colorCategory.setColorCategories()),
     setNationalities: () => dispatch(nationality.setNationalities()),
     setGenders: () => dispatch(gender.setGenders()),
 });

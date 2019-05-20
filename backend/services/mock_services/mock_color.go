@@ -47,17 +47,17 @@ func (mr *MockColorServiceMockRecorder) GetAll() *gomock.Call {
 }
 
 // Add mocks base method
-func (m *MockColorService) Add(lang, name, code string, getUserID func() (string, error)) error {
+func (m *MockColorService) Add(category, name, code string, getUserID func() (string, error)) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Add", lang, name, code, getUserID)
+	ret := m.ctrl.Call(m, "Add", category, name, code, getUserID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Add indicates an expected call of Add
-func (mr *MockColorServiceMockRecorder) Add(lang, name, code, getUserID interface{}) *gomock.Call {
+func (mr *MockColorServiceMockRecorder) Add(category, name, code, getUserID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockColorService)(nil).Add), lang, name, code, getUserID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Add", reflect.TypeOf((*MockColorService)(nil).Add), category, name, code, getUserID)
 }
 
 // GetNeighbors mocks base method

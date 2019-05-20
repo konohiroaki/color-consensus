@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"reflect"
 	"testing"
 )
 
@@ -32,6 +31,20 @@ func TestColorService_Add_Success(t *testing.T) {
 	service := newColorService(mockColorRepo, colorCategoryRepo)
 
 	err := service.Add("Category", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
+
+	assert.Nil(t, err)
+}
+
+func TestColorService_Add_SuccessShortColorCode(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockColorRepo, colorCategoryRepo := mockColorRepo(ctrl), mockColorCategoryRepo(ctrl)
+
+	colorCategoryRepo.EXPECT().IsPresent(gomock.Any()).Return(true)
+	mockColorRepo.EXPECT().Add("Category", "Name", "#aabbcc", "User").Return(nil)
+	service := newColorService(mockColorRepo, colorCategoryRepo)
+
+	err := service.Add("Category", "Name", "#ABC", func() (s string, e error) { return "User", nil })
 
 	assert.Nil(t, err)
 }
@@ -78,7 +91,6 @@ func TestColorService_Add_FailAdd(t *testing.T) {
 	err := service.Add("Category", "Name", "#FF00ff", func() (s string, e error) { return "User", nil })
 
 	assert.Error(t, err)
-	assert.NotEqual(t, reflect.TypeOf(&ValidationError{}), reflect.TypeOf(err))
 }
 
 func TestColorService_GetNeighbors_Cases(t *testing.T) {
@@ -101,23 +113,5 @@ func TestColorService_GetNeighbors_Cases(t *testing.T) {
 		if testCase.err != "" {
 			assert.Equal(t, testCase.err, err.Error())
 		}
-	}
-}
-
-func TestColorService_IsValidCodeFormat_Cases(t *testing.T) {
-	service := newColorService(nil, nil)
-
-	testCases := []struct {
-		argument string
-		expected bool
-	}{
-		{"#049aDF", true},
-		{"049aDF", false},
-		{"#049aDFa", false},
-	}
-
-	for _, testCase := range testCases {
-		actual, _ := service.IsValidCodeFormat(testCase.argument)
-		assert.Equal(t, testCase.expected, actual)
 	}
 }

@@ -77,7 +77,6 @@ func (r userRepository) insertSampleData() {
 		{ID: "00943efe-0aa5-46a4-ae5b-6ef818fc1480", Nationality: "JP", Birth: 1985, Gender: "Male", Date: time.Now()},
 		{ID: "0da04f70-dc71-4674-b47b-365c3b0805c4", Nationality: "US", Birth: 1990, Gender: "Male", Date: time.Now()},
 		{ID: "20af3406-8c7e-411a-851f-31732416fa83", Nationality: "JP", Birth: 1995, Gender: "Female", Date: time.Now()},
-		{ID: "testuser", Nationality: "ZW", Birth: 1, Gender: "Male", Date: time.Now()},
 	}
 
 	_, _ = r.Collection.RemoveAll(nil)

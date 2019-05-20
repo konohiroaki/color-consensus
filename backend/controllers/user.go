@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/services"
-	"log"
 	"net/http"
 	"sync"
 )
@@ -41,12 +40,11 @@ func (uc UserController) GetIDIfLoggedIn(ctx *gin.Context) {
 
 func (uc UserController) Login(ctx *gin.Context) {
 	type request struct {
-		ID string `json:"userID" binding:"required"`
+		ID string `json:"userID" binding:"required,len=36"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("userID should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse(getBindErrorMessage(err)))
 		return
 	}
 
@@ -61,13 +59,12 @@ func (uc UserController) Login(ctx *gin.Context) {
 func (uc UserController) SignUpAndLogin(ctx *gin.Context) {
 	type request struct {
 		Nationality string `json:"nationality" binding:"required"`
-		Birth       int    `json:"birth" binding:"required"`
+		Birth       int    `json:"birth" binding:"required,min=1900"`
 		Gender      string `json:"gender" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("all nationality, birth, gender should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse(getBindErrorMessage(err)))
 		return
 	}
 

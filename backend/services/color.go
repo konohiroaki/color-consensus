@@ -3,10 +3,7 @@ package services
 import (
 	"fmt"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
-	"regexp"
 	"sort"
-	"strconv"
-	"strings"
 	"sync"
 )
 
@@ -14,7 +11,6 @@ type ColorService interface {
 	GetAll() []map[string]interface{}
 	Add(category, name, code string, getUserID func() (string, error)) error
 	GetNeighbors(code string, size int) ([]string, error)
-	IsValidCodeFormat(input string) (bool, string)
 }
 
 type colorService struct {
@@ -51,7 +47,7 @@ func (cs colorService) Add(category, name, code string, getUserID func() (string
 		}
 	}
 
-	code = strings.ToLower(code)
+	code = util.shortToLowerLongHex(code)
 
 	return cs.colorRepo.Add(category, name, code, userID)
 }
@@ -63,18 +59,13 @@ func (cs colorService) GetNeighbors(code string, size int) ([]string, error) {
 	return []string{}, fmt.Errorf("size should be between 1 and 4096")
 }
 
-func (colorService) IsValidCodeFormat(input string) (bool, string) {
-	regex := regexp.MustCompile(`^#[0-9a-fA-F]{6}$`)
-	return regex.MatchString(input), regex.String()
-}
-
 // TODO: I think the sort order shouldn't be measured only by diff scale but should also consider about the ratio between each RGB.
 // For example of #808080, #707070 is farther than #806080, which would be opposite from how human feels.
 // So currently it shows very bad result for gray-ish colors.
 func (cs colorService) getNeighborColors(code string, size int) []string {
-	r := cs.fromHex(code[0:2])
-	g := cs.fromHex(code[2:4])
-	b := cs.fromHex(code[4:6])
+	r := util.fromHex(code[0:2])
+	g := util.fromHex(code[2:4])
+	b := util.fromHex(code[4:6])
 	type NeighborColor struct {
 		Code string
 		Diff int
@@ -83,11 +74,11 @@ func (cs colorService) getNeighborColors(code string, size int) []string {
 	for i := 0; i < 256; i += 16 {
 		for j := 0; j < 256; j += 16 {
 			for k := 0; k < 256; k += 16 {
-				diff := cs.abs(r-i) + cs.abs(g-j) + cs.abs(b-k)
+				diff := util.abs(r-i) + util.abs(g-j) + util.abs(b-k)
 				if diff != 0 {
 					candidates = append(candidates, NeighborColor{
-						"#" + cs.toHex(i) + cs.toHex(j) + cs.toHex(k),
-						cs.abs(r-i) + cs.abs(g-j) + cs.abs(b-k),
+						"#" + util.toHex(i) + util.toHex(j) + util.toHex(k),
+						util.abs(r-i) + util.abs(g-j) + util.abs(b-k),
 					})
 				}
 			}
@@ -102,18 +93,4 @@ func (cs colorService) getNeighborColors(code string, size int) []string {
 		}
 	}
 	return result
-}
-
-func (colorService) fromHex(hex string) int {
-	num, _ := strconv.ParseInt(hex, 16, 64)
-	return int(num)
-}
-func (colorService) toHex(num int) string {
-	return fmt.Sprintf("%02x", num)
-}
-func (colorService) abs(num int) int {
-	if (num < 0) {
-		return -num;
-	}
-	return num;
 }

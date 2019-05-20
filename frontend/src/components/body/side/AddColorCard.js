@@ -101,7 +101,8 @@ const ColorCategoryInput = props => {
                 <option key="0" value="">Choose from dropdown</option>
                 {categories}
             </select>
-            <input type="text" className="form-control" value={props.newCategory} placeholder="or input new"
+            <input type="text" className="form-control" value={props.newCategory}
+                   placeholder="or input new" maxLength="20"
                    onChange={e => props.newCategorySetter(e.target.value)} disabled={textDisabled}/>
         </div>
     </div>;
@@ -110,7 +111,7 @@ const ColorCategoryInput = props => {
 const ColorNameInput = props => (
     <div>
         <label className="mb-0">Color Name:</label>
-        <input type="text" className="form-control" placeholder="eg. Red"
+        <input type="text" className="form-control" placeholder="eg. Red" maxLength="30"
                value={props.name} onChange={e => props.nameSetter(e.target.value)}/>
     </div>
 );
@@ -118,7 +119,7 @@ const ColorNameInput = props => (
 const ColorCodeInput = props => (
     <div>
         <label className="mb-0">Base Color Code:</label>
-        <input type="text" className="form-control" placeholder="eg. #ff0000"
+        <input type="text" className="form-control" placeholder="eg. #ff0000" maxLength="7"
                value={props.code} onChange={e => props.codeSetter(e.target.value)}/>
     </div>
 );

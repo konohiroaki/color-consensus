@@ -36,7 +36,7 @@ const ToastContainerWrapper = () => (
         pauseOnHover
         transition={Slide}
         className={css({width: "500px", marginLeft: "-250px"})}
-        toastClassName={css({borderRadius: "5px 5px"}) + " alert-warning"}
+        toastClassName={css({borderRadius: "5px 5px", whiteSpace: "pre-wrap"}) + " alert-warning"}
         progressClassName={"bg-warning"}
     />
 );

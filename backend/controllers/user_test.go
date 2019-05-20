@@ -48,7 +48,7 @@ func TestUserController_Login_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
-	userID := "id"
+	userID := "id--------------------------------36"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().TryLogin(userID, gomock.Any()).Return(true)
 	controller := newUserController(mockUserService, mockClient)
@@ -67,7 +67,18 @@ func TestUserController_Login_FailBind(t *testing.T) {
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"user":"%s"}`, userID))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "userID should be in the request", response.Body)
+	assertErrorMessageContains(t, "ID: required", response.Body)
+}
+
+func TestUserController_Login_FailBindIDLength(t *testing.T) {
+	userID := "id"
+	controller := newUserController(nil, nil)
+
+	response := getResponseRecorder("", controller.Login,
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"userID":"%s"}`, userID))))
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+	assertErrorMessageContains(t, "ID: len 36", response.Body)
 }
 
 func TestUserController_Login_FailService(t *testing.T) {
@@ -75,7 +86,7 @@ func TestUserController_Login_FailService(t *testing.T) {
 	defer ctrl.Finish()
 	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
-	userID := "id"
+	userID := "id--------------------------------36"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().TryLogin(userID, gomock.Any()).Return(false)
 	controller := newUserController(mockUserService, mockClient)
@@ -92,7 +103,7 @@ func TestUserController_SignUpAndLogin_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
-	userID, nationality, birth, gender := "id", "foo", 1000, "bar"
+	userID, nationality, birth, gender := "id", "foo", 1900, "bar"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return(userID, nil)
 	controller := newUserController(mockUserService, mockClient)
@@ -114,7 +125,7 @@ func TestUserController_SignUpAndLogin_FailBind(t *testing.T) {
 			`{"nationality":"%s","gender":"%s"}`, nationality, gender))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "all nationality, birth, gender should be in the request", response.Body)
+	assertErrorMessageContains(t, "Birth: required", response.Body)
 }
 
 func TestUserController_SignUpAndLogin_InternalServerError(t *testing.T) {
@@ -122,7 +133,7 @@ func TestUserController_SignUpAndLogin_InternalServerError(t *testing.T) {
 	defer ctrl.Finish()
 	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
-	nationality, birth, gender, serviceError := "foo", 1000, "bar", "internal server error"
+	nationality, birth, gender, serviceError := "foo", 1900, "bar", "internal server error"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", services.NewInternalServerError(serviceError))
 	controller := newUserController(mockUserService, mockClient)
@@ -140,7 +151,7 @@ func TestUserController_SignUpAndLogin_ValidationError(t *testing.T) {
 	defer ctrl.Finish()
 	mockUserService, mockClient := mockUserService(ctrl), mockClient(ctrl)
 
-	nationality, birth, gender, serviceError := "foo", 1000, "bar", "gender format is not correct"
+	nationality, birth, gender, serviceError := "foo", 1900, "bar", "gender format is not correct"
 	mockClient.EXPECT().SetUserIDFunc(gomock.Any())
 	mockUserService.EXPECT().SignUpAndLogin(nationality, birth, gender, gomock.Any()).Return("", services.NewValidationError(serviceError))
 	controller := newUserController(mockUserService, mockClient)

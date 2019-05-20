@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/services"
-	"log"
 	"net/http"
 	"strings"
 	"sync"
@@ -39,14 +38,13 @@ func (vc VoteController) Vote(ctx *gin.Context) {
 	}
 
 	type request struct {
-		Category   string   `json:"category" binding:"required"`
-		Name   string   `json:"name" binding:"required"`
-		Colors []string `json:"colors" binding:"required"`
+		Category string   `json:"category" binding:"required,max=20"`
+		Name     string   `json:"name" binding:"required,max=30"`
+		Colors   []string `json:"colors" binding:"required,dive,hexcolor"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("all category, name, colors should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse(getBindErrorMessage(err)))
 		return
 	}
 
@@ -56,14 +54,13 @@ func (vc VoteController) Vote(ctx *gin.Context) {
 
 func (vc VoteController) Get(ctx *gin.Context) {
 	type request struct {
-		Category   string `form:"category"`
-		Name   string `form:"name"`
-		Fields string `form:"fields" binding:"required"`
+		Category string `form:"category" binding:"max=20"`
+		Name     string `form:"name" binding:"max=30"`
+		Fields   string `form:"fields" binding:"required"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("fields should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse(getBindErrorMessage(err)))
 		return
 	}
 	fields := strings.Split(req.Fields, ",")
@@ -74,12 +71,11 @@ func (vc VoteController) Get(ctx *gin.Context) {
 
 func (vc VoteController) RemoveByUser(ctx *gin.Context) {
 	type request struct {
-		ID string `json:"userID" binding:"required"`
+		ID string `json:"userID" binding:"required,len=36"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("userID should be in the request"))
+		ctx.JSON(http.StatusBadRequest, errorResponse(getBindErrorMessage(err)))
 		return
 	}
 

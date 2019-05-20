@@ -74,18 +74,3 @@ func (mr *MockColorServiceMockRecorder) GetNeighbors(code, size interface{}) *go
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNeighbors", reflect.TypeOf((*MockColorService)(nil).GetNeighbors), code, size)
 }
-
-// IsValidCodeFormat mocks base method
-func (m *MockColorService) IsValidCodeFormat(input string) (bool, string) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsValidCodeFormat", input)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(string)
-	return ret0, ret1
-}
-
-// IsValidCodeFormat indicates an expected call of IsValidCodeFormat
-func (mr *MockColorServiceMockRecorder) IsValidCodeFormat(input interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsValidCodeFormat", reflect.TypeOf((*MockColorService)(nil).IsValidCodeFormat), input)
-}

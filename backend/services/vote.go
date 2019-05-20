@@ -37,6 +37,11 @@ func (vs voteService) Get(category, name string, fields []string) []map[string]i
 
 func (vs voteService) Vote(category, name string, newColors []string, getUserID func() (string, error)) {
 	userID, _ := getUserID() // ensured there is no error
+
+	for k := range newColors {
+		newColors[k] = util.shortToLowerLongHex(newColors[k])
+	}
+
 	vs.voteRepo.Add(category, name, newColors, userID)
 }
 

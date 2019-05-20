@@ -46,7 +46,7 @@ func TestVoteController_Vote_FailAuthorization(t *testing.T) {
 	assertErrorMessageEqual(t, "user need to be logged in to vote", response.Body)
 }
 
-func TestVoteController_Vote_FailBind(t *testing.T) {
+func TestVoteController_Vote_FailBindColorRequired(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
@@ -60,7 +60,26 @@ func TestVoteController_Vote_FailBind(t *testing.T) {
 			`{"category":"%s","name":"%s"}`, category, name))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "all category, name, colors should be in the request", response.Body)
+	assertErrorMessageContains(t, "Colors: required", response.Body)
+}
+
+func TestVoteController_Vote_FailBindColorFormat(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+	mockVoteService, mockUserService, mockClient := mockVoteService(ctrl), mockUserService(ctrl), mockClient(ctrl)
+
+	category, name, colors := "X11", "Red", []string{"#0000", "#000010", "#a"}
+	mockUserService, mockClient = authorizationSuccess(mockUserService, mockClient)
+	controller := newVoteController(mockVoteService, mockUserService, mockClient)
+
+	response := getResponseRecorder("", controller.Vote,
+		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(
+			`{"category":"%s","name":"%s","colors":["%s"]}`, category, name, strings.Join(colors, "\",\"")))))
+
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+	assertErrorMessageContains(t, "Colors[0]: hexcolor", response.Body)
+	assertErrorMessageNotContains(t, "Colors[1]: hexcolor", response.Body)
+	assertErrorMessageContains(t, "Colors[2]: hexcolor", response.Body)
 }
 
 func TestVoteController_Get_Success(t *testing.T) {
@@ -87,7 +106,7 @@ func TestVoteController_Get_FailBind(t *testing.T) {
 		http.MethodGet, fmt.Sprintf("?category=%s&name=%s", category, name), nil)
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "fields should be in the request", response.Body)
+	assertErrorMessageContains(t, "Fields: required", response.Body)
 }
 
 func TestVoteController_RemoveByUser_Success(t *testing.T) {
@@ -95,7 +114,7 @@ func TestVoteController_RemoveByUser_Success(t *testing.T) {
 	defer ctrl.Finish()
 	mockVoteService := mockVoteService(ctrl)
 
-	userID := "id"
+	userID := "id--------------------------------36"
 	mockVoteService.EXPECT().RemoveByUser(userID)
 	controller := newVoteController(mockVoteService, nil, nil)
 
@@ -113,7 +132,7 @@ func TestVoteController_RemoveByUser_FailBind(t *testing.T) {
 		http.MethodPost, "", bytes.NewBuffer([]byte(fmt.Sprintf(`{"user":"%s"}`, userID))))
 
 	assert.Equal(t, http.StatusBadRequest, response.Code)
-	assertErrorMessageEqual(t, "userID should be in the request", response.Body)
+	assertErrorMessageContains(t, "ID: required", response.Body)
 }
 
 func doVote(vote *mock_services.MockVoteService, client *mock_client.MockClient, category, name string, colors []string) (

@@ -5,7 +5,6 @@ import (
 	"github.com/konohiroaki/color-consensus/backend/client"
 	"github.com/konohiroaki/color-consensus/backend/repositories"
 	"github.com/konohiroaki/color-consensus/backend/services"
-	"log"
 	"net/http"
 	"strconv"
 	"sync"
@@ -47,28 +46,19 @@ func (cc ColorController) Add(ctx *gin.Context) {
 	}
 
 	type request struct {
-		Category string `json:"category" binding:"required"`
-		Name     string `json:"name" binding:"required"`
-		Code     string `json:"code" binding:"required"`
+		Category string `json:"category" binding:"required,max=20"`
+		Name     string `json:"name" binding:"required,max=30"`
+		Code     string `json:"code" binding:"required,hexcolor"`
 	}
 	var req request
 	if err := ctx.ShouldBind(&req); err != nil {
-		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, errorResponse("all category, name, code are necessary"))
-		return
-	}
-
-	if ok, regex := cc.colorService.IsValidCodeFormat(req.Code); !ok {
-		ctx.JSON(http.StatusBadRequest, errorResponse("color code should match regex: "+regex))
+		ctx.JSON(http.StatusBadRequest, errorResponse(getBindErrorMessage(err)))
 		return
 	}
 
 	err := cc.colorService.Add(req.Category, req.Name, req.Code, cc.client.GetUserIDFunc(ctx))
 	if err != nil {
 		switch err.(type) {
-		case *services.ValidationError:
-			ctx.JSON(http.StatusBadRequest, errorResponse(err.Error()))
-			return
 		case *repositories.DuplicateError:
 			ctx.JSON(http.StatusBadRequest, errorResponse(err.Error()))
 			return

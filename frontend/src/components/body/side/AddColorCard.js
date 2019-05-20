@@ -6,6 +6,7 @@ import {actions as searchBar} from "../../../modules/searchBar";
 import {connect} from "react-redux";
 import $ from "jquery";
 import {toast} from "react-toastify";
+import {actions as colorCategory} from "../../../modules/colorCategory";
 
 class AddColorCard extends Component {
 
@@ -44,6 +45,7 @@ class AddColorCard extends Component {
         axios.post(`${process.env.WEBAPI_HOST}/api/v1/colors`, request)
             .then(() => {
                 this.props.fetchColors();
+                this.props.fetchColorCategories();
                 $("#color-add-modal").modal("toggle");
                 this.setState({category: "", newCategory: "", name: "", code: ""});
             })
@@ -127,6 +129,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     fetchColors: () => dispatch(searchBar.fetchColors()),
+    fetchColorCategories: () => dispatch(colorCategory.fetchColorCategories()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddColorCard);

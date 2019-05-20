@@ -26,17 +26,17 @@ class App extends Component {
 
     componentDidMount() {
         this.props.verifyLoginState();
-        this.props.setColorCategories();
-        this.props.setNationalities();
-        this.props.setGenders();
+        this.props.fetchColorCategories();
+        this.props.fetchNationalities();
+        this.props.fetchGenders();
     }
 }
 
 const mapDispatchToProps = dispatch => ({
     verifyLoginState: () => dispatch(user.verifyLoginState()),
-    setColorCategories: () => dispatch(colorCategory.setColorCategories()),
-    setNationalities: () => dispatch(nationality.setNationalities()),
-    setGenders: () => dispatch(gender.setGenders()),
+    fetchColorCategories: () => dispatch(colorCategory.fetchColorCategories()),
+    fetchNationalities: () => dispatch(nationality.fetchNationalities()),
+    fetchGenders: () => dispatch(gender.fetchGenders()),
 });
 
 export default connect(null, mapDispatchToProps)(App);

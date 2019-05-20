@@ -64,7 +64,7 @@ func (cs colorService) GetNeighbors(code string, size int) ([]string, error) {
 }
 
 func (colorService) IsValidCodeFormat(input string) (bool, string) {
-	regex := regexp.MustCompile(`#[0-9a-fA-F]{6}`)
+	regex := regexp.MustCompile(`^#[0-9a-fA-F]{6}$`)
 	return regex.MatchString(input), regex.String()
 }
 

@@ -113,6 +113,7 @@ func TestColorService_IsValidCodeFormat_Cases(t *testing.T) {
 	}{
 		{"#049aDF", true},
 		{"049aDF", false},
+		{"#049aDFa", false},
 	}
 
 	for _, testCase := range testCases {
